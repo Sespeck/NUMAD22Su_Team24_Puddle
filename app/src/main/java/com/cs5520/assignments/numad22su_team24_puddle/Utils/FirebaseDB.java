@@ -7,6 +7,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 
 import com.cs5520.assignments.numad22su_team24_puddle.MainActivity;
+import com.cs5520.assignments.numad22su_team24_puddle.PuddleListActivity;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
@@ -48,7 +49,7 @@ public class FirebaseDB {
                         @Override
                         public void onComplete(@NonNull Task<Void> task) {
                             if(task.isSuccessful()){
-                                Intent intent = new Intent(ct, MainActivity.class);
+                                Intent intent = new Intent(ct, PuddleListActivity.class);
                                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
                                 ct.startActivity(intent);
                             } else {

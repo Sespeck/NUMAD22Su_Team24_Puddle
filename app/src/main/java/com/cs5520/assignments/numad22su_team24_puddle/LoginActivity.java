@@ -30,7 +30,7 @@ public class LoginActivity extends AppCompatActivity {
 
         // checking for users existence: Saving the current user
         if(firebaseUser != null){
-            startActivity(new Intent(LoginActivity.this, MainActivity.class));
+            startActivity(new Intent(LoginActivity.this, PuddleListActivity.class));
             finish();
         }
     }
@@ -54,7 +54,7 @@ public class LoginActivity extends AppCompatActivity {
                     "123456").addOnCompleteListener(task -> {
                 if(task.isSuccessful()){
                     // Successfully Logged in
-                    Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                    Intent intent = new Intent(LoginActivity.this, PuddleListActivity.class);
                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
                     intent.putExtra("loginUserName", usernameEditText.getText().toString().trim());
                     finish();
