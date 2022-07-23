@@ -1,3 +1,10 @@
 <resources>
     <string name="app_name">Puddle</string>
+    <string name="about">About</string>
+    <string name="chat">Chat</string>
+    <string name="members">Members</string>
+    <string name="events">Events</string>
+    <string name="home">HOME</string>
+    <string name="map">MAP</string>
+    <string name="settings">SETTINGS</string>
 </resources>
