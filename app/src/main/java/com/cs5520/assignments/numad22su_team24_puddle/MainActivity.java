@@ -2,6 +2,7 @@ package com.cs5520.assignments.numad22su_team24_puddle;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import com.google.firebase.database.FirebaseDatabase;
@@ -14,5 +15,8 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         FirebaseDatabase.getInstance().getReference().child("chats").push().setValue("Firebase connection successful");
+
+        Intent intent = new Intent(this, MapActivity.class);
+        startActivity(intent);
     }
 }
