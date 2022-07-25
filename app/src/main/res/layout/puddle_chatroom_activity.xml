@@ -61,14 +61,9 @@
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent">
 
-        <com.google.android.material.bottomnavigation.BottomNavigationView
-            android:layout_width="match_parent"
-            android:layout_height="?actionBarSize"
-            app:layout_constraintBottom_toBottomOf="@+id/chatroom_fragment_container"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toStartOf="parent"
-            app:menu="@menu/bottom_app_bar" />
+        <include
+            layout="@layout/bottom_nav_bar"
+            />
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

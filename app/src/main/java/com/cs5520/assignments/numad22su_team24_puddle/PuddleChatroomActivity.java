@@ -1,6 +1,7 @@
 package com.cs5520.assignments.numad22su_team24_puddle;
 
 import android.os.Bundle;
+import android.util.Log;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -32,6 +33,7 @@ public class PuddleChatroomActivity extends AppCompatActivity {
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
+                Log.d("here",String.valueOf(tab.getPosition()));
                 currentTab = tab;
                 if (tab.getPosition() == 0){
                     changeVisibleFragment(R.id.chat_tab,new ChatroomFragment(),"chatroom");
@@ -40,10 +42,10 @@ public class PuddleChatroomActivity extends AppCompatActivity {
                     changeVisibleFragment(R.id.about_tab,new AboutFragment(),"about");
                 }
                 else if (tab.getPosition() == 2){
-                    changeVisibleFragment(R.id.events_tab,new EventsFragment(),"events");
+                    changeVisibleFragment(R.id.members_tab,new MembersFragment(), "members");
                 }
                 else if (tab.getPosition() == 3){
-                    changeVisibleFragment(R.id.members_tab,new MembersFragment(), "members");
+                    changeVisibleFragment(R.id.events_tab,new EventsFragment(),"events");
                 }
             }
 
