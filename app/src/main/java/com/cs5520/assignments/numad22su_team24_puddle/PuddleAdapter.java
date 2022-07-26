@@ -42,7 +42,7 @@ public class PuddleAdapter extends RecyclerView.Adapter<PuddleAdapter.PuddleView
     public void onBindViewHolder(@NonNull PuddleViewHolder holder, int position) {
         Puddle puddle = puddleList.get(position);
         holder.puddleName.setText(puddle.getName());
-        holder.puddleImage.setImageBitmap(puddle.getDisplayImage());
+//        holder.puddleImage.setImageBitmap(puddle.getDisplayImage());
     }
 
     @Override
