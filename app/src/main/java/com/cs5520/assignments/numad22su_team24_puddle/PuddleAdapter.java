@@ -10,6 +10,8 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.imageview.ShapeableImageView;
+
 import java.util.List;
 
 public class PuddleAdapter extends RecyclerView.Adapter<PuddleAdapter.PuddleViewHolder> {
@@ -19,7 +21,7 @@ public class PuddleAdapter extends RecyclerView.Adapter<PuddleAdapter.PuddleView
 
     public class PuddleViewHolder extends RecyclerView.ViewHolder {
         TextView puddleName;
-        ImageView puddleImage;
+        ShapeableImageView puddleImage;
         public PuddleViewHolder(@NonNull View itemView) {
             super(itemView);
             puddleName = itemView.findViewById(R.id.puddle_name_tv);
@@ -43,6 +45,7 @@ public class PuddleAdapter extends RecyclerView.Adapter<PuddleAdapter.PuddleView
         Puddle puddle = puddleList.get(position);
         holder.puddleName.setText(puddle.getName());
         holder.puddleImage.setImageBitmap(puddle.getDisplayImage());
+        holder.puddleImage.setShapeAppearanceModel(holder.puddleImage.getShapeAppearanceModel().withCornerSize(25));
     }
 
     @Override

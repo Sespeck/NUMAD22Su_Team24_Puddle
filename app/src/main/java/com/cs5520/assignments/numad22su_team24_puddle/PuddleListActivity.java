@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 
@@ -28,17 +29,18 @@ public class PuddleListActivity extends AppCompatActivity {
 
     private List<List<Puddle>> getPuddleList() {
         List<List<Puddle>> puddlesList= new ArrayList<>();
+        Bitmap bitmap = BitmapFactory.decodeResource(this.getResources(), R.drawable.puddle);
         for(Category category: Category.values()) {
             List<Puddle> puddleArray = new ArrayList<>();
-            puddleArray.add(new Puddle("Number "+(category.id+1), "Number 1", BitmapFactory.decodeResource(this.getResources(), R.drawable.puddle)));
-            puddleArray.add(new Puddle("Number "+(category.id+1), "Number 1", BitmapFactory.decodeResource(this.getResources(), R.drawable.puddle)));
-            puddleArray.add(new Puddle("Number "+(category.id+1), "Number 1", BitmapFactory.decodeResource(this.getResources(), R.drawable.puddle)));
-            puddleArray.add(new Puddle("Number "+(category.id+1), "Number 1", BitmapFactory.decodeResource(this.getResources(), R.drawable.puddle)));
-            puddleArray.add(new Puddle("Number "+(category.id+1), "Number 1", BitmapFactory.decodeResource(this.getResources(), R.drawable.puddle)));
-            puddleArray.add(new Puddle("Number "+(category.id+1), "Number 1", BitmapFactory.decodeResource(this.getResources(), R.drawable.puddle)));
-            puddleArray.add(new Puddle("Number "+(category.id+1), "Number 1", BitmapFactory.decodeResource(this.getResources(), R.drawable.puddle)));
-            puddleArray.add(new Puddle("Number "+(category.id+1), "Number 1", BitmapFactory.decodeResource(this.getResources(), R.drawable.puddle)));
-            puddleArray.add(new Puddle("Number "+(category.id+1), "Number 1", BitmapFactory.decodeResource(this.getResources(), R.drawable.puddle)));
+            puddleArray.add(new Puddle("Number "+(category.id+1), "Number 1", bitmap));
+            puddleArray.add(new Puddle("Number "+(category.id+1), "Number 1", bitmap));
+            puddleArray.add(new Puddle("Number "+(category.id+1), "Number 1", bitmap));
+            puddleArray.add(new Puddle("Number "+(category.id+1), "Number 1", bitmap));
+            puddleArray.add(new Puddle("Number "+(category.id+1), "Number 1", bitmap));
+            puddleArray.add(new Puddle("Number "+(category.id+1), "Number 1", bitmap));
+            puddleArray.add(new Puddle("Number "+(category.id+1), "Number 1", bitmap));
+            puddleArray.add(new Puddle("Number "+(category.id+1), "Number 1", bitmap));
+            puddleArray.add(new Puddle("Number "+(category.id+1), "Number 1", bitmap));
             puddlesList.add(puddleArray);
         }
         return puddlesList;

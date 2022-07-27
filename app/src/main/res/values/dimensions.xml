@@ -17,6 +17,6 @@
     <dimen name="font_size_large">20sp</dimen>
     <dimen name="font_size_xl">24sp</dimen>
 
-    <dimen name="icon_size">80dp</dimen>
+    <dimen name="icon_size">120dp</dimen>
     <dimen name="login_signup_rounded_corners">16dp</dimen>
 </resources>

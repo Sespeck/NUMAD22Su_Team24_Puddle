@@ -14,7 +14,7 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         android:textSize="@dimen/font_size_large"
-        tools:text = "Puddle"/>
+        tools:text = "Puddle Category Name"/>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/puddles_rv"
