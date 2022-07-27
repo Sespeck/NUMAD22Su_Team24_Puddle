@@ -14,11 +14,6 @@
         android:theme="@style/Theme.NUMAD22Su_Team24_Puddle"
         tools:targetApi="31">
         <activity
-            android:name=".NavigationDrawer"
-            android:exported="false"
-            android:label="@string/title_activity_navigation_drawer"
-            android:theme="@style/Theme.NUMAD22Su_Team24_Puddle.NoActionBar" />
-        <activity
             android:name=".PuddleListActivity"
             android:exported="false" />
         <activity
