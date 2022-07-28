@@ -46,9 +46,7 @@ public class PuddleListActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-//        setContentView(R.layout.activity_puddle_list);
-        // Changed to incorporate navigation drawer activity
-        setContentView(R.layout.nav_activity_main);
+        setContentView(R.layout.activity_puddle_list);
         userDetails = new HashMap<>();
 
         // Api Calls
@@ -56,10 +54,6 @@ public class PuddleListActivity extends AppCompatActivity {
 
         // Initializing Widgets
         puddleListRecyclerView = findViewById(R.id.puddle_list_rv);
-        drawer = findViewById(R.id.drawer_layout);
-        navView = findViewById(R.id.nav_view);
-        user_email = navView.getHeaderView(0).findViewById(R.id.user_email);
-        user_name = navView.getHeaderView(0).findViewById(R.id.username);
 
         // Initializing RecyclerView
         puddleListRecyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -86,7 +80,7 @@ public class PuddleListActivity extends AppCompatActivity {
     }
 
     public void clickProfile(View view){
-        drawer.openDrawer(GravityCompat.START);
+//        drawer.openDrawer(GravityCompat.START);
     }
 
     public void fetchCurrentUserData(){
@@ -99,9 +93,6 @@ public class PuddleListActivity extends AppCompatActivity {
                 for(DataSnapshot snap: snapshot.getChildren()){
                     userDetails.put(snap.getKey(), snap.getValue(String.class));
                 }
-
-                user_email.setText(current_user.getEmail());
-                user_name.setText(userDetails.get(getString(R.string.user_name)));
             }
 
             @Override
