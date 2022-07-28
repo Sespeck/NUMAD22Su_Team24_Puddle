@@ -2,19 +2,17 @@ package com.cs5520.assignments.numad22su_team24_puddle;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Intent;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.cs5520.assignments.numad22su_team24_puddle.Model.User;
+import com.cs5520.assignments.numad22su_team24_puddle.Adapter.PuddleListAdapter;
 import com.cs5520.assignments.numad22su_team24_puddle.Utils.FirebaseDB;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseUser;
@@ -81,6 +79,8 @@ public class PuddleListActivity extends AppCompatActivity {
 
     public void clickProfile(View view){
 //        drawer.openDrawer(GravityCompat.START);
+        Intent intent = new Intent(this, MyPuddles.class);
+        startActivity(intent);
     }
 
     public void fetchCurrentUserData(){
