@@ -3,6 +3,7 @@ package com.cs5520.assignments.numad22su_team24_puddle.chatroom_fragments;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,6 +11,8 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -25,6 +28,7 @@ public class EventsFragment extends Fragment {
     EventsAdapter eventsAdapter;
     Handler handler = new Handler();
     Fragment currentFragment = this;
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -42,7 +46,7 @@ public class EventsFragment extends Fragment {
              @Override
              public void run() {
                  List<Event> eventList = new ArrayList<>();
-                 eventList.add(new Event("Party","time",null,"partytime", BitmapFactory.decodeResource(currentFragment.getResources(),R.drawable.puddle)));
+                 eventList.add(new Event("NYC Block Party","Thurs, Aug 28: 7:00 PM",null,"partytime", BitmapFactory.decodeResource(currentFragment.getResources(),R.drawable.puddle)));
                  eventList.add(new Event("Party2","time",null,"partytime", BitmapFactory.decodeResource(currentFragment.getResources(),R.drawable.puddle)));
                  handler.post(()->{
                      eventsAdapter = new EventsAdapter(eventList);

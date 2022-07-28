@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="10sp"
+    android:layout_marginStart="5sp"
+    android:layout_marginEnd="5sp">
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/chatroom_message_profile_pic"
+        android:layout_width="40sp"
+        android:layout_height="40sp"
+        android:src="@drawable/puddle"
+        app:border_width=".5sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:layout_marginStart="5sp"
+        android:id="@+id/chatroom_message_item_username"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Temp Username"
+        android:textSize="18sp"
+        app:layout_constraintStart_toEndOf="@+id/chatroom_message_profile_pic"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/chatroom_message_datetime"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10sp"
+        android:text="Yesterday at 8:21"
+        android:textSize="14sp"
+        app:layout_constraintBottom_toBottomOf="@+id/chatroom_message_item_username"
+        app:layout_constraintStart_toEndOf="@id/chatroom_message_item_username"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:layout_marginStart="10sp"
+        android:layout_margin="5sp"
+        android:id="@+id/chatroom_message_body"
+        android:layout_width="0sp"
+        android:layout_height="wrap_content"
+        android:singleLine="false"
+        android:text="Nulla at sapien ipsum. Nam gravida nibh a dui fringilla,ibusulla at sapien ulla at sapien ipsum. Nam gravida nibh a dui fringilla,ibus ulla at sapien ipsum. Nam gravida nibh a dui fringilla,ibus ipsum. Nam gravida nibh a dui fringilla,ibus  tellus at molestie bibendum."
+        android:textSize="14sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/chatroom_message_profile_pic"
+        app:layout_constraintTop_toBottomOf="@+id/chatroom_message_item_username" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

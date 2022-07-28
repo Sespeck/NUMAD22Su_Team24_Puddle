@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white">
+
+
+    <TextView
+        android:id="@+id/new_event_text_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:text="Add New Event"
+        android:textSize="42sp"
+        app:layout_constraintStart_toEndOf="@+id/add_event_dialog_exit_button"
+        app:layout_constraintTop_toBottomOf="@+id/add_event_dialog_exit_button" />
+
+
+    <View
+        android:id="@+id/view"
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:layout_marginTop="20sp"
+        android:layout_marginBottom="20sp"
+        android:background="@color/light_grey"
+        android:backgroundTint="@color/light_grey"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/new_event_text_view" />
+
+    <EditText
+        android:id="@+id/editText2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="20sp"
+        android:background="@drawable/rectangle"
+        android:backgroundTint="@color/light_grey"
+        android:hint="#  Add Title"
+        android:padding="10sp"
+        android:textColorHint="@color/black"
+        android:textSize="26sp"
+        app:layout_constraintStart_toEndOf="@+id/add_event_dialog_exit_button"
+        app:layout_constraintTop_toBottomOf="@+id/view" />
+
+    <View
+        android:id="@+id/view2"
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:background="@color/light_grey"
+        app:layout_constraintTop_toBottomOf="@+id/radio_button_group" />
+
+    <EditText
+        android:id="@+id/dialog_description_edit_text"
+        android:layout_width="match_parent"
+        android:layout_height="0sp"
+        android:layout_margin="20sp"
+        android:background="@drawable/rectangle"
+        android:backgroundTint="@color/light_grey"
+        android:hint="@string/description"
+        android:padding="10sp"
+        android:textColorHint="@color/black"
+        android:textSize="20sp"
+        app:layout_constraintTop_toBottomOf="@+id/view2"
+        app:layout_constraintVertical_bias="1.0" />
+
+    <ImageView
+        android:layout_marginTop="15sp"
+        android:id="@+id/imageView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/time_icon"
+        app:layout_constraintStart_toStartOf="@+id/dialog_description_edit_text"
+        app:layout_constraintTop_toBottomOf="@+id/dialog_description_edit_text" />
+
+    <TextView
+        android:textSize="16sp"
+        android:layout_marginLeft="10sp"
+        android:id="@+id/starting_time_text_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toEndOf="@+id/imageView"
+        app:layout_constraintTop_toBottomOf="@+id/imageView" />
+
+    <TextView
+        android:textSize="16sp"
+        android:layout_marginTop="15sp"
+        android:id="@+id/ending_time_text_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="@+id/starting_time_text_view"
+        app:layout_constraintTop_toBottomOf="@+id/starting_time_text_view" />
+
+
+    <TextView
+        android:textSize="16sp"
+        android:layout_marginTop="15sp"
+        android:id="@+id/ending_date_text_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="@+id/ending_time_text_view"
+        app:layout_constraintStart_toStartOf="@+id/starting_date_text_view"
+        app:layout_constraintTop_toBottomOf="@+id/starting_time_text_view" />
+
+    <TextView
+        android:textSize="16sp"
+        android:id="@+id/starting_date_text_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/starting_time_text_view"
+        app:layout_constraintTop_toTopOf="@+id/starting_time_text_view" />
+
+    <Button
+        android:id="@+id/add_event_dialog_exit_button"
+        android:layout_width="32sp"
+        android:layout_height="32sp"
+        android:layout_marginStart="4dp"
+        android:layout_marginTop="4dp"
+        android:background="@drawable/close_icon"
+        android:backgroundTint="@color/black"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <RadioGroup
+        android:id="@+id/radio_button_group"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/editText2">
+
+        <RadioButton
+            android:id="@+id/radioButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingEnd="25sp"
+            android:text="@string/online"
+            app:layout_constraintEnd_toStartOf="@+id/offline_radio_button"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/editText2" />
+
+        <RadioButton
+            android:id="@+id/offline_radio_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingEnd="25sp"
+            android:text="@string/offline"
+            app:layout_constraintBottom_toBottomOf="@+id/radioButton"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/radioButton"
+            app:layout_constraintTop_toBottomOf="@+id/editText2" />
+    </RadioGroup>
+
+    <LinearLayout
+        android:id="@+id/linear_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <include
+            android:id="@+id/bottom_nav"
+            layout="@layout/bottom_nav_bar" />
+    </LinearLayout>
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

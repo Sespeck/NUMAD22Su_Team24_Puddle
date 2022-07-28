@@ -19,6 +19,4 @@
         android:id="@+id/settings_bottom_nav_button"
         android:icon="@drawable/settings_icon"
         />
-
-
 </menu>

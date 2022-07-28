@@ -8,4 +8,9 @@
     <string name="map">MAP</string>
     <string name="settings">SETTINGS</string>
     <string name="bgimg">BGIMG</string>
+    <string name="openeventdialog">OPENEVENTDIALOG</string>
+    <string name="location">Location</string>
+    <string name="description">Description</string>
+    <string name="online">Online</string>
+    <string name="offline">Offline</string>
 </resources>

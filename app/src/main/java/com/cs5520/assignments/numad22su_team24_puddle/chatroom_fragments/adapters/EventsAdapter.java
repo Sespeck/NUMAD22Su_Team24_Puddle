@@ -24,9 +24,11 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.EventViewH
     public static class EventViewHolder extends RecyclerView.ViewHolder {
         ImageView imageView;
         TextView name;
+        TextView date;
         public EventViewHolder(@NonNull View itemView) {
             super(itemView);
             name = itemView.findViewById(R.id.recycler_view_item_event_name);
+            date = itemView.findViewById(R.id.recycler_view_event_date_time);
             imageView = itemView.findViewById(R.id.recycler_view_item_bg_image);
         }
     }
@@ -42,6 +44,7 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.EventViewH
         Event event = eventList.get(position);
         holder.imageView.setImageBitmap(event.backgroundImg);
         holder.name.setText(event.getName());
+        holder.date.setText(event.getDatetime());
     }
 
     @Override

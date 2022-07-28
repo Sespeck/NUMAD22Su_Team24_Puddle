@@ -4,6 +4,7 @@ import android.graphics.Bitmap;
 import android.location.Location;
 
 public class Event {
+    Boolean isOnline;
     String name;
     String datetime;
     Location location;
