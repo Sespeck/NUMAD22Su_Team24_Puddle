@@ -3,31 +3,38 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:background="@drawable/puddle_background"
-    android:layout_margin="@dimen/margin_mid"
-    android:padding="@dimen/padding_mid">
+    xmlns:tools="http://schemas.android.com/tools">
 
     <com.google.android.material.imageview.ShapeableImageView
-        android:id="@+id/puddle_item_image"
-        android:layout_width="@dimen/icon_size"
-        android:layout_height="@dimen/icon_size"
+        android:id="@+id/puddle_modal_item_image"
+        android:layout_width="match_parent"
+        android:layout_height="300dp"
         android:textSize="@dimen/font_size_mid"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/puddle_name_tv"
+        app:layout_constraintBottom_toTopOf="@id/puddle_modal_name_tv"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:src ="@drawable/puddle"/>
+        tools:src ="@drawable/puddle"/>
 
     <TextView
-        android:id="@+id/puddle_name_tv"
+        android:id="@+id/puddle_modal_name_tv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="@dimen/font_size_mid"
-        app:layout_constraintTop_toBottomOf="@id/puddle_item_image"
+        app:layout_constraintTop_toBottomOf="@id/puddle_modal_item_image"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_marginTop="@dimen/margin_mid"
         android:text="Hello"/>
+
+
+    <com.google.android.material.button.MaterialButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Join"
+        android:layout_marginTop="@dimen/margin_mid"
+        app:layout_constraintTop_toBottomOf="@id/puddle_modal_name_tv"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

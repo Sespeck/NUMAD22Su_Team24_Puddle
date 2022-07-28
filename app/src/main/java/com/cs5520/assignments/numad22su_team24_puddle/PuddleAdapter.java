@@ -1,15 +1,21 @@
 package com.cs5520.assignments.numad22su_team24_puddle;
 
+import android.app.Activity;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.content.res.AppCompatResources;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import com.google.android.material.dialog.MaterialDialogs;
 import com.google.android.material.imageview.ShapeableImageView;
 
 import java.util.List;
@@ -46,6 +52,15 @@ public class PuddleAdapter extends RecyclerView.Adapter<PuddleAdapter.PuddleView
         holder.puddleName.setText(puddle.getName());
         holder.puddleImage.setImageBitmap(puddle.getDisplayImage());
         holder.puddleImage.setShapeAppearanceModel(holder.puddleImage.getShapeAppearanceModel().withCornerSize(25));
+        holder.itemView.setOnClickListener(view -> {
+            View layoutView = View.inflate(context, R.layout.puddle_modal, null);
+            AlertDialog dialog = new MaterialAlertDialogBuilder(context).setTitle(puddle.getName()).setView(layoutView).create();
+            TextView tv = layoutView.findViewById(R.id.puddle_modal_name_tv);
+            tv.setText(puddle.getDescription());
+            ShapeableImageView im = layoutView.findViewById(R.id.puddle_modal_item_image);
+            im.setImageBitmap(puddle.getDisplayImage());
+            dialog.show();
+        });
     }
 
     @Override
