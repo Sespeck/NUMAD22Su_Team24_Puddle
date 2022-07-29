@@ -1,21 +1,17 @@
 package com.cs5520.assignments.numad22su_team24_puddle;
 
-import android.app.Activity;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.content.res.AppCompatResources;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.button.MaterialButton;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
-import com.google.android.material.dialog.MaterialDialogs;
 import com.google.android.material.imageview.ShapeableImageView;
 
 import java.util.List;
@@ -59,6 +55,10 @@ public class PuddleAdapter extends RecyclerView.Adapter<PuddleAdapter.PuddleView
             tv.setText(puddle.getDescription());
             ShapeableImageView im = layoutView.findViewById(R.id.puddle_modal_item_image);
             im.setImageBitmap(puddle.getDisplayImage());
+            MaterialButton button = layoutView.findViewById(R.id.puddle_modal_join_btn);
+            button.setOnClickListener(v -> {
+                dialog.dismiss();
+            });
             dialog.show();
         });
     }

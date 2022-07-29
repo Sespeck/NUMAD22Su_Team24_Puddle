@@ -1,40 +1,47 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools">
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
 
-    <com.google.android.material.imageview.ShapeableImageView
-        android:id="@+id/puddle_modal_item_image"
-        android:layout_width="match_parent"
-        android:layout_height="300dp"
-        android:textSize="@dimen/font_size_mid"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/puddle_modal_name_tv"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        tools:src ="@drawable/puddle"/>
-
-    <TextView
-        android:id="@+id/puddle_modal_name_tv"
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textSize="@dimen/font_size_mid"
-        app:layout_constraintTop_toBottomOf="@id/puddle_modal_item_image"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="@dimen/margin_mid"
-        android:text="Hello"/>
+        android:layout_height="wrap_content">
+
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/puddle_modal_item_image"
+            android:layout_width="match_parent"
+            android:layout_height="300dp"
+            android:textSize="@dimen/font_size_mid"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/puddle_modal_name_tv"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            tools:src ="@drawable/puddle"/>
+
+        <TextView
+            android:id="@+id/puddle_modal_name_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/font_size_mid"
+            app:layout_constraintTop_toBottomOf="@id/puddle_modal_item_image"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginTop="@dimen/margin_mid"
+            android:text="Hello"/>
 
 
-    <com.google.android.material.button.MaterialButton
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Join"
-        android:layout_marginTop="@dimen/margin_mid"
-        app:layout_constraintTop_toBottomOf="@id/puddle_modal_name_tv"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/puddle_modal_join_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Join"
+            android:layout_marginTop="@dimen/margin_mid"
+            app:layout_constraintTop_toBottomOf="@id/puddle_modal_name_tv"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"/>
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</ScrollView>

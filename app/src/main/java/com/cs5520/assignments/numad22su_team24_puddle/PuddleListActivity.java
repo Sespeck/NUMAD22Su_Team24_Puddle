@@ -32,15 +32,15 @@ public class PuddleListActivity extends AppCompatActivity {
         Bitmap bitmap = BitmapFactory.decodeResource(this.getResources(), R.drawable.puddle);
         for(Category category: Category.values()) {
             List<Puddle> puddleArray = new ArrayList<>();
-            puddleArray.add(new Puddle("Number "+(category.id+1), "Number 1", bitmap));
-            puddleArray.add(new Puddle("Number "+(category.id+1), "Number 1", bitmap));
-            puddleArray.add(new Puddle("Number "+(category.id+1), "Number 1", bitmap));
-            puddleArray.add(new Puddle("Number "+(category.id+1), "Number 1", bitmap));
-            puddleArray.add(new Puddle("Number "+(category.id+1), "Number 1", bitmap));
-            puddleArray.add(new Puddle("Number "+(category.id+1), "Number 1", bitmap));
-            puddleArray.add(new Puddle("Number "+(category.id+1), "Number 1", bitmap));
-            puddleArray.add(new Puddle("Number "+(category.id+1), "Number 1", bitmap));
-            puddleArray.add(new Puddle("Number "+(category.id+1), "Number 1", bitmap));
+            puddleArray.add(new Puddle("Number "+(category.id+1), "Number "+(category.id+1), bitmap));
+            puddleArray.add(new Puddle("Number "+(category.id+1), "Number "+(category.id+1), bitmap));
+            puddleArray.add(new Puddle("Number "+(category.id+1), "Number "+(category.id+1), bitmap));
+            puddleArray.add(new Puddle("Number "+(category.id+1), "Number "+(category.id+1), bitmap));
+            puddleArray.add(new Puddle("Number "+(category.id+1), "Number "+(category.id+1), bitmap));
+            puddleArray.add(new Puddle("Number "+(category.id+1), "Number "+(category.id+1), bitmap));
+            puddleArray.add(new Puddle("Number "+(category.id+1), "Number "+(category.id+1), bitmap));
+            puddleArray.add(new Puddle("Number "+(category.id+1), "Number "+(category.id+1), bitmap));
+            puddleArray.add(new Puddle("Number "+(category.id+1), "Number "+(category.id+1), bitmap));
             puddlesList.add(puddleArray);
         }
         return puddlesList;
