@@ -136,9 +136,13 @@ public class PuddleListActivity extends AppCompatActivity implements View.OnClic
         if (view.equals(nearMeBtn)) {
             puddleListRecyclerView.setLayoutManager(new LinearLayoutManager(this));
             puddleListRecyclerView.setAdapter(new PuddleListAdapter(this, getPuddleList()));
+            nearMeBtn.setBackgroundColor(getResources().getColor(R.color.purple_700));
+            myPuddlesBtn.setBackgroundColor(getResources().getColor(R.color.purple_200));
         } else {
             puddleListRecyclerView.setLayoutManager(new GridLayoutManager(this, 2));
             puddleListRecyclerView.setAdapter(new MyPuddlesAdapter(this));
+            nearMeBtn.setBackgroundColor(getResources().getColor(R.color.purple_200));
+            myPuddlesBtn.setBackgroundColor(getResources().getColor(R.color.purple_700));
         }
 
     }

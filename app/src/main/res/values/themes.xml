@@ -52,4 +52,8 @@
     <style name="Theme.NUMAD22Su_Team24_Puddle.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
 
     <style name="Theme.NUMAD22Su_Team24_Puddle.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+
+    <style name="Theme.NUMAD22Su_Team24_Puddle.CustomButtonTheme" parent="Widget.Material3.Button">
+        <item name="android:textSize">@dimen/font_size_mid</item>
+    </style>
 </resources>

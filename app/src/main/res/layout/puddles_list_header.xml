@@ -38,6 +38,7 @@
 
     <Button
         android:id="@+id/header_near_me_btn"
+        style="@style/Theme.NUMAD22Su_Team24_Puddle.CustomButtonTheme"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/margin_mid"
@@ -47,6 +48,7 @@
 
     <Button
         android:id="@+id/header_my_puddles_btn"
+        style="@style/Theme.NUMAD22Su_Team24_Puddle.CustomButtonTheme"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/margin_large"
