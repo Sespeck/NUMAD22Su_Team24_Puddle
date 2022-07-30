@@ -48,6 +48,7 @@ public class MyPuddlesAdapter extends RecyclerView.Adapter<MyPuddlesAdapter.MyPu
         public MyPudAdapter(@NonNull View itemView) {
             super(itemView);
             puddleBg = itemView.findViewById(R.id.puddle_bg);
+            puddleBg.setColorFilter(R.color.black);
 //            puddleName = itemView.findViewById(R.id.puddle_name);
         }
     }

@@ -10,21 +10,6 @@
         android:id="@+id/puddle_list_header"
         layout="@layout/puddles_list_header"/>
 
-<!--    <ImageButton-->
-<!--        android:id="@+id/profile_icon"-->
-<!--        android:layout_width="80dp"-->
-<!--        android:layout_height="80dp"-->
-<!--        android:layout_marginStart="16dp"-->
-<!--        android:layout_marginTop="16dp"-->
-<!--        android:background="@null"-->
-<!--        android:contentDescription="@string/profile_img"-->
-<!--        android:onClick="clickProfile"-->
-<!--        android:scaleType="centerCrop"-->
-<!--        app:layout_constraintStart_toStartOf="parent"-->
-<!--        app:layout_constraintTop_toBottomOf="@id/puddle_list_header"-->
-<!--        app:srcCompat="@drawable/man"-->
-<!--        tools:ignore="SpeakableTextPresentCheck" />-->
-
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/puddle_list_rv"
         android:layout_width="@dimen/fit_constraint"

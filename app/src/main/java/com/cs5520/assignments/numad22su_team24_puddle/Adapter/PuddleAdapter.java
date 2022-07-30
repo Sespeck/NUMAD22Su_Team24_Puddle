@@ -1,4 +1,4 @@
-package com.cs5520.assignments.numad22su_team24_puddle;
+package com.cs5520.assignments.numad22su_team24_puddle.Adapter;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -51,6 +51,7 @@ public class PuddleAdapter extends RecyclerView.Adapter<PuddleAdapter.PuddleView
         holder.puddleName.setText(puddle.getName());
         holder.puddleImage.setImageBitmap(puddle.getDisplayImage());
         holder.puddleImage.setShapeAppearanceModel(holder.puddleImage.getShapeAppearanceModel().withCornerSize(25));
+        holder.puddleImage.setColorFilter(R.color.black);
         holder.itemView.setOnClickListener(view -> {
             View layoutView = View.inflate(context, R.layout.puddle_modal, null);
             AlertDialog dialog = new MaterialAlertDialogBuilder(context).setTitle(puddle.getName()).setView(layoutView).create();
