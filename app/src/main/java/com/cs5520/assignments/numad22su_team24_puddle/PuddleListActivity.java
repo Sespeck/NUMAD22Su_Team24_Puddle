@@ -47,14 +47,7 @@ public class PuddleListActivity extends AppCompatActivity {
     // Widgets
     RecyclerView puddleListRecyclerView;
     PuddleListAdapter puddleListAdapter;
-    DrawerLayout drawer;
-    NavigationView navView;
-    TextView user_email;
-    TextView user_name;
-
     ImageButton btn;
-
-    Button imgSelect;
 
     // Firebase
     FirebaseUser current_user;
@@ -77,7 +70,6 @@ public class PuddleListActivity extends AppCompatActivity {
 
         // Initializing Widgets
         puddleListRecyclerView = findViewById(R.id.puddle_list_rv);
-        imgSelect = findViewById(R.id.image_select);
         btn = findViewById(R.id.profile_icon);
 
         ActivityResultLauncher<Intent> startActivityForResult = registerForActivityResult(
@@ -93,7 +85,7 @@ public class PuddleListActivity extends AppCompatActivity {
                 }
         );
 
-        imgSelect.setOnClickListener(new View.OnClickListener() {
+        btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent gallery = new Intent();
