@@ -1,5 +1,7 @@
 package com.cs5520.assignments.numad22su_team24_puddle;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.drawerlayout.widget.DrawerLayout;
@@ -7,25 +9,40 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.ContentResolver;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
+import android.util.Log;
 import android.view.View;
+import android.webkit.MimeTypeMap;
+import android.widget.Button;
+import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.cs5520.assignments.numad22su_team24_puddle.Adapter.MyPuddlesAdapter;
 import com.cs5520.assignments.numad22su_team24_puddle.Adapter.PuddleListAdapter;
 import com.cs5520.assignments.numad22su_team24_puddle.Utils.FirebaseDB;
 import com.google.android.material.imageview.ShapeableImageView;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.OnProgressListener;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -45,8 +62,24 @@ public class PuddleListActivity extends AppCompatActivity implements View.OnClic
     // Firebase
     FirebaseUser current_user;
     DatabaseReference userRef;
+    DatabaseReference imgRef;
+    StorageReference storeRef;
 
     private HashMap<String, String> userDetails;
+    private Uri imageUri;
+
+    ActivityResultLauncher<Intent> startActivityForResult = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            result -> {
+                if (result.getResultCode() == AppCompatActivity.RESULT_OK) {
+                    Intent data = result.getData();
+                    imageUri = data.getData();
+                    profileIcon.setImageURI(imageUri);
+
+                    uploadToFirebase(imageUri);
+                }
+            }
+    );
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,9 +102,11 @@ public class PuddleListActivity extends AppCompatActivity implements View.OnClic
 
         // Api Calls
         fetchCurrentUserData();
+        uploadImageToFb();
 
         // Initializing Widgets
         puddleListRecyclerView = findViewById(R.id.puddle_list_rv);
+
 
         updateRecyclerView(myPuddlesBtn);
     }
@@ -119,7 +154,10 @@ public class PuddleListActivity extends AppCompatActivity implements View.OnClic
     @Override
     public void onClick(View view) {
         if (view.equals(profileIcon)) {
-
+            Intent gallery = new Intent();
+            gallery.setAction(Intent.ACTION_GET_CONTENT);
+            gallery.setType("image/*");
+            startActivityForResult.launch(gallery);
         } else if (view.equals(nearMeBtn) || view.equals(myPuddlesBtn)) {
             updateRecyclerView(view);
         } else if (view.equals(createIcon)) {
@@ -145,5 +183,47 @@ public class PuddleListActivity extends AppCompatActivity implements View.OnClic
             myPuddlesBtn.setBackgroundColor(getResources().getColor(R.color.purple_700));
         }
 
+    }
+
+    // Testing Firestore + Firebase DB
+    public void uploadImageToFb(){
+        imgRef = FirebaseDB.getDataReference("images");
+        imgRef.setValue("url");
+
+        storeRef = FirebaseDB.storageRef;
+    }
+
+    public void uploadToFirebase(Uri uri){
+        StorageReference ref = storeRef.child(System.currentTimeMillis() + "." + getFileExtension(uri));
+        ref.putFile(uri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+            @Override
+            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+
+                ref.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                    @Override
+                    public void onSuccess(Uri uri) {
+                        String imgUrl = uri.toString();
+                        imgRef.setValue(imgUrl);
+                    }
+                });
+                Toast.makeText(PuddleListActivity.this, "Success!", Toast.LENGTH_SHORT).show();
+            }
+        }).addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
+            @Override
+            public void onProgress(@NonNull UploadTask.TaskSnapshot snapshot) {
+
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+
+            }
+        });
+    }
+
+    public String getFileExtension(Uri muri){
+        ContentResolver cr = getContentResolver();
+        MimeTypeMap mime = MimeTypeMap.getSingleton();
+        return mime.getExtensionFromMimeType(cr.getType(muri));
     }
 }

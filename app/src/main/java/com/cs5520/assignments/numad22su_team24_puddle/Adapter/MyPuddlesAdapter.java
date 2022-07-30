@@ -32,7 +32,9 @@ public class MyPuddlesAdapter extends RecyclerView.Adapter<MyPuddlesAdapter.MyPu
     @Override
     public void onBindViewHolder(@NonNull MyPudAdapter holder, int position) {
 //        holder.puddleName.setText("Android App Development");
-        Glide.with(this.ct).load("https://cdn.pixabay.com/photo/2016/05/05/02/37/sunset-1373171__480.jpg").into(holder.puddleBg);
+        // https://firebasestorage.googleapis.com/v0/b/android-chat-85561.appspot.com/o/1659200277705.jpg?alt=media&token=4284da6a-ce2e-4098-8777-ec8fd0c93b2a
+        Glide.with(this.ct).load("https://firebasestorage.googleapis.com/v0/b/android-chat-85561.appspot.com/o/1659204399343.jpg?alt=media&token=fd3aaabb-f864-4ee1-a862-7e3be8b7778d").into(holder.puddleBg);
+        // https://cdn.pixabay.com/photo/2016/05/05/02/37/sunset-1373171__480.jpg
     }
 
     @Override
