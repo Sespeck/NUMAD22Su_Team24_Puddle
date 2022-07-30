@@ -20,8 +20,8 @@
 
         <ImageView
             android:id="@+id/app_icon"
-            android:layout_width="@dimen/icon_size"
-            android:layout_height="@dimen/icon_size"
+            android:layout_width="@dimen/icon_size_lg"
+            android:layout_height="@dimen/icon_size_lg"
             android:layout_gravity="center"
             android:src="@drawable/icon_puddle"
             />

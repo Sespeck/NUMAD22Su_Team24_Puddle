@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <com.google.android.material.imageview.ShapeableImageView
+        android:id="@+id/puddle_list_header_profile_icon"
+        android:layout_width="@dimen/profile_icon_small"
+        android:layout_height="@dimen/profile_icon_small"
+        android:layout_marginStart="@dimen/margin_large"
+        android:layout_marginTop="@dimen/margin_mid"
+        android:src="@drawable/man"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/puddle_list_header_app_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/margin_mid"
+        android:text="@string/app_name"
+        android:textSize="@dimen/font_size_xxl"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="@id/puddle_list_header_profile_icon"
+        app:layout_constraintStart_toEndOf="@id/puddle_list_header_profile_icon"
+        app:layout_constraintTop_toTopOf="@id/puddle_list_header_profile_icon" />
+
+    <ImageView
+        android:id="@+id/header_create_puddle_icon"
+        android:layout_width="@dimen/icon_size_small"
+        android:layout_height="@dimen/icon_size_small"
+        android:layout_marginEnd="@dimen/margin_large"
+        android:src="@drawable/create"
+        app:layout_constraintBottom_toBottomOf="@id/puddle_list_header_profile_icon"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@id/puddle_list_header_profile_icon" />
+
+    <Button
+        android:id="@+id/header_near_me_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/margin_mid"
+        android:text="Near Me"
+        app:layout_constraintStart_toStartOf="@id/puddle_list_header_profile_icon"
+        app:layout_constraintTop_toBottomOf="@id/puddle_list_header_profile_icon" />
+
+    <Button
+        android:id="@+id/header_my_puddles_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/margin_large"
+        android:text="My Puddles"
+        app:layout_constraintStart_toEndOf="@id/header_near_me_btn"
+        app:layout_constraintTop_toTopOf="@id/header_near_me_btn" />
+
+    <ImageView
+        android:id="@+id/header_navigation_icon"
+        android:layout_width="@dimen/icon_size_small"
+        android:layout_height="@dimen/icon_size_small"
+        android:layout_marginEnd="@dimen/margin_large"
+        android:src="@drawable/navigation"
+        app:layout_constraintBottom_toBottomOf="@id/header_near_me_btn"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@id/header_near_me_btn" />
+
+    <ImageView
+        android:id="@+id/header_filter_icon"
+        android:layout_width="@dimen/icon_size_small"
+        android:layout_height="@dimen/icon_size_small"
+        android:layout_marginEnd="@dimen/margin_large"
+        android:src="@drawable/filter"
+        app:layout_constraintBottom_toBottomOf="@id/header_near_me_btn"
+        app:layout_constraintEnd_toStartOf="@id/header_navigation_icon"
+        app:layout_constraintTop_toTopOf="@id/header_near_me_btn" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

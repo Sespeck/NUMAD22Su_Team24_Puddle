@@ -11,5 +11,5 @@
     <color name="login_signup_text_color">#5183F7</color>
     <color name="login_signup_button_background">#C1D4FF</color>
 
-    <color name="puddle_background">#222222</color>
+    <color name="puddle_background">#EEEEEE</color>
 </resources>

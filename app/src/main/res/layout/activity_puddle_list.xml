@@ -4,33 +4,36 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#FFFFFF"
     tools:context=".PuddleListActivity">
 
-    <ImageButton
-        android:id="@+id/profile_icon"
-        android:layout_width="80dp"
-        android:layout_height="80dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
-        android:background="@null"
-        android:contentDescription="@string/profile_img"
-        android:onClick="clickProfile"
-        android:scaleType="centerCrop"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/man"
-        tools:ignore="SpeakableTextPresentCheck" />
+    <include
+        android:id="@+id/puddle_list_header"
+        layout="@layout/puddles_list_header"/>
+
+<!--    <ImageButton-->
+<!--        android:id="@+id/profile_icon"-->
+<!--        android:layout_width="80dp"-->
+<!--        android:layout_height="80dp"-->
+<!--        android:layout_marginStart="16dp"-->
+<!--        android:layout_marginTop="16dp"-->
+<!--        android:background="@null"-->
+<!--        android:contentDescription="@string/profile_img"-->
+<!--        android:onClick="clickProfile"-->
+<!--        android:scaleType="centerCrop"-->
+<!--        app:layout_constraintStart_toStartOf="parent"-->
+<!--        app:layout_constraintTop_toBottomOf="@id/puddle_list_header"-->
+<!--        app:srcCompat="@drawable/man"-->
+<!--        tools:ignore="SpeakableTextPresentCheck" />-->
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/puddle_list_rv"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginTop="16dp"
-        android:backgroundTint="#8BC34A"
+        android:layout_width="@dimen/fit_constraint"
+        android:layout_height="@dimen/fit_constraint"
+        android:layout_marginTop="@dimen/margin_mid"
+        android:layout_marginStart="@dimen/margin_mid"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/profile_icon" />
+        app:layout_constraintTop_toBottomOf="@+id/puddle_list_header" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
