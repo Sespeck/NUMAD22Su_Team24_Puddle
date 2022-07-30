@@ -1,4 +1,4 @@
-package com.cs5520.assignments.numad22su_team24_puddle;
+package com.cs5520.assignments.numad22su_team24_puddle.Adapter;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -10,10 +10,12 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.cs5520.assignments.numad22su_team24_puddle.Category;
+import com.cs5520.assignments.numad22su_team24_puddle.Puddle;
+import com.cs5520.assignments.numad22su_team24_puddle.R;
 import com.cs5520.assignments.numad22su_team24_puddle.Utils.Util;
 
 import java.util.List;
-import java.util.Map;
 
 public class PuddleListAdapter extends RecyclerView.Adapter<PuddleListAdapter.PuddleListViewHolder> {
 

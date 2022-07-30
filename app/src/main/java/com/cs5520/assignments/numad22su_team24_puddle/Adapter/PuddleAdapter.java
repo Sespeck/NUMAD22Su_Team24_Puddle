@@ -6,6 +6,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.cs5520.assignments.numad22su_team24_puddle.Puddle;
+import com.cs5520.assignments.numad22su_team24_puddle.R;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.RecyclerView;
@@ -31,7 +34,7 @@ public class PuddleAdapter extends RecyclerView.Adapter<PuddleAdapter.PuddleView
         }
     }
 
-    PuddleAdapter(Context context, List<Puddle> puddleList) {
+    public PuddleAdapter(Context context, List<Puddle> puddleList) {
         this.context = context;
         this.puddleList = puddleList;
     }
