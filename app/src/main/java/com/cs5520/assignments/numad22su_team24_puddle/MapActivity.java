@@ -3,6 +3,7 @@ package com.cs5520.assignments.numad22su_team24_puddle;
 
 import android.Manifest;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Geocoder;
 import android.location.Location;
@@ -20,6 +21,7 @@ import androidx.core.content.ContextCompat;
 import androidx.viewpager.widget.ViewPager;
 import androidx.viewpager2.widget.ViewPager2;
 
+import com.cs5520.assignments.numad22su_team24_puddle.Utils.LocationRequestActivity;
 import com.cs5520.assignments.numad22su_team24_puddle.model.PuddleMarker;
 import com.cs5520.assignments.numad22su_team24_puddle.services.MapService;
 import com.cs5520.assignments.numad22su_team24_puddle.services.MarkerService;
@@ -44,7 +46,6 @@ import java.util.List;
 
 public class MapActivity extends AppCompatActivity implements OnMapReadyCallback {
     private static final String TAG = "MapActivity";
-    private static final int REQUEST_CODE_FINE_LOCATION = 2;
     private boolean mapInitiated = true;
     private GoogleMap mMap;
     FusedLocationProviderClient fusedLocationProviderClient;
@@ -59,12 +60,17 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_map);
+
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
         viewPager = findViewById(R.id.viewPager);
         viewPager.setPageMargin(15);
+
+        mapService = new MapService();
+        markerService = new MarkerService();
+
 
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
 
@@ -79,7 +85,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                 super.onLocationResult(locationResult);
                 Log.d(TAG, "onLocationResult: " + locationResult.getLastLocation());
                 if (mMap != null) {
-                    if (mapInitiated == true){
+                    if (mapInitiated == true) {
                         Location location = locationResult.getLastLocation();
                         LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
                         mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 17));
@@ -90,19 +96,20 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             }
         };
 
-        mapService = new MapService();
-        markerService = new MarkerService();
     }
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
-
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) {
+            return;
+        }
         mMap = googleMap;
         mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            MapService mapService = new MapService();
-            mapService.requestPermission(this, REQUEST_CODE_FINE_LOCATION);
-        }
+
+
+
         mMap.setMyLocationEnabled(true);
 
         List<PuddleMarker> puddleList = mapService.getPuddleList();
@@ -139,15 +146,16 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 //        });
     }
 
-
     @Override
     protected void onStart() {
         super.onStart();
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-            startLocationUpdates();
-        } else {
-            MapService locationService = new MapService();
-            locationService.requestPermission(this, REQUEST_CODE_FINE_LOCATION);
+        if(LocationRequestActivity.checkMapServices(this)){
+            if(LocationRequestActivity.locationPermissionGranted){
+                startLocationUpdates();
+            }
+            else{
+                LocationRequestActivity.requestPermission(this);
+            }
         }
     }
 
@@ -160,30 +168,17 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
 
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode == REQUEST_CODE_FINE_LOCATION) {
+        if (requestCode == LocationRequestActivity.REQUEST_CODE_FINE_LOCATION) {
 
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                LocationRequestActivity.locationPermissionGranted = true;
                 Toast.makeText(this, "Location access successfully granted", Toast.LENGTH_SHORT).show();
-            } else {
-                //Permission NOT granted
-                if (!ActivityCompat.shouldShowRequestPermissionRationale(MapActivity.this, Manifest.permission.ACCESS_FINE_LOCATION)) {
-                    new AlertDialog.Builder(MapActivity.this)
-                            .setMessage("Please enable location access in the settings")
-                            .setPositiveButton("Go to settings", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialogInterface, int i) {
-                                    MapService locationService = null;
-                                    locationService.locationSetting(MapActivity.this);
-                                }
-                            })
-                            .setNegativeButton("Cancel", null)
-                            .setCancelable(false)
-                            .show();
-
-                } else {
-                    Toast.makeText(this, "Location access is not granted", Toast.LENGTH_SHORT).show();
-                }
+                startLocationUpdates();
             }
+            else {
+                Toast.makeText(this, "Location access is not granted", Toast.LENGTH_SHORT).show();
+            }
+
         }
     }
     private void startLocationUpdates() {
@@ -196,6 +191,8 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     private void stopLocationUpdates() {
         fusedLocationProviderClient.removeLocationUpdates(locationCallback);
     }
+
+
 
 }
 
