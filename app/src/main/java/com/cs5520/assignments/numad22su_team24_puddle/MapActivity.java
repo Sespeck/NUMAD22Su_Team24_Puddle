@@ -2,26 +2,19 @@ package com.cs5520.assignments.numad22su_team24_puddle;
 
 
 import android.Manifest;
-import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.location.Geocoder;
 import android.location.Location;
 import android.os.Bundle;
 import android.os.Looper;
 import android.util.Log;
-import android.view.View;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
 import androidx.viewpager.widget.ViewPager;
-import androidx.viewpager2.widget.ViewPager2;
 
-import com.cs5520.assignments.numad22su_team24_puddle.Utils.LocationRequestActivity;
+import com.cs5520.assignments.numad22su_team24_puddle.Utils.LocationPermissionActivity;
 import com.cs5520.assignments.numad22su_team24_puddle.model.PuddleMarker;
 import com.cs5520.assignments.numad22su_team24_puddle.services.MapService;
 import com.cs5520.assignments.numad22su_team24_puddle.services.MarkerService;
@@ -35,11 +28,7 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
-import com.google.android.gms.maps.model.Circle;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.Marker;
-import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.util.List;
 
@@ -149,12 +138,12 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     @Override
     protected void onStart() {
         super.onStart();
-        if(LocationRequestActivity.checkMapServices(this)){
-            if(LocationRequestActivity.locationPermissionGranted){
+        if(LocationPermissionActivity.checkMapServices(this)){
+            if(LocationPermissionActivity.locationPermissionGranted){
                 startLocationUpdates();
             }
             else{
-                LocationRequestActivity.requestPermission(this);
+                LocationPermissionActivity.requestPermission(this);
             }
         }
     }
@@ -168,10 +157,10 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
 
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode == LocationRequestActivity.REQUEST_CODE_FINE_LOCATION) {
+        if (requestCode == LocationPermissionActivity.REQUEST_CODE_FINE_LOCATION) {
 
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                LocationRequestActivity.locationPermissionGranted = true;
+                LocationPermissionActivity.locationPermissionGranted = true;
                 Toast.makeText(this, "Location access successfully granted", Toast.LENGTH_SHORT).show();
                 startLocationUpdates();
             }

@@ -1,6 +1,5 @@
 package com.cs5520.assignments.numad22su_team24_puddle.Utils;
 
-import android.Manifest;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
@@ -8,8 +7,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.LocationManager;
-import android.net.Uri;
-import android.provider.Settings;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -17,11 +14,10 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
-import com.cs5520.assignments.numad22su_team24_puddle.MainActivity;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 
-public class LocationRequestActivity {
+public class LocationPermissionActivity {
     public static final int ERROR_DIALOG_REQUEST = 99;
     public static final int PERMISSIONS_REQUEST_ENABLE_GPS = 88;
     public static final int REQUEST_CODE_FINE_LOCATION = 77;
@@ -33,7 +29,6 @@ public class LocationRequestActivity {
         int available = GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(activity);
 
         if(available == ConnectionResult.SUCCESS){
-            //everything is fine and the user can make map requests
             Log.d("LocationRequest", "Google Play Services is working");
             return true;
         }
@@ -83,8 +78,8 @@ public class LocationRequestActivity {
     }
 
     public static boolean checkMapServices(Activity activity){
-        if(LocationRequestActivity.checkGoogleService(activity)){
-            if(LocationRequestActivity.enableLocationAccess(activity)){
+        if(LocationPermissionActivity.checkGoogleService(activity)){
+            if(LocationPermissionActivity.enableLocationAccess(activity)){
                 return true;
             }
         }
