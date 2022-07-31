@@ -13,7 +13,16 @@
     <dimen name="padding_xl">24dp</dimen>
 
     <dimen name="font_size_small">10sp</dimen>
-    <dimen name="font_size_mid">14sp</dimen>
+    <dimen name="font_size_mid">16sp</dimen>
     <dimen name="font_size_large">20sp</dimen>
     <dimen name="font_size_xl">24sp</dimen>
+    <dimen name="font_size_xxl">32sp</dimen>
+
+    <dimen name="puddle_background_size">120dp</dimen>
+
+    <dimen name="login_signup_rounded_corners">16dp</dimen>
+
+    <dimen name="profile_icon_small">60dp</dimen>
+    <dimen name="icon_size_small">30dp</dimen>
+    <dimen name="icon_size_lg">120dp</dimen>
 </resources>

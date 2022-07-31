@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
+    tools:context=".SignupActivity">
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/signup_username_layout"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        android:layout_width="@dimen/fit_constraint"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/margin_xl"
+        android:layout_marginEnd="@dimen/margin_xl"
+        android:hint="@string/username"
+        android:textColorHint="@color/login_signup_text_color"
+        app:boxCornerRadiusBottomEnd="@dimen/login_signup_rounded_corners"
+        app:boxCornerRadiusBottomStart="@dimen/login_signup_rounded_corners"
+        app:boxCornerRadiusTopEnd="@dimen/login_signup_rounded_corners"
+        app:boxCornerRadiusTopStart="@dimen/login_signup_rounded_corners"
+        app:boxStrokeWidth="3dp"
+        app:counterEnabled="true"
+        app:counterMaxLength="15"
+        app:counterOverflowTextColor="@android:color/holo_red_light"
+        app:counterTextAppearance="@style/HelperTextAppearance"
+        app:helperText="@string/helper_text_login"
+        app:helperTextEnabled="true"
+        app:helperTextTextAppearance="@style/HelperTextAppearance"
+        app:hintAnimationEnabled="true"
+        app:hintEnabled="true"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.17"
+        app:startIconDrawable="@drawable/account_circle"
+        app:startIconTint="@color/login_signup_text_color">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/signup_username_et"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/font_size_mid"
+            android:textStyle="bold" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/signup_email_layout"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/margin_xl"
+        android:layout_marginTop="@dimen/margin_large"
+        android:layout_marginEnd="@dimen/margin_xl"
+        android:hint="@string/email"
+        android:textColorHint="@color/login_signup_text_color"
+        app:boxCornerRadiusBottomEnd="@dimen/login_signup_rounded_corners"
+        app:boxCornerRadiusBottomStart="@dimen/login_signup_rounded_corners"
+        app:boxCornerRadiusTopEnd="@dimen/login_signup_rounded_corners"
+        app:boxCornerRadiusTopStart="@dimen/login_signup_rounded_corners"
+        app:boxStrokeWidth="3dp"
+        app:hintAnimationEnabled="true"
+        app:hintEnabled="true"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/signup_username_layout"
+        app:startIconDrawable="@drawable/email"
+        app:startIconTint="@color/login_signup_text_color">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/signup_email_et"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/font_size_mid"
+            android:textStyle="bold" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <Button
+        android:id="@+id/register_btn"
+        style="@style/Widget.Material3.Button.TonalButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:backgroundTint="@color/login_signup_button_background"
+        android:text="@string/signup"
+        android:textColor="@color/login_signup_text_color"
+        android:textSize="@dimen/font_size_mid"
+        android:textStyle="bold"
+        android:layout_marginTop="@dimen/margin_xl"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/signup_email_layout"
+        app:layout_constraintVertical_bias="0.4" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
