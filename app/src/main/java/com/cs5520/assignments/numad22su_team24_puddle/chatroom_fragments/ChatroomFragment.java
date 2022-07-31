@@ -6,6 +6,8 @@ import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
+import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -24,6 +26,8 @@ import java.util.List;
 
 public class ChatroomFragment extends Fragment {
     private RecyclerView recyclerView;
+    private ImageView sendButton;
+    private EditText chatEditText;
     private Handler handler = new Handler();
     private Fragment currentFragment = this;
     @Nullable
@@ -32,10 +36,18 @@ public class ChatroomFragment extends Fragment {
                              @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.chatroom_fragment,container,false);
         this.recyclerView = view.findViewById(R.id.chatroom_recycler_view);
+        this.sendButton = view.findViewById(R.id.chat_room_send_button);
+        this.chatEditText = view.findViewById(R.id.chat_room_edit_text);
         recyclerView.hasFixedSize();
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         initializeRecyclerView();
         return view;
+    }
+
+    private void createNewMessage(){
+        sendButton.setOnClickListener(v -> {
+        });
+
     }
 
     private void initializeRecyclerView(){
@@ -44,7 +56,8 @@ public class ChatroomFragment extends Fragment {
             public void run() {
                 List<Message> chatroomList = new ArrayList<>();
                 chatroomList.add(new Message("Chris","Yesterday 8:21", "text",
-                        BitmapFactory.decodeResource(currentFragment.getResources(), R.drawable.puddle)));
+                        BitmapFactory.decodeResource(currentFragment.getResources(),
+                                R.drawable.puddle)));
                 handler.post(()->{
                     ChatroomAdapter adapter = new ChatroomAdapter(chatroomList);
                     recyclerView.setAdapter(adapter);

@@ -19,9 +19,11 @@ public class DateTimeFormatUtil {
             time[1] = "00";
             time[0] = String.valueOf(hours + 1);
         }
-        time[0] = Integer.parseInt(time[0]) % 12 != 0 ? String.valueOf((Integer.parseInt(time[0]) % 12)) : "12";
+        time[0] = Integer.parseInt(time[0]) % 12 != 0 ?
+                String.valueOf((Integer.parseInt(time[0]) % 12)) : "12";
         String startingTime = time[0]+":"+time[1]+" "+amOrPm;
-        String endingTime = Integer.parseInt(time[0])+1 % 12 != 0 ? String.valueOf((Integer.parseInt(time[0])+1 % 12)) : "12";
+        String endingTime = Integer.parseInt(time[0])+1 % 12 != 0 ?
+                String.valueOf((Integer.parseInt(time[0])+1 % 12)) : "12";
         return new String[]{startingTime,endingTime+":"+time[1]+" "+amOrPm};
     }
 
@@ -33,10 +35,12 @@ public class DateTimeFormatUtil {
 
     public static String formatEventDate(String date) {
         String[] currentDate = date.split("-");
-        LocalDate formattedDate = LocalDate.of(Integer.parseInt(currentDate[0]), Integer.parseInt(currentDate[1]), Integer.parseInt(currentDate[2]));
+        LocalDate formattedDate = LocalDate.of(Integer.parseInt(currentDate[0]),
+                Integer.parseInt(currentDate[1]), Integer.parseInt(currentDate[2]));
         Log.d("here",formattedDate.toString());
         DayOfWeek dayOfWeek = DayOfWeek.from(formattedDate);
-        return getDayName(dayOfWeek.getValue())+", " + getMonthName(Integer.parseInt(currentDate[1]))+" "+currentDate[2]+", "+currentDate[0];
+        return getDayName(dayOfWeek.getValue())+", " +
+                getMonthName(Integer.parseInt(currentDate[1]))+" "+currentDate[2]+", "+currentDate[0];
     }
 
     private static String getMonthName(Integer month){
@@ -46,7 +50,6 @@ public class DateTimeFormatUtil {
     }
 
     private static String getDayName(Integer day){
-//        Log.d("here",String.valueOf(day));
         String[] days = new String[]{"Mon","Tue","Wed","Thu","Fri","Sat","Sun"};
         return days[day-1];
     }
