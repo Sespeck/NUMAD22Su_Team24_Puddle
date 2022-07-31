@@ -1,12 +1,14 @@
 package com.cs5520.assignments.numad22su_team24_puddle.Adapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.cs5520.assignments.numad22su_team24_puddle.Puddle;
+import com.cs5520.assignments.numad22su_team24_puddle.PuddleChatroomActivity;
 import com.cs5520.assignments.numad22su_team24_puddle.R;
 
 import androidx.annotation.NonNull;
@@ -61,7 +63,8 @@ public class PuddleAdapter extends RecyclerView.Adapter<PuddleAdapter.PuddleView
             im.setImageBitmap(puddle.getDisplayImage());
             MaterialButton button = layoutView.findViewById(R.id.puddle_modal_join_btn);
             button.setOnClickListener(v -> {
-                dialog.dismiss();
+                Intent intent = new Intent(context, PuddleChatroomActivity.class);
+                context.startActivity(intent);
             });
             dialog.show();
         });

@@ -16,7 +16,6 @@
         android:id="@+id/view1"
         android:layout_width="match_parent"
         android:layout_height="2dp"
-        android:background="@color/light_grey"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
@@ -25,7 +24,6 @@
         android:id="@+id/view2"
         android:layout_width="match_parent"
         android:layout_height="2dp"
-        android:background="@color/light_grey"
         app:layout_constraintBottom_toTopOf="@+id/chat_room_edit_text"
         app:layout_constraintEnd_toEndOf="parent" />
 
