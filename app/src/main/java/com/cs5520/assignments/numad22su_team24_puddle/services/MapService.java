@@ -18,34 +18,6 @@ import java.util.List;
 
 public class MapService {
 
-    public void requestPermission(Activity activity, int permissionCode) {
-
-        if (ActivityCompat.shouldShowRequestPermissionRationale(activity, Manifest.permission.ACCESS_FINE_LOCATION)) {
-            new AlertDialog.Builder( activity)
-                    .setMessage("Permission for location access is required.")
-                    .setCancelable(false)
-                    .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialogInterface, int i) {
-                            ActivityCompat.requestPermissions(activity, new String[] {Manifest.permission.ACCESS_FINE_LOCATION}, permissionCode);
-                        }
-                    })
-                    .show();
-        } else {
-            ActivityCompat.requestPermissions(activity, new String[] {Manifest.permission.ACCESS_FINE_LOCATION}, permissionCode);
-        }
-
-    }
-
-    public void locationSetting(Activity activity) {
-
-        Intent intent = new Intent();
-        intent.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
-        Uri uri = Uri.fromParts("package", activity.getPackageName(), null);
-        intent.setData(uri);
-        activity.startActivity(intent);
-    }
-
     public List<PuddleMarker> getPuddleList(){
         List<PuddleMarker> puddleList = new ArrayList<>();
 

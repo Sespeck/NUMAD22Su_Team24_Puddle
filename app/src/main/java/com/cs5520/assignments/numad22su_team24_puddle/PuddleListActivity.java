@@ -11,8 +11,10 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.ContentResolver;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -30,6 +32,7 @@ import android.widget.Toast;
 import com.cs5520.assignments.numad22su_team24_puddle.Adapter.MyPuddlesAdapter;
 import com.cs5520.assignments.numad22su_team24_puddle.Adapter.PuddleListAdapter;
 import com.cs5520.assignments.numad22su_team24_puddle.Utils.FirebaseDB;
+import com.cs5520.assignments.numad22su_team24_puddle.Utils.LocationRequestActivity;
 import com.google.android.material.imageview.ShapeableImageView;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -164,8 +167,14 @@ public class PuddleListActivity extends AppCompatActivity implements View.OnClic
             Intent newPud = new Intent(PuddleListActivity.this, CreatePuddle.class);
             startActivity(newPud);
         } else if (view.equals(navigationIcon)) {
-            Intent intent = new Intent(this, MapActivity.class);
-            startActivity(intent);
+            if(LocationRequestActivity.checkMapServices(this)){
+                if(LocationRequestActivity.locationPermissionGranted){
+                    startActivity(new Intent(this, MapActivity.class));
+                }
+                else{
+                    LocationRequestActivity.requestPermission(this);
+                }
+            }
         } else if (view.equals(filterIcon)) {
 
         }
@@ -227,5 +236,39 @@ public class PuddleListActivity extends AppCompatActivity implements View.OnClic
         ContentResolver cr = getContentResolver();
         MimeTypeMap mime = MimeTypeMap.getSingleton();
         return mime.getExtensionFromMimeType(cr.getType(muri));
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        switch (requestCode) {
+            case LocationRequestActivity.PERMISSIONS_REQUEST_ENABLE_GPS: {
+                if(LocationRequestActivity.locationPermissionGranted){
+                    startActivity(new Intent(this, MapActivity.class));
+                }
+                else{
+                    LocationRequestActivity.requestPermission(this);
+                }
+            }
+        }
+
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == LocationRequestActivity.REQUEST_CODE_FINE_LOCATION) {
+
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                LocationRequestActivity.locationPermissionGranted = true;
+                Toast.makeText(this, "Location access successfully granted", Toast.LENGTH_SHORT).show();
+                startActivity(new Intent(this, MapActivity.class));
+            }
+            else {
+                Toast.makeText(this, "Location access is not granted", Toast.LENGTH_SHORT).show();
+            }
+
+        }
     }
 }
