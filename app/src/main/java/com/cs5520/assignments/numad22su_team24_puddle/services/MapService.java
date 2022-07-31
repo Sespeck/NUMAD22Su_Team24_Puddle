@@ -11,8 +11,12 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.core.app.ActivityCompat;
 
 import com.cs5520.assignments.numad22su_team24_puddle.MapActivity;
+import com.cs5520.assignments.numad22su_team24_puddle.model.PuddleMarker;
 
-public class LocationService {
+import java.util.ArrayList;
+import java.util.List;
+
+public class MapService {
 
     public void requestPermission(Activity activity, int permissionCode) {
 
@@ -40,5 +44,11 @@ public class LocationService {
         Uri uri = Uri.fromParts("package", activity.getPackageName(), null);
         intent.setData(uri);
         activity.startActivity(intent);
+    }
+
+    public List<PuddleMarker> getPuddleList(){
+        List<PuddleMarker> puddleList = new ArrayList<>();
+
+        return puddleList;
     }
 }

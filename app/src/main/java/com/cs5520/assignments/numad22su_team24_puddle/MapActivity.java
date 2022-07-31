@@ -4,8 +4,6 @@ package com.cs5520.assignments.numad22su_team24_puddle;
 import android.Manifest;
 import android.content.DialogInterface;
 import android.content.pm.PackageManager;
-import android.graphics.Color;
-import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
 import android.os.Bundle;
@@ -19,7 +17,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
-import com.cs5520.assignments.numad22su_team24_puddle.services.LocationService;
+import com.cs5520.assignments.numad22su_team24_puddle.services.MapService;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
@@ -31,15 +29,10 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
-import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.Circle;
-import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-
-import java.io.IOException;
-import java.util.List;
 
 
 public class MapActivity extends AppCompatActivity implements OnMapReadyCallback {
@@ -87,19 +80,20 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     @Override
     public void onMapReady(GoogleMap googleMap) {
 
-//        LatLng sydney = new LatLng(-33.852, 151.211);
-//        googleMap.addMarker(new MarkerOptions()
-//                .position(sydney)
-//                .title("Marker in Sydney"));
-//        googleMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
         mMap = googleMap;
         mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            LocationService locationService = new LocationService();
-            locationService.requestPermission(this, REQUEST_CODE_FINE_LOCATION);
+            MapService mapService = new MapService();
+            mapService.requestPermission(this, REQUEST_CODE_FINE_LOCATION);
         }
         mMap.setMyLocationEnabled(true);
 
+        mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+            @Override
+            public boolean onMarkerClick(@NonNull Marker marker) {
+                return false;
+            }
+        });
     }
 
 
@@ -109,7 +103,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             startLocationUpdates();
         } else {
-            LocationService locationService = new LocationService();
+            MapService locationService = new MapService();
             locationService.requestPermission(this, REQUEST_CODE_FINE_LOCATION);
         }
     }
@@ -135,7 +129,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                             .setPositiveButton("Go to settings", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialogInterface, int i) {
-                                    LocationService locationService = null;
+                                    MapService locationService = null;
                                     locationService.locationSetting(MapActivity.this);
                                 }
                             })
@@ -168,14 +162,11 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             MarkerOptions markerOptions = new MarkerOptions();
             markerOptions.position(latLng);
             markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.user));
-//            markerOptions.rotation(location.getBearing());
             markerOptions.anchor((float) 0.5, (float) 0.5);
             userLocationMarker = mMap.addMarker(markerOptions);
             mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 17));
         } else  {
             userLocationMarker.setPosition(latLng);
-//            userLocationMarker.setRotation(location.getBearing());
-//            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 17));
         }
 //        if (userLocationAccuracyCircle == null) {
 //            CircleOptions circleOptions = new CircleOptions();
