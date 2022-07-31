@@ -2,7 +2,6 @@ package com.cs5520.assignments.numad22su_team24_puddle;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.content.Intent;
 import android.os.Bundle;
 
 import com.google.firebase.database.FirebaseDatabase;

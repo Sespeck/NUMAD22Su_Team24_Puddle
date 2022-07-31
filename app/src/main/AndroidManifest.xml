@@ -43,6 +43,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".PuddleChatroomActivity"
+            android:exported="true"
+            />
         <activity
             android:name=".MainActivity"
             android:exported="false" />
