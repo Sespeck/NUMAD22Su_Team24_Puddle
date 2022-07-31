@@ -4,7 +4,6 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -14,34 +13,25 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
-import android.provider.MediaStore;
-import android.util.Log;
 import android.view.View;
 import android.webkit.MimeTypeMap;
 import android.widget.Button;
-import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.Button;
-import android.widget.ImageView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.cs5520.assignments.numad22su_team24_puddle.Adapter.MyPuddlesAdapter;
 import com.cs5520.assignments.numad22su_team24_puddle.Adapter.PuddleListAdapter;
 import com.cs5520.assignments.numad22su_team24_puddle.Utils.FirebaseDB;
-import com.cs5520.assignments.numad22su_team24_puddle.Utils.LocationRequestActivity;
+import com.cs5520.assignments.numad22su_team24_puddle.Utils.LocationPermissionActivity;
 import com.google.android.material.imageview.ShapeableImageView;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
@@ -167,12 +157,12 @@ public class PuddleListActivity extends AppCompatActivity implements View.OnClic
             Intent newPud = new Intent(PuddleListActivity.this, CreatePuddle.class);
             startActivity(newPud);
         } else if (view.equals(navigationIcon)) {
-            if(LocationRequestActivity.checkMapServices(this)){
-                if(LocationRequestActivity.locationPermissionGranted){
+            if(LocationPermissionActivity.checkMapServices(this)){
+                if(LocationPermissionActivity.locationPermissionGranted){
                     startActivity(new Intent(this, MapActivity.class));
                 }
                 else{
-                    LocationRequestActivity.requestPermission(this);
+                    LocationPermissionActivity.requestPermission(this);
                 }
             }
         } else if (view.equals(filterIcon)) {
@@ -242,12 +232,12 @@ public class PuddleListActivity extends AppCompatActivity implements View.OnClic
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         switch (requestCode) {
-            case LocationRequestActivity.PERMISSIONS_REQUEST_ENABLE_GPS: {
-                if(LocationRequestActivity.locationPermissionGranted){
+            case LocationPermissionActivity.PERMISSIONS_REQUEST_ENABLE_GPS: {
+                if(LocationPermissionActivity.locationPermissionGranted){
                     startActivity(new Intent(this, MapActivity.class));
                 }
                 else{
-                    LocationRequestActivity.requestPermission(this);
+                    LocationPermissionActivity.requestPermission(this);
                 }
             }
         }
@@ -258,10 +248,10 @@ public class PuddleListActivity extends AppCompatActivity implements View.OnClic
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
 
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode == LocationRequestActivity.REQUEST_CODE_FINE_LOCATION) {
+        if (requestCode == LocationPermissionActivity.REQUEST_CODE_FINE_LOCATION) {
 
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                LocationRequestActivity.locationPermissionGranted = true;
+                LocationPermissionActivity.locationPermissionGranted = true;
                 Toast.makeText(this, "Location access successfully granted", Toast.LENGTH_SHORT).show();
                 startActivity(new Intent(this, MapActivity.class));
             }
