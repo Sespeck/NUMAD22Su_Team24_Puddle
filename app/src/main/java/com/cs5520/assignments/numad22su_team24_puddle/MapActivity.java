@@ -9,6 +9,7 @@ import android.location.Location;
 import android.os.Bundle;
 import android.os.Looper;
 import android.util.Log;
+import android.view.View;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -16,8 +17,12 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.viewpager.widget.ViewPager;
+import androidx.viewpager2.widget.ViewPager2;
 
+import com.cs5520.assignments.numad22su_team24_puddle.model.PuddleMarker;
 import com.cs5520.assignments.numad22su_team24_puddle.services.MapService;
+import com.cs5520.assignments.numad22su_team24_puddle.services.MarkerService;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
@@ -34,18 +39,21 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import java.util.List;
+
 
 public class MapActivity extends AppCompatActivity implements OnMapReadyCallback {
     private static final String TAG = "MapActivity";
     private static final int REQUEST_CODE_FINE_LOCATION = 2;
+    private boolean mapInitiated = true;
     private GoogleMap mMap;
-    private Geocoder geocoder;
-    private int ACCESS_LOCATION_REQUEST_CODE = 1001;
     FusedLocationProviderClient fusedLocationProviderClient;
     LocationRequest locationRequest;
     LocationCallback locationCallback;
-    Marker userLocationMarker;
-    Circle userLocationAccuracyCircle;
+    MapService mapService;
+    MarkerService markerService;
+    ViewPager viewPager;
+    MapViewPagerAdapter mapViewPagerAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,7 +62,9 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
-        geocoder = new Geocoder(this);
+
+        viewPager = findViewById(R.id.viewPager);
+        viewPager.setPageMargin(15);
 
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
 
@@ -69,12 +79,19 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                 super.onLocationResult(locationResult);
                 Log.d(TAG, "onLocationResult: " + locationResult.getLastLocation());
                 if (mMap != null) {
-                    setUserLocationMarker(locationResult.getLastLocation());
+                    if (mapInitiated == true){
+                        Location location = locationResult.getLastLocation();
+                        LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
+                        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 17));
+                        mapInitiated = false;
+                    }
+
                 }
             }
         };
 
-
+        mapService = new MapService();
+        markerService = new MarkerService();
     }
 
     @Override
@@ -88,12 +105,38 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         }
         mMap.setMyLocationEnabled(true);
 
-        mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+        List<PuddleMarker> puddleList = mapService.getPuddleList();
+        for (PuddleMarker puddle: puddleList){
+            markerService.addMarker(puddle, mMap);
+        }
+        mapViewPagerAdapter = new MapViewPagerAdapter(getSupportFragmentManager(), puddleList);
+        viewPager.setAdapter(mapViewPagerAdapter);
+
+        viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
-            public boolean onMarkerClick(@NonNull Marker marker) {
-                return false;
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+                
             }
+
+            @Override
+            public void onPageSelected(int position) {
+                mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(puddleList.get(position).getLatLng(), 17));
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
+            }
+
         });
+
+//        mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+//            @Override
+//            public boolean onMarkerClick(@NonNull Marker marker) {
+//                viewPager.setCurrentItem(2, true);
+//                return true;
+//            }
+//        });
     }
 
 
@@ -153,35 +196,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     private void stopLocationUpdates() {
         fusedLocationProviderClient.removeLocationUpdates(locationCallback);
     }
-
-    private void setUserLocationMarker(Location location) {
-
-        LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
-
-        if (userLocationMarker == null) {
-            MarkerOptions markerOptions = new MarkerOptions();
-            markerOptions.position(latLng);
-            markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.user));
-            markerOptions.anchor((float) 0.5, (float) 0.5);
-            userLocationMarker = mMap.addMarker(markerOptions);
-            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 17));
-        } else  {
-            userLocationMarker.setPosition(latLng);
-        }
-//        if (userLocationAccuracyCircle == null) {
-//            CircleOptions circleOptions = new CircleOptions();
-//            circleOptions.center(latLng);
-//            circleOptions.strokeWidth(4);
-//            circleOptions.strokeColor(Color.argb(255, 255, 0, 0));
-//            circleOptions.fillColor(Color.argb(32, 255, 0, 0));
-//            circleOptions.radius(location.getAccuracy());
-//            userLocationAccuracyCircle = mMap.addCircle(circleOptions);
-//        } else {
-//            userLocationAccuracyCircle.setCenter(latLng);
-//            userLocationAccuracyCircle.setRadius(location.getAccuracy());
-//        }
-    }
-
 
 }
 
