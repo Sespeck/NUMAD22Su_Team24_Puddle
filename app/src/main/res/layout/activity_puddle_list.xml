@@ -4,16 +4,21 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    tools:context=".PuddleListActivity">
 
-    <TextView
-        android:id="@+id/hello_world"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Hello World!"
+    <include
+        android:id="@+id/puddle_list_header"
+        layout="@layout/puddles_list_header"/>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/puddle_list_rv"
+        android:layout_width="@dimen/fit_constraint"
+        android:layout_height="@dimen/fit_constraint"
+        android:layout_marginTop="@dimen/margin_mid"
+        android:layout_marginStart="@dimen/margin_mid"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/puddle_list_header" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
