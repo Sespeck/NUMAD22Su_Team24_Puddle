@@ -37,8 +37,16 @@ public class EventsFragment extends Fragment {
         recyclerView.hasFixedSize();
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         initializeRecyclerView();
+        initializeFragmentResultListener();
         return view;
     }
+
+    private void initializeFragmentResultListener(){
+        getParentFragmentManager().setFragmentResultListener("event_creation_result",this,((requestKey, result) -> {
+
+        }));
+    }
+
 
 
     private void initializeRecyclerView(){
@@ -46,8 +54,8 @@ public class EventsFragment extends Fragment {
              @Override
              public void run() {
                  List<Event> eventList = new ArrayList<>();
-                 eventList.add(new Event("NYC Block Party","Thurs, Aug 28: 7:00 PM",null,"partytime", BitmapFactory.decodeResource(currentFragment.getResources(),R.drawable.puddle)));
-                 eventList.add(new Event("Party2","time",null,"partytime", BitmapFactory.decodeResource(currentFragment.getResources(),R.drawable.puddle)));
+                 eventList.add(new Event("NYC BLOCK PARTY ALL COUPLES WELCOME WHOO","Thurs, Aug 28: 7:00 PM",null,"partytime", BitmapFactory.decodeResource(currentFragment.getResources(),R.drawable.puddle),0));
+                 eventList.add(new Event("Party2","time",null,"partytime", BitmapFactory.decodeResource(currentFragment.getResources(),R.drawable.puddle),0));
                  handler.post(()->{
                      eventsAdapter = new EventsAdapter(eventList);
                      recyclerView.setAdapter(eventsAdapter);

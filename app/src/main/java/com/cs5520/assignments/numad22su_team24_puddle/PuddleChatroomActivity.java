@@ -29,6 +29,8 @@ public class PuddleChatroomActivity extends AppCompatActivity {
         setContentView(R.layout.puddle_chatroom_activity);
         tabLayout = findViewById(R.id.tabLayout);
         initializeOnTabSelectedListener();
+        BottomFilterModal modal = new BottomFilterModal();
+        modal.show(getSupportFragmentManager(), "modal");
         this.fab = findViewById(R.id.fab);
         fab.setOnClickListener(v -> {
             currentTab = tabLayout.getTabAt(3);

@@ -25,18 +25,21 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.EventViewH
         ImageView imageView;
         TextView name;
         TextView date;
+        TextView attendanceCounter;
         public EventViewHolder(@NonNull View itemView) {
             super(itemView);
             name = itemView.findViewById(R.id.recycler_view_item_event_name);
             date = itemView.findViewById(R.id.recycler_view_event_date_time);
             imageView = itemView.findViewById(R.id.recycler_view_item_bg_image);
+            attendanceCounter = itemView.findViewById(R.id.attendance_counter);
         }
     }
 
     @NonNull
     @Override
     public EventsAdapter.EventViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        return new EventViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.event_recycler_view_item,parent,false));
+        return new EventViewHolder(LayoutInflater.from(parent.getContext()).
+                inflate(R.layout.event_recycler_view_item,parent,false));
     }
 
     @Override
@@ -45,6 +48,7 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.EventViewH
         holder.imageView.setImageBitmap(event.backgroundImg);
         holder.name.setText(event.getName());
         holder.date.setText(event.getDatetime());
+        holder.attendanceCounter.setText(String.valueOf(event.getAttendanceCount()));
     }
 
     @Override

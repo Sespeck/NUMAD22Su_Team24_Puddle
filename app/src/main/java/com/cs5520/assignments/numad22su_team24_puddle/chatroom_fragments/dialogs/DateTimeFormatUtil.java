@@ -40,7 +40,8 @@ public class DateTimeFormatUtil {
     }
 
     private static String getMonthName(Integer month){
-        String[] months = new String[]{"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
+        String[] months = new String[]{"Jan", "Feb", "Mar", "Apr", "May",
+                "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
         return months[month-1];
     }
 

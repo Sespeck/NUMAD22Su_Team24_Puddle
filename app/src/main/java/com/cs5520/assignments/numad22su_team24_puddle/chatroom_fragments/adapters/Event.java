@@ -10,13 +10,16 @@ public class Event {
     Location location;
     String description;
     Bitmap backgroundImg;
+    int attendanceCount;
 
-    public Event(String name, String datetime, Location location, String description, Bitmap backgroundImg){
+
+    public Event(String name, String datetime, Location location, String description, Bitmap backgroundImg, int attendanceCount){
         this.name = name;
         this.datetime = datetime;
         this.location = location;
         this.description = description;
         this.backgroundImg = backgroundImg;
+        this.attendanceCount = attendanceCount;
     }
 
     public String getName() {
@@ -37,5 +40,9 @@ public class Event {
 
     public Bitmap getBackgroundImg() {
         return backgroundImg;
+    }
+
+    public int getAttendanceCount(){
+        return attendanceCount;
     }
 }

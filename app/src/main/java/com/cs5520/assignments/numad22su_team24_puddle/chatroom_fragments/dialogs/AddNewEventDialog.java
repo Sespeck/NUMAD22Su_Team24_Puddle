@@ -30,6 +30,16 @@ public class AddNewEventDialog extends DialogFragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.add_event_dialog, container, false);
         exitButton = view.findViewById(R.id.add_event_dialog_exit_button);
+        initializeAllTextViewOnClicks(view);
+        exitButton.setOnClickListener(v -> {
+            dismiss();
+        });
+        // Inflate the layout to use as dialog or embedded fragment
+        return view;
+    }
+
+
+    private void initializeAllTextViewOnClicks(View view){
         startingTimeView = view.findViewById(R.id.starting_time_text_view);
         endingTimeView = view.findViewById(R.id.ending_time_text_view);
         startingDateView = view.findViewById(R.id.starting_date_text_view);
@@ -44,12 +54,6 @@ public class AddNewEventDialog extends DialogFragment {
         endingDateView.setOnClickListener(this::showDatePickerDialog);
         startingTimeView.setOnClickListener(this::showTimePickerDialog);
         endingTimeView.setOnClickListener(this::showTimePickerDialog);
-
-        exitButton.setOnClickListener(v -> {
-            dismiss();
-        });
-        // Inflate the layout to use as dialog or embedded fragment
-        return view;
     }
 
     /** The system calls this only when creating the layout in a dialog. */
