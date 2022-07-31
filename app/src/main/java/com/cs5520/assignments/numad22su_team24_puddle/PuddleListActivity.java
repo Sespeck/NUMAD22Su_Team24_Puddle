@@ -163,7 +163,8 @@ public class PuddleListActivity extends AppCompatActivity implements View.OnClic
         } else if (view.equals(createIcon)) {
 
         } else if (view.equals(navigationIcon)) {
-
+            Intent intent = new Intent(this, MapActivity.class);
+            startActivity(intent);
         } else if (view.equals(filterIcon)) {
 
         }

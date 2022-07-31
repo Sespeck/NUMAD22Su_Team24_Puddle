@@ -16,7 +16,5 @@ public class MainActivity extends AppCompatActivity {
 
         FirebaseDatabase.getInstance().getReference().child("chats").push().setValue("Firebase connection successful");
 
-        Intent intent = new Intent(this, MapActivity.class);
-        startActivity(intent);
     }
 }
