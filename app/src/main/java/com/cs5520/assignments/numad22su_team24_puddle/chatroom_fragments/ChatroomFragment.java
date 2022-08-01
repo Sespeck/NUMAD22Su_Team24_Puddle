@@ -47,7 +47,6 @@ public class ChatroomFragment extends Fragment {
     private void createNewMessage(){
         sendButton.setOnClickListener(v -> {
         });
-
     }
 
     private void initializeRecyclerView(){

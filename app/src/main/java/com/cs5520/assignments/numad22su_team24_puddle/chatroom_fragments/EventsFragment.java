@@ -44,6 +44,8 @@ public class EventsFragment extends Fragment {
     private void initializeFragmentResultListener(){
         getParentFragmentManager().setFragmentResultListener("event_creation_result",this,((requestKey, result) -> {
 
+
+
         }));
     }
 

@@ -7,7 +7,6 @@
     android:layout_height="match_parent"
     android:background="@color/white">
 
-
     <TextView
         android:id="@+id/new_event_text_view"
         android:layout_width="wrap_content"
@@ -20,6 +19,7 @@
 
 
     <View
+        android:background="@color/purple_200"
         android:id="@+id/view"
         android:layout_width="match_parent"
         android:layout_height="2dp"
@@ -30,7 +30,7 @@
         app:layout_constraintTop_toBottomOf="@+id/new_event_text_view" />
 
     <EditText
-        android:id="@+id/editText2"
+        android:id="@+id/add_title_edit_text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="20sp"
@@ -43,6 +43,7 @@
         app:layout_constraintTop_toBottomOf="@+id/view" />
 
     <View
+        android:background="@color/purple_200"
         android:id="@+id/view2"
         android:layout_width="match_parent"
         android:layout_height="2dp"
@@ -64,6 +65,7 @@
 
 
     <View
+        android:background="@color/purple_200"
         android:id="@+id/view4"
         android:layout_width="match_parent"
         android:layout_height="2dp"
@@ -71,48 +73,48 @@
         app:layout_constraintTop_toBottomOf="@+id/dialog_description_edit_text" />
 
     <ImageView
-        android:layout_marginTop="10sp"
         android:id="@+id/imageView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="10sp"
         android:src="@drawable/time_icon"
         app:layout_constraintStart_toStartOf="@+id/dialog_description_edit_text"
         app:layout_constraintTop_toBottomOf="@+id/view4" />
 
     <TextView
-        android:textSize="16sp"
-        android:layout_marginLeft="10sp"
         android:id="@+id/starting_time_text_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginLeft="10sp"
+        android:textSize="16sp"
         app:layout_constraintStart_toEndOf="@+id/imageView"
         app:layout_constraintTop_toBottomOf="@+id/imageView" />
 
     <TextView
-        android:textSize="16sp"
-        android:layout_marginTop="15sp"
         android:id="@+id/ending_time_text_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="15sp"
+        android:textSize="16sp"
         app:layout_constraintStart_toStartOf="@+id/starting_time_text_view"
         app:layout_constraintTop_toBottomOf="@+id/starting_time_text_view" />
 
 
     <TextView
-        android:textSize="16sp"
-        android:layout_marginTop="15sp"
         android:id="@+id/ending_date_text_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="15sp"
+        android:textSize="16sp"
         app:layout_constraintBottom_toBottomOf="@+id/ending_time_text_view"
         app:layout_constraintStart_toStartOf="@+id/starting_date_text_view"
         app:layout_constraintTop_toBottomOf="@+id/starting_time_text_view" />
 
     <TextView
-        android:textSize="16sp"
         android:id="@+id/starting_date_text_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:textSize="16sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/starting_time_text_view"
         app:layout_constraintTop_toTopOf="@+id/starting_time_text_view" />
@@ -135,7 +137,7 @@
         android:orientation="horizontal"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/editText2">
+        app:layout_constraintTop_toBottomOf="@+id/add_title_edit_text">
 
         <RadioButton
             android:id="@+id/radioButton"
@@ -161,10 +163,11 @@
 
 
     <View
-        android:layout_marginTop="10sp"
+        android:background="@color/purple_200"
         android:id="@+id/view3"
         android:layout_width="match_parent"
         android:layout_height="2dp"
+        android:layout_marginTop="10sp"
         app:layout_constraintTop_toBottomOf="@id/ending_date_text_view" />
 
 
@@ -180,6 +183,7 @@
 
 
     <TextView
+        android:id="@+id/textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
@@ -188,6 +192,18 @@
         app:layout_constraintBottom_toBottomOf="@+id/imageView3"
         app:layout_constraintStart_toEndOf="@+id/imageView3"
         app:layout_constraintTop_toTopOf="@+id/imageView3" />
+
+    <Button
+        android:id="@+id/add_event_save_button"
+        style="@style/Theme.NUMAD22Su_Team24_Puddle.CustomButtonTheme"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/save"
+        app:layout_constraintBottom_toTopOf="@+id/linear_layout"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView" />
 
     <LinearLayout
         android:id="@+id/linear_layout"
@@ -202,8 +218,6 @@
             android:id="@+id/bottom_nav"
             layout="@layout/bottom_nav_bar" />
     </LinearLayout>
-
-
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

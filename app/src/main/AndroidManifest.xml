@@ -43,8 +43,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".PuddleChatroomActivity"
+        <activity
+            android:name=".PuddleChatroomActivity"
             android:exported="true"
+            android:theme="@style/Theme.NUMAD22Su_Team24_Puddle.NoActionBar"
             />
         <activity
             android:name=".MainActivity"

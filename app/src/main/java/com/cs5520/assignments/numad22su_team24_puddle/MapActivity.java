@@ -20,7 +20,7 @@ import androidx.core.content.ContextCompat;
 import androidx.viewpager.widget.ViewPager;
 import androidx.viewpager2.widget.ViewPager2;
 
-import com.cs5520.assignments.numad22su_team24_puddle.model.PuddleMarker;
+import com.cs5520.assignments.numad22su_team24_puddle.Model.PuddleMarker;
 import com.cs5520.assignments.numad22su_team24_puddle.services.MapService;
 import com.cs5520.assignments.numad22su_team24_puddle.services.MarkerService;
 import com.google.android.gms.location.FusedLocationProviderClient;

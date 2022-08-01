@@ -1,11 +1,11 @@
 package com.cs5520.assignments.numad22su_team24_puddle;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
@@ -18,19 +18,24 @@ import com.cs5520.assignments.numad22su_team24_puddle.chatroom_fragments.Members
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.tabs.TabLayout;
 
+
 public class PuddleChatroomActivity extends AppCompatActivity {
     private TabLayout tabLayout;
     private TabLayout.Tab currentTab;
     private FloatingActionButton fab;
+    private Toolbar toolbar;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.puddle_chatroom_activity);
         tabLayout = findViewById(R.id.tabLayout);
+        toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
         initializeOnTabSelectedListener();
-        BottomFilterModal modal = new BottomFilterModal();
-        modal.show(getSupportFragmentManager(), "modal");
+//        BottomFilterModal modal = new BottomFilterModal();
+//        modal.show(getSupportFragmentManager(), "modal");
         this.fab = findViewById(R.id.fab);
         fab.setOnClickListener(v -> {
             currentTab = tabLayout.getTabAt(3);
@@ -84,7 +89,7 @@ public class PuddleChatroomActivity extends AppCompatActivity {
 
     private void changeVisibleFragment(int id, Fragment fragment, String fragmentName){
         getSupportFragmentManager().beginTransaction().replace(R.id.chatroom_fragment_container,
-                fragment, fragmentName).addToBackStack(fragmentName).commit();
+                fragment, fragmentName).commit();
 
     }
 
@@ -93,9 +98,7 @@ public class PuddleChatroomActivity extends AppCompatActivity {
         super.onStart();
         if (currentTab == null){
             currentTab = tabLayout.getTabAt(0);
-            completeFragmentNavigation(currentTab);
-        }else{
-            completeFragmentNavigation(currentTab);
         }
+        completeFragmentNavigation(currentTab);
     }
 }

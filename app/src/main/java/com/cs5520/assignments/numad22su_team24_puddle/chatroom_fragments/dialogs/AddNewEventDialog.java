@@ -2,11 +2,13 @@ package com.cs5520.assignments.numad22su_team24_puddle.chatroom_fragments.dialog
 
 import android.app.Dialog;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -16,10 +18,11 @@ import com.cs5520.assignments.numad22su_team24_puddle.R;
 
 public class AddNewEventDialog extends DialogFragment {
     private Button exitButton;
-    private TextView startingTimeView;
-    private TextView endingTimeView;
-    private TextView startingDateView;
-    private TextView endingDateView;
+    private String startingTime;
+    private String endingTime;
+    private String startingDate;
+    private String endingDate;
+    private EditText title;
 
 
 
@@ -30,9 +33,12 @@ public class AddNewEventDialog extends DialogFragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.add_event_dialog, container, false);
         exitButton = view.findViewById(R.id.add_event_dialog_exit_button);
+        title = view.findViewById(R.id.add_title_edit_text);
         initializeAllTextViewOnClicks(view);
-        exitButton.setOnClickListener(v -> {
-            dismiss();
+        exitButton.setOnClickListener(v -> dismiss());
+        view.findViewById(R.id.add_event_save_button).setOnClickListener(v->{
+            Bundle result = new Bundle();
+            getParentFragmentManager().setFragmentResult("event_creation_result", result);
         });
         // Inflate the layout to use as dialog or embedded fragment
         return view;
@@ -40,10 +46,10 @@ public class AddNewEventDialog extends DialogFragment {
 
 
     private void initializeAllTextViewOnClicks(View view){
-        startingTimeView = view.findViewById(R.id.starting_time_text_view);
-        endingTimeView = view.findViewById(R.id.ending_time_text_view);
-        startingDateView = view.findViewById(R.id.starting_date_text_view);
-        endingDateView = view.findViewById(R.id.ending_date_text_view);
+        TextView startingTimeView = view.findViewById(R.id.starting_time_text_view);
+        TextView endingTimeView = view.findViewById(R.id.ending_time_text_view);
+        TextView startingDateView = view.findViewById(R.id.starting_date_text_view);
+        TextView endingDateView = view.findViewById(R.id.ending_date_text_view);
         String[] initalTime = DateTimeFormatUtil.formatPresetTime(java.time.LocalTime.now().toString());
         String date = DateTimeFormatUtil.formatEventDate(java.time.LocalDate.now().toString());
         startingTimeView.setText(initalTime[0]);
@@ -66,12 +72,28 @@ public class AddNewEventDialog extends DialogFragment {
     }
 
     public void showDatePickerDialog(View v) {
-        DialogFragment newFragment = new EventCalendarPickerDialog(v);
+        DialogFragment newFragment = new EventCalendarPickerDialog(v, this);
         newFragment.show(getParentFragmentManager(), "datePicker");
     }
 
     public void showTimePickerDialog(View v) {
-        DialogFragment newFragment = new EventTimePickerDialog(v);
+        DialogFragment newFragment = new EventTimePickerDialog(v, this);
         newFragment.show(getParentFragmentManager(), "timePicker");
+    }
+
+    public void acceptPickerStartTime(String startingTime){
+        this.startingTime = startingTime;
+    }
+
+    public void acceptPickerEndingTime(String endingTime){
+        this.endingTime = endingTime;
+    }
+
+    public void acceptPickerStartingDate(String startingDate){
+        this.startingDate = startingDate;
+    }
+
+    public void acceptPickerEndingDate(String endingDate){
+        this.endingDate = endingDate;
     }
 }

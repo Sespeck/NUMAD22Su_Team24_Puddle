@@ -10,7 +10,7 @@ import android.provider.Settings;
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.app.ActivityCompat;
 
-import com.cs5520.assignments.numad22su_team24_puddle.model.PuddleMarker;
+import com.cs5520.assignments.numad22su_team24_puddle.Model.PuddleMarker;
 import com.google.android.gms.maps.model.LatLng;
 
 import java.util.ArrayList;
