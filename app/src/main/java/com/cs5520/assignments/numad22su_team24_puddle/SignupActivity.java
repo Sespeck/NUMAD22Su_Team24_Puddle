@@ -14,7 +14,8 @@ import com.google.android.material.textfield.TextInputEditText;
 public class SignupActivity extends AppCompatActivity {
 
     private Button signupBtn;
-    private TextInputEditText emailEditText, usernameEditText;
+    private TextInputEditText emailEditText, usernameEditText, passwordEditText;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -23,16 +24,22 @@ public class SignupActivity extends AppCompatActivity {
         signupBtn = findViewById(R.id.register_btn);
         emailEditText = findViewById(R.id.signup_email_et);
         usernameEditText = findViewById(R.id.signup_username_et);
+        passwordEditText = findViewById(R.id.signup_password_et);
 
         signupBtn.setOnClickListener(v -> {
             // Implement Firebase signup logic
+            if (passwordEditText.getText().toString().isEmpty()) {
+                Toast.makeText(this, "Enter a valid password", Toast.LENGTH_SHORT).show();
+                return;
+            }
             if (!Util.isNetworkConnected(this)) {
                 Toast.makeText(this, "Please connect to internet!", Toast.LENGTH_SHORT).show();
                 return;
             }
-            FirebaseDB.registerUser(usernameEditText.getText().toString()+
-                            "@puddle.com", "123456",usernameEditText.getText().toString(),
-                    SignupActivity.this);
+            FirebaseDB.registerUser(usernameEditText.getText().toString() + "@puddle.com"
+                    , passwordEditText.getText().toString()
+                    , usernameEditText.getText().toString()
+                    , SignupActivity.this);
         });
     }
 }
