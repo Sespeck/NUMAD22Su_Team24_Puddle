@@ -38,6 +38,7 @@ import com.google.android.material.chip.ChipGroup;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.stream.Collectors;
 
 
@@ -125,9 +126,14 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             @Override
             public void onCheckedChanged(@NonNull ChipGroup group, @NonNull List<Integer> checkedIds) {
                 categories.clear();
-                for (Integer i: checkedIds){
-                    categories.add(MarkerService.chipIdToCategory.get(i));
+
+                for (Integer id: checkedIds){
+                    Chip chip = chipGroup.findViewById(id);
+                    String cat = chip.getText().toString().toUpperCase();
+                    Log.d(TAG, "chip cat: " + cat);
+                    categories.add(cat);
                 }
+
                 if (mMap != null) {
                     mMap.clear();
                 }
@@ -212,7 +218,10 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     }
 
 
-
+    @Override
+    public void onBackPressed() {
+        finish();
+    }
 }
 
 
