@@ -77,6 +77,19 @@ public class LocationPermissionActivity {
 
     }
 
+    public static void checkPermission(Activity activity) {
+
+        if (ContextCompat.checkSelfPermission(activity.getApplicationContext(),
+                android.Manifest.permission.ACCESS_FINE_LOCATION)
+                == PackageManager.PERMISSION_GRANTED) {
+            locationPermissionGranted = true;
+        }
+        else{
+            locationPermissionGranted = false;
+        }
+
+    }
+
     public static boolean checkMapServices(Activity activity){
         if(LocationPermissionActivity.checkGoogleService(activity)){
             if(LocationPermissionActivity.enableLocationAccess(activity)){

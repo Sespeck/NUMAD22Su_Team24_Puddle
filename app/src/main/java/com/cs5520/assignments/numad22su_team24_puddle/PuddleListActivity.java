@@ -102,6 +102,7 @@ public class PuddleListActivity extends AppCompatActivity implements View.OnClic
 
 
         updateRecyclerView(myPuddlesBtn);
+        LocationPermissionActivity.checkPermission(this);
     }
 
     private List<List<Puddle>> getPuddleList() {

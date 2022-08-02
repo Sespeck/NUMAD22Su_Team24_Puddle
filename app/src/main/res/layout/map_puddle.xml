@@ -33,7 +33,7 @@
             android:layout_alignParentBottom="true"
             android:layout_marginEnd="0dp"
             android:layout_marginBottom="0dp"
-            android:background="#BF360C"
+            android:background="@color/purple_200"
             android:scaleType="centerCrop" />
 
         <ImageView
