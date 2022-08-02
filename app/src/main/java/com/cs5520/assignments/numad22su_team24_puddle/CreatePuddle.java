@@ -9,8 +9,11 @@ import android.content.ContentResolver;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.webkit.MimeTypeMap;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.Toast;
@@ -39,6 +42,7 @@ public class CreatePuddle extends AppCompatActivity {
     Slider range;
     Button createPuddle;
     LinearLayout addBanner;
+    AutoCompleteTextView menu;
 
     Uri imgUri;
     String bannerUrl = "";
@@ -66,6 +70,12 @@ public class CreatePuddle extends AppCompatActivity {
         range = findViewById(R.id.range_filter);
         createPuddle = findViewById(R.id.create);
         addBanner = findViewById(R.id.add_banner);
+        menu = findViewById(R.id.category_menu);
+
+        String[] options = {"Select", "Music", "Sports", "Education"};
+        ArrayAdapter arrayAdapter = new ArrayAdapter(this, R.layout.category_options, options);
+        menu.setText(arrayAdapter.getItem(0).toString(), false);
+        menu.setAdapter(arrayAdapter);
 
         addBanner.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -134,7 +144,7 @@ public class CreatePuddle extends AppCompatActivity {
         puddleMap.put("isPrivate", String.valueOf(isPrivate.isChecked()));
         puddleMap.put("bannerUrl", bannerUrl);
         puddleMap.put("range", String.valueOf(range.getValue()));
-        puddleMap.put("category", "Music");
+        puddleMap.put("category", menu.getText().toString());
 
         ref.push().setValue(puddleMap);
     }
