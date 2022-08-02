@@ -1,7 +1,7 @@
 package com.cs5520.assignments.numad22su_team24_puddle.services;
 
+import com.cs5520.assignments.numad22su_team24_puddle.Model.PuddleMarker;
 import com.cs5520.assignments.numad22su_team24_puddle.Puddle;
-import com.cs5520.assignments.numad22su_team24_puddle.model.PuddleMarker;
 import com.google.android.gms.maps.model.LatLng;
 
 import java.util.ArrayList;
