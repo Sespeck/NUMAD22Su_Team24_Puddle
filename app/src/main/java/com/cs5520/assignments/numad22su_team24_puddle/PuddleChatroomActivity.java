@@ -18,7 +18,6 @@ import com.cs5520.assignments.numad22su_team24_puddle.chatroom_fragments.Members
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.tabs.TabLayout;
 
-
 public class PuddleChatroomActivity extends AppCompatActivity {
     private TabLayout tabLayout;
     private TabLayout.Tab currentTab;
@@ -31,23 +30,19 @@ public class PuddleChatroomActivity extends AppCompatActivity {
         setContentView(R.layout.puddle_chatroom_activity);
         tabLayout = findViewById(R.id.tabLayout);
         toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-
+        toolbar.setNavigationIcon(R.drawable.ic_baseline_arrow_back_24);
+        toolbar.setNavigationOnClickListener(v -> onBackPressed());
         initializeOnTabSelectedListener();
-//        BottomFilterModal modal = new BottomFilterModal();
-//        modal.show(getSupportFragmentManager(), "modal");
         this.fab = findViewById(R.id.fab);
+        // Opens the full screen add new event modal
         fab.setOnClickListener(v -> {
             currentTab = tabLayout.getTabAt(3);
             FragmentManager fragmentManager = getSupportFragmentManager();
-            AddNewEventDialog fragment = new AddNewEventDialog();
+            AddNewEventDialog fragment = new AddNewEventDialog(this);
             FragmentTransaction transaction = fragmentManager.beginTransaction();
             transaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
             transaction.add(android.R.id.content, fragment).addToBackStack(null).commit();
         });
-
-        // Need to dynamically pull the puddle BGImage from DB
-        // Need to inflate the recycler view with msgs
     }
 
     private void completeFragmentNavigation(TabLayout.Tab tab) {

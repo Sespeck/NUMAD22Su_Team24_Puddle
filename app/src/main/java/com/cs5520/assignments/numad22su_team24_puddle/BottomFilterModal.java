@@ -52,7 +52,7 @@ public class BottomFilterModal extends BottomSheetDialogFragment {
     }
 
 
-    public class DatePickerCalendarFragment extends DialogFragment
+    public static class DatePickerCalendarFragment extends DialogFragment
             implements DatePickerDialog.OnDateSetListener {
         private TextView view;
 
