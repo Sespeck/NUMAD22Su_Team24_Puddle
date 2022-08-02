@@ -7,6 +7,9 @@ import android.location.Location;
 import android.os.Bundle;
 import android.os.Looper;
 import android.util.Log;
+import android.view.View;
+import android.widget.HorizontalScrollView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -30,8 +33,12 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
+import com.google.android.material.chip.Chip;
+import com.google.android.material.chip.ChipGroup;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 public class MapActivity extends AppCompatActivity implements OnMapReadyCallback {
@@ -42,9 +49,11 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     LocationRequest locationRequest;
     LocationCallback locationCallback;
     MapService mapService;
-    MarkerService markerService;
     ViewPager viewPager;
     MapViewPagerAdapter mapViewPagerAdapter;
+    List<PuddleMarker> puddleList, filteredPuddleList;
+    HashSet<String> categories;
+    ChipGroup chipGroup;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,8 +68,12 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         viewPager.setPageMargin(15);
 
         mapService = new MapService();
-        markerService = new MarkerService();
+        puddleList = mapService.getPuddleList();
+        filteredPuddleList = puddleList;
+        categories = new HashSet<String>();
 
+        HorizontalScrollView map_filter_chips = findViewById(R.id.map_filter_chips);
+        chipGroup = map_filter_chips.findViewById(R.id.map_chip_group);
 
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
 
@@ -97,30 +110,45 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         }
         mMap = googleMap;
         mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
-
-
-
         mMap.setMyLocationEnabled(true);
 
-        List<PuddleMarker> puddleList = mapService.getPuddleList();
+        updatePuddles();
+        mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+            @Override
+            public boolean onMarkerClick(@NonNull Marker marker) {
+                viewPager.setCurrentItem(Integer.parseInt(marker.getSnippet()), true);
+                return true;
+            }
+        });
 
-        int position = 0;
-        for (PuddleMarker puddle: puddleList){
-            puddle.setPosition(position++);
-            markerService.addMarker(puddle, mMap);
-        }
-        mapViewPagerAdapter = new MapViewPagerAdapter(getSupportFragmentManager(), puddleList);
+        chipGroup.setOnCheckedStateChangeListener(new ChipGroup.OnCheckedStateChangeListener() {
+            @Override
+            public void onCheckedChanged(@NonNull ChipGroup group, @NonNull List<Integer> checkedIds) {
+                categories.clear();
+                for (Integer i: checkedIds){
+                    categories.add(MarkerService.chipIdToCategory.get(i));
+                }
+                if (mMap != null) {
+                    mMap.clear();
+                }
+                filteredPuddleList = puddleList.stream().filter(x->categories.contains(x.getCategory())).collect(Collectors.toList());
+                updatePuddles();
+            }
+        });
+    }
+
+    private void updatePuddles(){
+        mapViewPagerAdapter = new MapViewPagerAdapter(getSupportFragmentManager(), filteredPuddleList);
         viewPager.setAdapter(mapViewPagerAdapter);
-
         viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-                
+
             }
 
             @Override
             public void onPageSelected(int position) {
-                mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(puddleList.get(position).getLatLng(), 17));
+                mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(filteredPuddleList.get(position).getLatLng(), 17));
             }
 
             @Override
@@ -129,14 +157,13 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             }
 
         });
-
-        mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
-            @Override
-            public boolean onMarkerClick(@NonNull Marker marker) {
-                viewPager.setCurrentItem(Integer.parseInt(marker.getSnippet()), true);
-                return true;
-            }
-        });
+        int position = 0;
+        for (PuddleMarker puddle: filteredPuddleList){
+            puddle.setPosition(position++);
+            MarkerService.addMarker(puddle, mMap);
+            categories.add(puddle.getCategory());
+        }
+        mapViewPagerAdapter.notifyDataSetChanged();
     }
 
     @Override

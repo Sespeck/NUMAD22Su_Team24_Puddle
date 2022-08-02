@@ -11,13 +11,15 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
+import androidx.fragment.app.FragmentStatePagerAdapter;
+import androidx.viewpager2.adapter.FragmentStateAdapter;
 
 import com.cs5520.assignments.numad22su_team24_puddle.model.PuddleMarker;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class MapViewPagerAdapter extends FragmentPagerAdapter {
+public class MapViewPagerAdapter extends FragmentStatePagerAdapter {
     List<PuddleMarker> list ;
     List<MapFragment> fragmentList = new ArrayList<>();
 
@@ -40,7 +42,6 @@ public class MapViewPagerAdapter extends FragmentPagerAdapter {
     public int getCount() {
         return list.size();
     }
-
 
 }
 

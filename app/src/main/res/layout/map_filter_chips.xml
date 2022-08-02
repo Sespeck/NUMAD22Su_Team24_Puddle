@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<HorizontalScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:scrollbars="none"
+    android:layout_height="wrap_content">
+
+    <com.google.android.material.chip.ChipGroup
+        android:id="@+id/map_chip_group"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:singleLine="true">
+        <com.google.android.material.chip.Chip
+            style="@style/Widget.MaterialComponents.Chip.Choice"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="4dp"
+            android:padding="12dp"
+            android:textAlignment="center"
+            app:chipIcon="@drawable/music_marker"
+            android:text="Music"
+            app:chipIconEnabled="true"
+            app:chipStartPadding="5dp"
+            app:chipEndPadding="5dp"
+            android:checked="true"/>
+<!--            android:clickable="true"-->
+<!--            android:onClick="filterMarkerByCategory"-->
+
+
+        <com.google.android.material.chip.Chip
+            style="@style/Widget.MaterialComponents.Chip.Choice"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="4dp"
+            android:padding="12dp"
+            android:textAlignment="center"
+            app:chipIcon="@drawable/sports_marker"
+            android:text="Sports"
+            android:checked="true"
+            app:chipIconEnabled="true"
+            app:chipStartPadding="5dp"
+            app:chipEndPadding="5dp"/>
+<!--            android:clickable="true"-->
+<!--            android:onClick="filterMarkerByCategory"-->
+
+
+        <com.google.android.material.chip.Chip
+            style="@style/Widget.MaterialComponents.Chip.Choice"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="4dp"
+            android:padding="12dp"
+            android:textAlignment="center"
+            android:text="Finance"
+            android:checked="true"
+            app:chipIcon="@drawable/finance_marker"
+            app:chipIconEnabled="true"
+            app:chipStartPadding="5dp"
+            app:chipEndPadding="5dp"/>
+<!--            android:clickable="true"-->
+<!--            android:onClick="filterMarkerByCategory"/>-->
+
+        <com.google.android.material.chip.Chip
+            style="@style/Widget.MaterialComponents.Chip.Choice"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="4dp"
+            android:padding="12dp"
+            android:textAlignment="center"
+            android:text="Book"
+            android:checked="true"
+            app:chipIcon="@drawable/book_marker"
+            app:chipIconEnabled="true"
+            app:chipStartPadding="5dp"
+            app:chipEndPadding="5dp"/>
+<!--            android:clickable="true"-->
+<!--            android:onClick="filterMarkerByCategory"/>-->
+
+        <com.google.android.material.chip.Chip
+            style="@style/Widget.MaterialComponents.Chip.Choice"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="4dp"
+            android:padding="12dp"
+            android:textAlignment="center"
+            android:text="Travel"
+            android:checked="true"
+            app:chipIcon="@drawable/travel_marker"
+            app:chipIconEnabled="true"
+            app:chipStartPadding="5dp"
+            app:chipEndPadding="5dp"/>
+<!--            android:clickable="true"-->
+<!--            android:onClick="filterMarkerByCategory"/>-->
+    </com.google.android.material.chip.ChipGroup>
+
+
+</HorizontalScrollView>
