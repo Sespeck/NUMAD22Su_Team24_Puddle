@@ -163,7 +163,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             MarkerService.addMarker(puddle, mMap);
             categories.add(puddle.getCategory());
         }
-        mapViewPagerAdapter.notifyDataSetChanged();
     }
 
     @Override
