@@ -4,17 +4,16 @@
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:background="@drawable/puddle_background"
     android:layout_margin="@dimen/margin_mid"
     android:padding="@dimen/padding_mid">
 
     <com.google.android.material.imageview.ShapeableImageView
         android:id="@+id/puddle_item_image"
-        android:layout_width="@dimen/puddle_background_size"
-        android:layout_height="@dimen/puddle_background_size"
+        android:layout_width="120dp"
+        android:layout_height="120dp"
         android:textSize="@dimen/font_size_mid"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/puddle_name_tv"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         android:src ="@drawable/puddle"/>
@@ -23,8 +22,9 @@
         android:id="@+id/puddle_name_tv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:textColor="#FFFFFF"
         android:textSize="@dimen/font_size_mid"
-        app:layout_constraintTop_toBottomOf="@id/puddle_item_image"
+        app:layout_constraintBottom_toBottomOf="@id/puddle_item_image"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_marginTop="@dimen/margin_mid"
