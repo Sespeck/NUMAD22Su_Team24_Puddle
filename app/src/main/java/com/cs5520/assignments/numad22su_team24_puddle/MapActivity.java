@@ -87,7 +87,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             @Override
             public void onLocationResult(LocationResult locationResult) {
                 super.onLocationResult(locationResult);
-                Log.d(TAG, "onLocationResult: " + locationResult.getLastLocation());
                 if (mMap != null) {
                     if (mapInitiated == true) {
                         Location location = locationResult.getLastLocation();
@@ -144,6 +143,14 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     }
 
     private void updatePuddles(){
+        int position = 0;
+        for (PuddleMarker puddle: filteredPuddleList){
+            Log.d(TAG, "filteredPuddleList: " + puddle.getName());
+            Log.d(TAG, "filteredPuddleList: position " + position);
+
+            puddle.setPosition(position++);
+            MarkerService.addMarker(puddle, mMap);
+        }
         mapViewPagerAdapter = new MapViewPagerAdapter(getSupportFragmentManager(), filteredPuddleList);
         viewPager.setAdapter(mapViewPagerAdapter);
         viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
@@ -163,12 +170,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             }
 
         });
-        int position = 0;
-        for (PuddleMarker puddle: filteredPuddleList){
-            puddle.setPosition(position++);
-            MarkerService.addMarker(puddle, mMap);
-            categories.add(puddle.getCategory());
-        }
+
     }
 
     @Override
