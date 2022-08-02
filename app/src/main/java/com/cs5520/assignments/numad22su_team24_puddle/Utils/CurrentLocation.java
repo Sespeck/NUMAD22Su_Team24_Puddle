@@ -50,6 +50,7 @@ public class CurrentLocation extends AppCompatActivity {
 
                 setResult(100, intent);
                 finish();
+
             }
             else{LocationPermissionActivity.requestPermission(this);}
 
