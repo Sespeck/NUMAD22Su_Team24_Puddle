@@ -25,7 +25,8 @@ public class MarkerService {
             case "TRAVEL": markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.travel_marker));
                 break;
         }
-        markerOptions.title(puddleMarker.getPuddleId());
+        markerOptions.title(puddleMarker.getName());
+        markerOptions.snippet(String.valueOf(puddleMarker.getPosition()));
         markerOptions.anchor((float) 0.5, (float) 0.5);
         mMap.addMarker(markerOptions);
 

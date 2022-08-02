@@ -19,7 +19,9 @@
 
         <activity
             android:name=".MapActivity"
-            android:exported="false" />
+            android:configChanges="screenSize|orientation"
+            android:exported="false"
+            />
         <activity
             android:name=".PuddleListActivity"
             android:exported="false"

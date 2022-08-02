@@ -29,6 +29,7 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 
 import java.util.List;
 
@@ -102,7 +103,10 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         mMap.setMyLocationEnabled(true);
 
         List<PuddleMarker> puddleList = mapService.getPuddleList();
+
+        int position = 0;
         for (PuddleMarker puddle: puddleList){
+            puddle.setPosition(position++);
             markerService.addMarker(puddle, mMap);
         }
         mapViewPagerAdapter = new MapViewPagerAdapter(getSupportFragmentManager(), puddleList);
@@ -126,13 +130,13 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
         });
 
-//        mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
-//            @Override
-//            public boolean onMarkerClick(@NonNull Marker marker) {
-//                viewPager.setCurrentItem(2, true);
-//                return true;
-//            }
-//        });
+        mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+            @Override
+            public boolean onMarkerClick(@NonNull Marker marker) {
+                viewPager.setCurrentItem(Integer.parseInt(marker.getSnippet()), true);
+                return true;
+            }
+        });
     }
 
     @Override
