@@ -6,14 +6,15 @@ public class PuddleMarker {
 
     private String name, puddleId, category;
     private LatLng latLng;
-    private int memberCount;
+    private int memberCount, position, background;
 
-    public PuddleMarker(String name, String puddleId, String category, LatLng latLng, int memberCount) {
+    public PuddleMarker(String name, String puddleId, String category, LatLng latLng, int memberCount, int background) {
         this.name = name;
         this.puddleId = puddleId;
         this.category = category;
         this.latLng = latLng;
         this.memberCount = memberCount;
+        this.background = background;
     }
 
     public String getName() {
@@ -34,5 +35,17 @@ public class PuddleMarker {
 
     public int getMemberCount() {
         return memberCount;
+    }
+
+    public int getPosition() {
+        return position;
+    }
+
+    public int getBackground() {
+        return background;
+    }
+
+    public void setPosition(int position) {
+        this.position = position;
     }
 }

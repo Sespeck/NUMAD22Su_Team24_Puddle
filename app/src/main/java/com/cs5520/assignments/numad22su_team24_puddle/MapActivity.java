@@ -2,25 +2,23 @@ package com.cs5520.assignments.numad22su_team24_puddle;
 
 
 import android.Manifest;
-import android.content.DialogInterface;
 import android.content.pm.PackageManager;
-import android.location.Geocoder;
 import android.location.Location;
 import android.os.Bundle;
 import android.os.Looper;
 import android.util.Log;
 import android.view.View;
+import android.widget.HorizontalScrollView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
 import androidx.viewpager.widget.ViewPager;
-import androidx.viewpager2.widget.ViewPager2;
 
-import com.cs5520.assignments.numad22su_team24_puddle.Model.PuddleMarker;
+import com.cs5520.assignments.numad22su_team24_puddle.Utils.LocationPermissionActivity;
+import com.cs5520.assignments.numad22su_team24_puddle.model.PuddleMarker;
 import com.cs5520.assignments.numad22su_team24_puddle.services.MapService;
 import com.cs5520.assignments.numad22su_team24_puddle.services.MarkerService;
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -33,38 +31,50 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
-import com.google.android.gms.maps.model.Circle;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
-import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.material.chip.Chip;
+import com.google.android.material.chip.ChipGroup;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
+import java.util.stream.Collectors;
 
 
 public class MapActivity extends AppCompatActivity implements OnMapReadyCallback {
     private static final String TAG = "MapActivity";
-    private static final int REQUEST_CODE_FINE_LOCATION = 2;
     private boolean mapInitiated = true;
     private GoogleMap mMap;
     FusedLocationProviderClient fusedLocationProviderClient;
     LocationRequest locationRequest;
     LocationCallback locationCallback;
     MapService mapService;
-    MarkerService markerService;
     ViewPager viewPager;
     MapViewPagerAdapter mapViewPagerAdapter;
+    List<PuddleMarker> puddleList, filteredPuddleList;
+    HashSet<String> categories;
+    ChipGroup chipGroup;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_map);
+
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
         viewPager = findViewById(R.id.viewPager);
         viewPager.setPageMargin(15);
+
+        mapService = new MapService();
+        puddleList = mapService.getPuddleList();
+        filteredPuddleList = puddleList;
+        categories = new HashSet<String>();
+
+        HorizontalScrollView map_filter_chips = findViewById(R.id.map_filter_chips);
+        chipGroup = map_filter_chips.findViewById(R.id.map_chip_group);
 
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
 
@@ -79,7 +89,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                 super.onLocationResult(locationResult);
                 Log.d(TAG, "onLocationResult: " + locationResult.getLastLocation());
                 if (mMap != null) {
-                    if (mapInitiated == true){
+                    if (mapInitiated == true) {
                         Location location = locationResult.getLastLocation();
                         LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
                         mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 17));
@@ -90,37 +100,61 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             }
         };
 
-        mapService = new MapService();
-        markerService = new MarkerService();
     }
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
-
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) {
+            return;
+        }
         mMap = googleMap;
         mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            MapService mapService = new MapService();
-            mapService.requestPermission(this, REQUEST_CODE_FINE_LOCATION);
-        }
         mMap.setMyLocationEnabled(true);
 
-        List<PuddleMarker> puddleList = mapService.getPuddleList();
-        for (PuddleMarker puddle: puddleList){
-            markerService.addMarker(puddle, mMap);
-        }
-        mapViewPagerAdapter = new MapViewPagerAdapter(getSupportFragmentManager(), puddleList);
-        viewPager.setAdapter(mapViewPagerAdapter);
+        updatePuddles();
+        mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+            @Override
+            public boolean onMarkerClick(@NonNull Marker marker) {
+                viewPager.setCurrentItem(Integer.parseInt(marker.getSnippet()), true);
+                return true;
+            }
+        });
 
+        chipGroup.setOnCheckedStateChangeListener(new ChipGroup.OnCheckedStateChangeListener() {
+            @Override
+            public void onCheckedChanged(@NonNull ChipGroup group, @NonNull List<Integer> checkedIds) {
+                categories.clear();
+
+                for (Integer id: checkedIds){
+                    Chip chip = chipGroup.findViewById(id);
+                    String cat = chip.getText().toString().toUpperCase();
+                    Log.d(TAG, "chip cat: " + cat);
+                    categories.add(cat);
+                }
+
+                if (mMap != null) {
+                    mMap.clear();
+                }
+                filteredPuddleList = puddleList.stream().filter(x->categories.contains(x.getCategory())).collect(Collectors.toList());
+                updatePuddles();
+            }
+        });
+    }
+
+    private void updatePuddles(){
+        mapViewPagerAdapter = new MapViewPagerAdapter(getSupportFragmentManager(), filteredPuddleList);
+        viewPager.setAdapter(mapViewPagerAdapter);
         viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-                
+
             }
 
             @Override
             public void onPageSelected(int position) {
-                mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(puddleList.get(position).getLatLng(), 17));
+                mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(filteredPuddleList.get(position).getLatLng(), 17));
             }
 
             @Override
@@ -129,25 +163,24 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             }
 
         });
-
-//        mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
-//            @Override
-//            public boolean onMarkerClick(@NonNull Marker marker) {
-//                viewPager.setCurrentItem(2, true);
-//                return true;
-//            }
-//        });
+        int position = 0;
+        for (PuddleMarker puddle: filteredPuddleList){
+            puddle.setPosition(position++);
+            MarkerService.addMarker(puddle, mMap);
+            categories.add(puddle.getCategory());
+        }
     }
-
 
     @Override
     protected void onStart() {
         super.onStart();
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-            startLocationUpdates();
-        } else {
-            MapService locationService = new MapService();
-            locationService.requestPermission(this, REQUEST_CODE_FINE_LOCATION);
+        if(LocationPermissionActivity.checkMapServices(this)){
+            if(LocationPermissionActivity.locationPermissionGranted){
+                startLocationUpdates();
+            }
+            else{
+                LocationPermissionActivity.requestPermission(this);
+            }
         }
     }
 
@@ -160,30 +193,17 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
 
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode == REQUEST_CODE_FINE_LOCATION) {
+        if (requestCode == LocationPermissionActivity.REQUEST_CODE_FINE_LOCATION) {
 
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                LocationPermissionActivity.locationPermissionGranted = true;
                 Toast.makeText(this, "Location access successfully granted", Toast.LENGTH_SHORT).show();
-            } else {
-                //Permission NOT granted
-                if (!ActivityCompat.shouldShowRequestPermissionRationale(MapActivity.this, Manifest.permission.ACCESS_FINE_LOCATION)) {
-                    new AlertDialog.Builder(MapActivity.this)
-                            .setMessage("Please enable location access in the settings")
-                            .setPositiveButton("Go to settings", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialogInterface, int i) {
-                                    MapService locationService = null;
-                                    locationService.locationSetting(MapActivity.this);
-                                }
-                            })
-                            .setNegativeButton("Cancel", null)
-                            .setCancelable(false)
-                            .show();
-
-                } else {
-                    Toast.makeText(this, "Location access is not granted", Toast.LENGTH_SHORT).show();
-                }
+                startLocationUpdates();
             }
+            else {
+                Toast.makeText(this, "Location access is not granted", Toast.LENGTH_SHORT).show();
+            }
+
         }
     }
     private void startLocationUpdates() {
@@ -197,6 +217,11 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         fusedLocationProviderClient.removeLocationUpdates(locationCallback);
     }
 
+
+    @Override
+    public void onBackPressed() {
+        finish();
+    }
 }
 
 

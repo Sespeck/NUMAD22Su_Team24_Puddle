@@ -24,12 +24,27 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
+
         <ImageView
             android:id="@+id/map_puddle_bg"
             android:layout_width="match_parent"
             android:layout_height="150dp"
-            android:scaleType="centerCrop"
-            tools:srcCompat="@drawable/pub_night" />
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginEnd="0dp"
+            android:layout_marginBottom="0dp"
+            android:background="@color/purple_200"
+            android:scaleType="centerCrop" />
+
+        <ImageView
+            android:id="@+id/map_open_puddle_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentEnd="true"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="10dp"
+            app:srcCompat="@drawable/open_puddle" />
 
         <ImageView
             android:id="@+id/map_member_icon"
@@ -38,8 +53,8 @@
             android:layout_alignBottom="@+id/map_puddle_bg"
             android:layout_marginStart="16dp"
             android:layout_marginBottom="12dp"
-            android:tint="@color/purple_200"
-            app:srcCompat="@drawable/member_icon" />
+            app:srcCompat="@drawable/member_icon"
+            app:tint="@color/white" />
 
         <TextView
             android:id="@+id/map_member_count"
@@ -50,7 +65,7 @@
             android:layout_marginStart="25dp"
             android:layout_marginBottom="12dp"
             android:text="36 Members"
-            android:textColor="#673AB7"
+            android:textColor="@color/white"
             android:textSize="@dimen/font_size_mid"
             android:textStyle="bold" />
 
@@ -63,7 +78,7 @@
             android:layout_marginRight="16dp"
             android:layout_marginBottom="36dp"
             android:text="Friday Pub Night"
-            android:textColor="#673AB7"
+            android:textColor="@color/white"
             android:textSize="@dimen/font_size_large"
             android:textStyle="bold" />
 
