@@ -3,6 +3,7 @@ package com.cs5520.assignments.numad22su_team24_puddle.chatroom_fragments;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,11 +17,13 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.cs5520.assignments.numad22su_team24_puddle.R;
+import com.cs5520.assignments.numad22su_team24_puddle.Utils.FirebaseDB;
 import com.cs5520.assignments.numad22su_team24_puddle.chatroom_fragments.adapters.ChatroomAdapter;
 import com.cs5520.assignments.numad22su_team24_puddle.chatroom_fragments.adapters.Event;
 import com.cs5520.assignments.numad22su_team24_puddle.chatroom_fragments.adapters.EventsAdapter;
 import com.cs5520.assignments.numad22su_team24_puddle.chatroom_fragments.adapters.Message;
 
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,6 +33,7 @@ public class ChatroomFragment extends Fragment {
     private EditText chatEditText;
     private Handler handler = new Handler();
     private Fragment currentFragment = this;
+    private ChatroomAdapter adapter;
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
@@ -41,13 +45,21 @@ public class ChatroomFragment extends Fragment {
         recyclerView.hasFixedSize();
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         initializeRecyclerView();
+        createNewMessageListener();
         return view;
     }
 
-    private void createNewMessage(){
+    private void createNewMessageListener(){
         sendButton.setOnClickListener(v -> {
+            if (chatEditText.getText() != null){
+                Log.d("iso", Instant.now().toString());
+               adapter.addNewMessage(new Message("Chrisxd", chatEditText.getText().toString(),
+                       Instant.now().toString(), BitmapFactory.decodeResource(currentFragment.getResources(),
+                       R.drawable.puddle)));
+               recyclerView.scrollToPosition(adapter.getItemCount()-1);
+               chatEditText.getText().clear();
+            }
         });
-
     }
 
     private void initializeRecyclerView(){
@@ -59,7 +71,7 @@ public class ChatroomFragment extends Fragment {
                         BitmapFactory.decodeResource(currentFragment.getResources(),
                                 R.drawable.puddle)));
                 handler.post(()->{
-                    ChatroomAdapter adapter = new ChatroomAdapter(chatroomList);
+                    adapter = new ChatroomAdapter(chatroomList);
                     recyclerView.setAdapter(adapter);
                 });
             }

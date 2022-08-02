@@ -17,7 +17,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
-import com.cs5520.assignments.numad22su_team24_puddle.model.PuddleMarker;
+import com.cs5520.assignments.numad22su_team24_puddle.Model.PuddleMarker;
 
 public class MapFragment extends Fragment{
     int memberCount;

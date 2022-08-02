@@ -8,11 +8,13 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/chatroom_recycler_view"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="0sp"
+        app:layout_constraintBottom_toTopOf="@+id/view2"
         app:layout_constraintTop_toTopOf="parent" />
 
 
     <View
+        android:background="@color/quantum_grey200"
         android:id="@+id/view1"
         android:layout_width="match_parent"
         android:layout_height="2dp"
@@ -21,6 +23,7 @@
 
 
     <View
+        android:background="@color/quantum_grey200"
         android:id="@+id/view2"
         android:layout_width="match_parent"
         android:layout_height="2dp"

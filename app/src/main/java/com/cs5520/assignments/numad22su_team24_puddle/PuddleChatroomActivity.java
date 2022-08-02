@@ -1,11 +1,11 @@
 package com.cs5520.assignments.numad22su_team24_puddle;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
@@ -22,27 +22,27 @@ public class PuddleChatroomActivity extends AppCompatActivity {
     private TabLayout tabLayout;
     private TabLayout.Tab currentTab;
     private FloatingActionButton fab;
+    private Toolbar toolbar;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.puddle_chatroom_activity);
         tabLayout = findViewById(R.id.tabLayout);
+        toolbar = findViewById(R.id.toolbar);
+        toolbar.setNavigationIcon(R.drawable.ic_baseline_arrow_back_24);
+        toolbar.setNavigationOnClickListener(v -> onBackPressed());
         initializeOnTabSelectedListener();
-        BottomFilterModal modal = new BottomFilterModal();
-        modal.show(getSupportFragmentManager(), "modal");
         this.fab = findViewById(R.id.fab);
+        // Opens the full screen add new event modal
         fab.setOnClickListener(v -> {
             currentTab = tabLayout.getTabAt(3);
             FragmentManager fragmentManager = getSupportFragmentManager();
-            AddNewEventDialog fragment = new AddNewEventDialog();
+            AddNewEventDialog fragment = new AddNewEventDialog(this);
             FragmentTransaction transaction = fragmentManager.beginTransaction();
             transaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
             transaction.add(android.R.id.content, fragment).addToBackStack(null).commit();
         });
-
-        // Need to dynamically pull the puddle BGImage from DB
-        // Need to inflate the recycler view with msgs
     }
 
     private void completeFragmentNavigation(TabLayout.Tab tab) {
@@ -84,7 +84,7 @@ public class PuddleChatroomActivity extends AppCompatActivity {
 
     private void changeVisibleFragment(int id, Fragment fragment, String fragmentName){
         getSupportFragmentManager().beginTransaction().replace(R.id.chatroom_fragment_container,
-                fragment, fragmentName).addToBackStack(fragmentName).commit();
+                fragment, fragmentName).commit();
 
     }
 
@@ -93,9 +93,7 @@ public class PuddleChatroomActivity extends AppCompatActivity {
         super.onStart();
         if (currentTab == null){
             currentTab = tabLayout.getTabAt(0);
-            completeFragmentNavigation(currentTab);
-        }else{
-            completeFragmentNavigation(currentTab);
         }
+        completeFragmentNavigation(currentTab);
     }
 }

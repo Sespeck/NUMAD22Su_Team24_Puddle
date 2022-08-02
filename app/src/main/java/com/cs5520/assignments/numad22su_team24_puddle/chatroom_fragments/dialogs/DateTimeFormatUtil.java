@@ -1,6 +1,5 @@
 package com.cs5520.assignments.numad22su_team24_puddle.chatroom_fragments.dialogs;
 
-import android.util.Log;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
@@ -37,7 +36,6 @@ public class DateTimeFormatUtil {
         String[] currentDate = date.split("-");
         LocalDate formattedDate = LocalDate.of(Integer.parseInt(currentDate[0]),
                 Integer.parseInt(currentDate[1]), Integer.parseInt(currentDate[2]));
-        Log.d("here",formattedDate.toString());
         DayOfWeek dayOfWeek = DayOfWeek.from(formattedDate);
         return getDayName(dayOfWeek.getValue())+", " +
                 getMonthName(Integer.parseInt(currentDate[1]))+" "+currentDate[2]+", "+currentDate[0];

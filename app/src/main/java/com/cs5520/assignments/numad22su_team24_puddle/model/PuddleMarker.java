@@ -1,4 +1,4 @@
-package com.cs5520.assignments.numad22su_team24_puddle.model;
+package com.cs5520.assignments.numad22su_team24_puddle.Model;
 
 import com.google.android.gms.maps.model.LatLng;
 

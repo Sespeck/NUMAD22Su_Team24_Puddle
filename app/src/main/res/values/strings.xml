@@ -40,5 +40,7 @@
     <string name="users">Users</string>
     <string name="chats">chats</string>
     <string name="user_name">username</string>
+    <string name="_0">0</string>
+    <string name="save">Save</string>
 
 </resources>

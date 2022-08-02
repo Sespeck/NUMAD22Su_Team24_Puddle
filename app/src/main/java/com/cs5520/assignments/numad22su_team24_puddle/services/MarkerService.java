@@ -4,8 +4,8 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.cs5520.assignments.numad22su_team24_puddle.Category;
+import com.cs5520.assignments.numad22su_team24_puddle.Model.PuddleMarker;
 import com.cs5520.assignments.numad22su_team24_puddle.R;
-import com.cs5520.assignments.numad22su_team24_puddle.model.PuddleMarker;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.Marker;

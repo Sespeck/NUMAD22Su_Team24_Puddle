@@ -4,16 +4,24 @@ import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.icu.util.Calendar;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.DatePicker;
 import android.widget.TextView;
 
 import androidx.fragment.app.DialogFragment;
 
+import com.cs5520.assignments.numad22su_team24_puddle.R;
+
 public class EventCalendarPickerDialog extends DialogFragment
         implements DatePickerDialog.OnDateSetListener {
     private TextView view;
+    private AddNewEventDialog dialog;
+
+    public EventCalendarPickerDialog(View view, AddNewEventDialog dialog){
+        this.view = (TextView) view;
+        this.dialog = dialog;
+    }
+
 
     public EventCalendarPickerDialog(View view){
         this.view = (TextView) view;
@@ -32,7 +40,12 @@ public class EventCalendarPickerDialog extends DialogFragment
     }
 
     public void onDateSet(DatePicker view, int year, int month, int day) {
-        String date = year + "-"+(month+1)+"-"+day;
+        String date = year + "-" + (month + 1) + "-" + day;
         this.view.setText(DateTimeFormatUtil.formatEventDate(date));
+        if (view.getId() == R.id.starting_date_text_view) {
+            dialog.acceptPickerStartingDate(date);
+        } else{
+            dialog.acceptPickerEndingDate(date);
+        }
     }
 }

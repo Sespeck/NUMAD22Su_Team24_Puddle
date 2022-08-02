@@ -52,7 +52,7 @@ public class BottomFilterModal extends BottomSheetDialogFragment {
     }
 
 
-    public class DatePickerCalendarFragment extends DialogFragment
+    public static class DatePickerCalendarFragment extends DialogFragment
             implements DatePickerDialog.OnDateSetListener {
         private TextView view;
 
@@ -85,6 +85,7 @@ public class BottomFilterModal extends BottomSheetDialogFragment {
         interests.add("Music");
         interests.add("Travel");
         interests.add("Business");
+        interests.add("Education");
         fullAdapter = new ArrayAdapter(getActivity(), R.layout.filter_spinner_item, interests);
         fullAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner.setAdapter(fullAdapter);
