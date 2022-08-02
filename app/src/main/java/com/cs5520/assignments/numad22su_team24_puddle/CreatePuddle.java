@@ -15,7 +15,9 @@ import android.webkit.MimeTypeMap;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.cs5520.assignments.numad22su_team24_puddle.Utils.FirebaseDB;
@@ -41,8 +43,9 @@ public class CreatePuddle extends AppCompatActivity {
     SwitchMaterial isPrivate;
     Slider range;
     Button createPuddle;
-    LinearLayout addBanner;
+    RelativeLayout addBanner;
     AutoCompleteTextView menu;
+    ImageView selectedImg;
 
     Uri imgUri;
     String bannerUrl = "";
@@ -53,6 +56,7 @@ public class CreatePuddle extends AppCompatActivity {
                 if (result.getResultCode() == AppCompatActivity.RESULT_OK) {
                     Intent data = result.getData();
                     imgUri = data.getData();
+                    selectedImg.setImageURI(imgUri);
                     uploadImageToStore(imgUri);
                 }
             }
@@ -71,6 +75,7 @@ public class CreatePuddle extends AppCompatActivity {
         createPuddle = findViewById(R.id.create);
         addBanner = findViewById(R.id.add_banner);
         menu = findViewById(R.id.category_menu);
+        selectedImg = findViewById(R.id.selected_pud_img);
 
         String[] options = {"Select", "Music", "Sports", "Education"};
         ArrayAdapter arrayAdapter = new ArrayAdapter(this, R.layout.category_options, options);
@@ -146,6 +151,6 @@ public class CreatePuddle extends AppCompatActivity {
         puddleMap.put("range", String.valueOf(range.getValue()));
         puddleMap.put("category", menu.getText().toString());
 
-        ref.push().setValue(puddleMap);
+        ref.child(ref.push().getKey()).setValue(puddleMap);
     }
 }
