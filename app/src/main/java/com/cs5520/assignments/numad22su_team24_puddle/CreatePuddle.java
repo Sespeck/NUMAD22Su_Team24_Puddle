@@ -142,7 +142,7 @@ public class CreatePuddle extends AppCompatActivity {
 
     public void sendPuddleToFirebase(){
         DatabaseReference ref = FirebaseDB.getDataReference("Puddles");
-
+        String pud_key = ref.push().getKey();
         HashMap<String, Object> puddleMap = new HashMap<>();
         puddleMap.put("name", puddleName.getText().toString());
         puddleMap.put("bio", puddleBio.getText().toString());
@@ -151,6 +151,11 @@ public class CreatePuddle extends AppCompatActivity {
         puddleMap.put("range", String.valueOf(range.getValue()));
         puddleMap.put("category", menu.getText().toString());
 
-        ref.child(ref.push().getKey()).setValue(puddleMap);
+        HashMap<String, String> members = new HashMap<>();
+        members.put("profile_url", "https://firebasestorage.googleapis.com/v0/b/android-chat-85561.appspot.com/o/1659461577945.jpg?alt=media&token=a6433924-64d3-4b1e-9e3f-b52140976eb3");
+        members.put("username", "HarshitG24");
+
+        ref.child(pud_key).setValue(puddleMap);
+        ref.child(pud_key).child("members").push().setValue(members);
     }
 }
