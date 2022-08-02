@@ -161,7 +161,8 @@ public class PuddleListActivity extends AppCompatActivity implements View.OnClic
         } else if (view.equals(nearMeBtn) || view.equals(myPuddlesBtn)) {
             updateRecyclerView(view);
         } else if (view.equals(createIcon)) {
-
+            Intent newPud = new Intent(PuddleListActivity.this, CreatePuddle.class);
+            startActivity(newPud);
         } else if (view.equals(navigationIcon)) {
             Intent intent = new Intent(this, MapActivity.class);
             startActivity(intent);

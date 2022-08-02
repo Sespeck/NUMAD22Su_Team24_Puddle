@@ -3,11 +3,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.cs5520.assignments.numad22su_team24_puddle">
 
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <uses-permission android:name="android.permission.INTERNET" />
-
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
@@ -18,19 +13,18 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.NUMAD22Su_Team24_Puddle"
         tools:targetApi="31">
-        <meta-data
-            android:name="com.google.android.gms.version"
-            android:value="@integer/google_play_services_version" />
-        <meta-data
-            android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyDTbzxCT5jOJFnvWSRrQzlMJi97daSIDwg" />
+        <activity
+            android:name=".CreatePuddle"
+            android:exported="false" />
+
         <activity
             android:name=".MapActivity"
             android:exported="false" />
         <activity
             android:name=".PuddleListActivity"
             android:exported="false"
-            android:theme="@style/Theme.NUMAD22Su_Team24_Puddle.NoActionBar"/>
+            android:theme="@style/Theme.NUMAD22Su_Team24_Puddle.NoActionBar" />
+
         <activity
             android:name=".SignupActivity"
             android:exported="false" />
@@ -43,12 +37,23 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".PuddleChatroomActivity"
-            android:exported="true"
-            />
+        <activity
+            android:name=".PuddleChatroomActivity"
+            android:exported="true" />
         <activity
             android:name=".MainActivity"
             android:exported="false" />
+        <meta-data
+            android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version" />
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyDTbzxCT5jOJFnvWSRrQzlMJi97daSIDwg" />
     </application>
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.INTERNET" />
+
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 
 </manifest>
