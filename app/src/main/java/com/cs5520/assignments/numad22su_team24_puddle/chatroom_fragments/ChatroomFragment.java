@@ -18,13 +18,19 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.cs5520.assignments.numad22su_team24_puddle.R;
 import com.cs5520.assignments.numad22su_team24_puddle.Utils.FirebaseDB;
+import com.cs5520.assignments.numad22su_team24_puddle.Utils.Util;
 import com.cs5520.assignments.numad22su_team24_puddle.chatroom_fragments.adapters.ChatroomAdapter;
 import com.cs5520.assignments.numad22su_team24_puddle.chatroom_fragments.adapters.Event;
 import com.cs5520.assignments.numad22su_team24_puddle.chatroom_fragments.adapters.EventsAdapter;
 import com.cs5520.assignments.numad22su_team24_puddle.chatroom_fragments.adapters.Message;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.ValueEventListener;
 
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class ChatroomFragment extends Fragment {
@@ -34,16 +40,26 @@ public class ChatroomFragment extends Fragment {
     private Handler handler = new Handler();
     private Fragment currentFragment = this;
     private ChatroomAdapter adapter;
+    private String puddleID;
+    private DatabaseReference messageRef;
+
+    public ChatroomFragment(String puddleID){
+        this.puddleID = puddleID;
+    }
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
+        Log.d("here",Instant.now().toString());
         View view = inflater.inflate(R.layout.chatroom_fragment,container,false);
         this.recyclerView = view.findViewById(R.id.chatroom_recycler_view);
         this.sendButton = view.findViewById(R.id.chat_room_send_button);
         this.chatEditText = view.findViewById(R.id.chat_room_edit_text);
+        this.messageRef =  FirebaseDB.getDataReference("Messages");
         recyclerView.hasFixedSize();
-        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
+        recyclerView.setLayoutManager(layoutManager);
         initializeRecyclerView();
         createNewMessageListener();
         return view;
@@ -52,12 +68,18 @@ public class ChatroomFragment extends Fragment {
     private void createNewMessageListener(){
         sendButton.setOnClickListener(v -> {
             if (chatEditText.getText() != null){
-                Log.d("iso", Instant.now().toString());
-               adapter.addNewMessage(new Message("Chrisxd", chatEditText.getText().toString(),
-                       Instant.now().toString(), BitmapFactory.decodeResource(currentFragment.getResources(),
-                       R.drawable.puddle)));
+                String textResult = chatEditText.getText().toString();
+                HashMap<String, Object> newMessage = new HashMap<>();
+                newMessage.put("timestamp", Instant.now().toString());
+                newMessage.put("username", "Chris");
+                newMessage.put("body",textResult);
+                newMessage.put("profile_url","https://firebasestorage.googleapis.com/v0/b/android-chat-85561.appspot.com/o/1659466819026.png?alt=media&token=d17c60ee-9b7e-41ee-a48c-32440f4f493c");
+                // Add a new message based off current time, the edittext body, the current user's
+                // Pfp and name
+               adapter.addNewMessage(new Message("Chris",textResult,Instant.now().toString(),"https://firebasestorage.googleapis.com/v0/b/android-chat-85561.appspot.com/o/1659466819026.png?alt=media&token=d17c60ee-9b7e-41ee-a48c-32440f4f493c"));
                recyclerView.scrollToPosition(adapter.getItemCount()-1);
                chatEditText.getText().clear();
+               messageRef.child(puddleID).push().setValue(newMessage);
             }
         });
     }
@@ -66,13 +88,30 @@ public class ChatroomFragment extends Fragment {
         class adapterRunnable implements Runnable{
             @Override
             public void run() {
-                List<Message> chatroomList = new ArrayList<>();
-                chatroomList.add(new Message("Chris","Yesterday 8:21", "text",
-                        BitmapFactory.decodeResource(currentFragment.getResources(),
-                                R.drawable.puddle)));
-                handler.post(()->{
-                    adapter = new ChatroomAdapter(chatroomList);
-                    recyclerView.setAdapter(adapter);
+               messageRef.child(puddleID).addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        List<Message> chatroomList = new ArrayList<>();
+                        for (DataSnapshot snap: snapshot.getChildren()){
+                            String username = snap.child("username").getValue(String.class);
+                            String body = snap.child("body").getValue(String.class);
+                            String profile_url = snap.child("profile_url").getValue(String.class);
+                            String timestamp = Util.convertTocurrentDateTime(snap.child("timestamp").getValue(String.class));
+                            Log.d("here",timestamp);
+                            chatroomList.add(new Message(username, body, timestamp, profile_url));
+
+                        }
+                        handler.post(()->{
+                            adapter = new ChatroomAdapter(chatroomList,getContext());
+                            recyclerView.setAdapter(adapter);
+                            recyclerView.scrollToPosition(adapter.getItemCount()-1);
+                        });
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+
+                    }
                 });
             }
         }

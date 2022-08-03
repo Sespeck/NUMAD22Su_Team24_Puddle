@@ -15,6 +15,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.webkit.MimeTypeMap;
 import android.widget.Button;
@@ -67,8 +68,8 @@ public class PuddleListActivity extends AppCompatActivity implements View.OnClic
                 if (result.getResultCode() == AppCompatActivity.RESULT_OK) {
                     Intent data = result.getData();
                     imageUri = data.getData();
+                    Log.d("here",imageUri.toString());
                     profileIcon.setImageURI(imageUri);
-
                     uploadToFirebase(imageUri);
                 }
             }

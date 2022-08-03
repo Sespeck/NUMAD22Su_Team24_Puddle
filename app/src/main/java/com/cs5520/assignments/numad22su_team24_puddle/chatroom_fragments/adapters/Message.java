@@ -1,30 +1,28 @@
 package com.cs5520.assignments.numad22su_team24_puddle.chatroom_fragments.adapters;
 
-import android.graphics.Bitmap;
-
 public class Message {
-    String text;
-    String datetime;
+    String body;
+    String timestamp;
     String username;
-    Bitmap profilePicture;
+    String profilePicture;
 
-    public Message(String username, String text, String datetime, Bitmap profilePicture){
-        this.text = text;
-        this.datetime = datetime;
+    public Message(String username, String text, String datetime, String profilePicture){
+        this.body = text;
+        this.timestamp = datetime;
         this.username = username;
         this.profilePicture = profilePicture;
     }
 
-    public String getDatetime() {
-        return datetime;
+    public String getTimestamp() {
+        return timestamp;
     }
 
-    public Bitmap getProfilePicture() {
+    public String getProfilePicture() {
         return profilePicture;
     }
 
-    public String getText() {
-        return text;
+    public String getBody() {
+        return body;
     }
 
     public String getUsername() {

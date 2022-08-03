@@ -49,7 +49,7 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.EventViewH
         holder.imageView.setColorFilter(R.color.black);
         holder.name.setText(event.getName());
         holder.date.setText(event.getDatetime());
-        holder.attendanceCounter.setText(String.valueOf(event.getAttendanceCount()));
+        holder.attendanceCounter.setText(String.valueOf(0));
     }
 
     @Override

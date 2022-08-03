@@ -12,6 +12,9 @@ import android.view.Window;
 import android.webkit.MimeTypeMap;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.activity.result.ActivityResultLauncher;
@@ -21,9 +24,11 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.DialogFragment;
 
+import com.bumptech.glide.Glide;
 import com.cs5520.assignments.numad22su_team24_puddle.R;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
@@ -34,12 +39,14 @@ public class AddNewEventDialog extends DialogFragment {
     private Button exitButton;
     private AppCompatActivity parent;
     private Toolbar toolbar;
+    private RelativeLayout upload;
     private String startingTime;
     private String endingTime;
     private String startingDate;
     private String endingDate;
-    private EditText title;
+    private TextInputLayout title;
     private Uri imageUri;
+    private ImageView banner;
     private StorageReference storeRef;
     private DatabaseReference imgRef;
 
@@ -52,7 +59,7 @@ public class AddNewEventDialog extends DialogFragment {
                 if (result.getResultCode() == AppCompatActivity.RESULT_OK) {
                     Intent data = result.getData();
                     imageUri = data.getData();
-                    uploadToFirebase(imageUri);
+                    Glide.with(getContext()).load(imageUri).into(banner);
                 }
             }
     );
@@ -68,9 +75,11 @@ public class AddNewEventDialog extends DialogFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.add_event_dialog, container, false);
+        upload = view.findViewById(R.id.add_banner);
         exitButton = view.findViewById(R.id.add_event_dialog_exit_button);
         title = view.findViewById(R.id.add_title_edit_text);
         toolbar = view.findViewById(R.id.add_event_toolbar);
+        banner = view.findViewById(R.id.selected_pud_img);
         parent.setSupportActionBar(toolbar);
         toolbar.setNavigationIcon(R.drawable.ic_baseline_arrow_back_24);
         toolbar.setTitle("Add New Event");
@@ -79,6 +88,12 @@ public class AddNewEventDialog extends DialogFragment {
         });
         initializeAllTextViewOnClicks(view);
         exitButton.setOnClickListener(v -> dismiss());
+        upload.setOnClickListener(v -> {
+            Intent gallery = new Intent();
+            gallery.setAction(Intent.ACTION_GET_CONTENT);
+            gallery.setType("image/*");
+            startActivityForResult.launch(gallery);
+        });
         view.findViewById(R.id.add_event_save_button).setOnClickListener(v->{
             Bundle result = new Bundle();
             getParentFragmentManager().setFragmentResult("event_creation_result", result);
@@ -89,17 +104,12 @@ public class AddNewEventDialog extends DialogFragment {
 
     public void uploadToFirebase(Uri uri){
         StorageReference ref = storeRef.child(System.currentTimeMillis() + "." + getFileExtension(uri));
-        ref.putFile(uri).addOnSuccessListener(taskSnapshot -> ref.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-            @Override
-            public void onSuccess(Uri uri1) {
-                String imgUrl = uri1.toString();
-                imgRef.setValue(imgUrl);
-            }
-        })).addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
-            @Override
-            public void onProgress(@NonNull UploadTask.TaskSnapshot snapshot) {
+        ref.putFile(uri).addOnSuccessListener(taskSnapshot
+                -> ref.getDownloadUrl().addOnSuccessListener(uri1 -> {
+            String imgUrl = uri1.toString();
+            imgRef.setValue(imgUrl);
+        })).addOnProgressListener(snapshot -> {
 
-            }
         }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
