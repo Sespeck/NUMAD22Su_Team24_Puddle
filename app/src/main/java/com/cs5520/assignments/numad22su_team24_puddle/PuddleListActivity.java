@@ -15,6 +15,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.webkit.MimeTypeMap;
 import android.widget.Button;
@@ -23,6 +24,7 @@ import android.widget.Toast;
 
 import com.cs5520.assignments.numad22su_team24_puddle.Adapter.MyPuddlesAdapter;
 import com.cs5520.assignments.numad22su_team24_puddle.Adapter.PuddleListAdapter;
+import com.cs5520.assignments.numad22su_team24_puddle.Model.User;
 import com.cs5520.assignments.numad22su_team24_puddle.Utils.FirebaseDB;
 import com.cs5520.assignments.numad22su_team24_puddle.Utils.LocationPermissionActivity;
 import com.google.android.material.imageview.ShapeableImageView;
@@ -131,9 +133,11 @@ public class PuddleListActivity extends AppCompatActivity implements View.OnClic
         userRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                for (DataSnapshot snap : snapshot.getChildren()) {
-                    userDetails.put(snap.getKey(), snap.getValue(String.class));
-                }
+//                for (DataSnapshot snap : snapshot) {
+//                    userDetails.put(snap.getKey(), snap.getValue(String.class));
+//                }
+                User currentUser = snapshot.getValue(User.class);
+                Log.d("currentUser", currentUser.toString());
             }
 
             @Override

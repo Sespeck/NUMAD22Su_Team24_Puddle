@@ -156,6 +156,8 @@ public class CreatePuddle extends AppCompatActivity {
 
     public void sendPuddleToFirebase(){
         DatabaseReference ref = FirebaseDB.getDataReference("Puddles");
+        DatabaseReference ref2 = FirebaseDB.getDataReference("Members");
+
         String pud_key = ref.push().getKey();
         HashMap<String, Object> puddleMap = new HashMap<>();
         puddleMap.put("name", puddleName.getText().toString());
@@ -176,7 +178,11 @@ public class CreatePuddle extends AppCompatActivity {
         members.put("username", "HarshitG24");
 
         ref.child(pud_key).setValue(puddleMap);
-        ref.child(pud_key).child("members").push().setValue(members);
+//        ref.child(pud_key).child("members").push().setValue(members);
+        ref2.child(pud_key).push().setValue(members);
+
+        // update the puddles in my list
+        updateMyPuddles(pud_key);
 
     }
 
@@ -216,5 +222,11 @@ public class CreatePuddle extends AppCompatActivity {
         } else {
 
         }
+    }
+
+    public void updateMyPuddles(String key){
+        DatabaseReference myPuddles = FirebaseDB.getDataReference("Users").child(FirebaseDB.getCurrentUser().getUid());
+
+        myPuddles.child("my_puddles").push().setValue(key);
     }
 }
