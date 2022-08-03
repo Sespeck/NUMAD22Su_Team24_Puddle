@@ -178,7 +178,6 @@ public class CreatePuddle extends AppCompatActivity {
         members.put("username", "HarshitG24");
 
         ref.child(pud_key).setValue(puddleMap);
-//        ref.child(pud_key).child("members").push().setValue(members);
         ref2.child(pud_key).push().setValue(members);
 
         // update the puddles in my list
