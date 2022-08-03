@@ -4,9 +4,12 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 
+import android.Manifest;
 import android.content.ContentResolver;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
@@ -21,6 +24,9 @@ import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.cs5520.assignments.numad22su_team24_puddle.Utils.FirebaseDB;
+import com.cs5520.assignments.numad22su_team24_puddle.Utils.LocationPermissionActivity;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -28,7 +34,10 @@ import com.google.android.gms.tasks.Task;
 import com.google.android.material.slider.Slider;
 import com.google.android.material.switchmaterial.SwitchMaterial;
 import com.google.android.material.textfield.TextInputEditText;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
@@ -36,6 +45,11 @@ import com.google.firebase.storage.UploadTask;
 import java.util.HashMap;
 
 public class CreatePuddle extends AppCompatActivity {
+
+
+    private double lat =0.0 , lng = 0.0;
+
+    FusedLocationProviderClient fusedLocationProviderClient;
 
     // Widgets
     TextInputEditText puddleName;
@@ -95,7 +109,7 @@ public class CreatePuddle extends AppCompatActivity {
         createPuddle.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                sendPuddleToFirebase();
+                getLocation();
             }
         });
     }
@@ -151,11 +165,56 @@ public class CreatePuddle extends AppCompatActivity {
         puddleMap.put("range", String.valueOf(range.getValue()));
         puddleMap.put("category", menu.getText().toString());
 
+        HashMap<String, String> location = new HashMap<>();
+        location.put("latitude", String.valueOf(lat));
+        location.put("longitude", String.valueOf(lng));
+
+        puddleMap.put("Location", location);
+
         HashMap<String, String> members = new HashMap<>();
         members.put("profile_url", "https://firebasestorage.googleapis.com/v0/b/android-chat-85561.appspot.com/o/1659461577945.jpg?alt=media&token=a6433924-64d3-4b1e-9e3f-b52140976eb3");
         members.put("username", "HarshitG24");
 
         ref.child(pud_key).setValue(puddleMap);
         ref.child(pud_key).child("members").push().setValue(members);
+
+    }
+
+    public void getLocation(){
+        if (LocationPermissionActivity.checkMapServices(this)) {
+            if (LocationPermissionActivity.locationPermissionGranted) {
+                fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
+                if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                    return;
+                }
+                fusedLocationProviderClient.getLastLocation().addOnSuccessListener(this, location -> {
+                    Log.d("location", location.toString());
+                    if (location != null) {
+                        lat = location.getLatitude();
+                        lng = location.getLongitude();
+
+                        sendPuddleToFirebase();
+                    } else {
+                        Toast.makeText(CreatePuddle.this, "Failed to get user location, Please provide location acccess to continue", Toast.LENGTH_LONG).show();
+                    }
+                });
+                Bundle extras = new Bundle();
+                extras.putDouble("latitude",lat);
+                extras.putDouble("longitude",lng);
+
+                Intent intent = new Intent();
+                intent.putExtras(extras);
+
+                setResult(100, intent);
+                finish();
+
+            }
+            else{LocationPermissionActivity.requestPermission(this);}
+
+
+
+        } else {
+
+        }
     }
 }
