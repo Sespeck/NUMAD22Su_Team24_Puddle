@@ -19,7 +19,7 @@ import com.cs5520.assignments.numad22su_team24_puddle.Model.PuddleMarker;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MapViewPagerAdapter extends FragmentPagerAdapter {
+public class MapViewPagerAdapter extends FragmentStatePagerAdapter {
     List<PuddleMarker> list ;
     List<MapFragment> fragmentList = new ArrayList<>();
 
