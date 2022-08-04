@@ -67,8 +67,7 @@ public class AboutFragment extends Fragment {
                         handler.post(() -> {
                             if (bio != null) bioTextView.setText(bio);
                             if (name != null) puddleName.setText(name);
-//                            Picasso.get().load(profilePic).into(bannerIcon);
-                            Glide.with(getContext()).load(profilePic).into(bannerIcon);
+                                Glide.with(getContext()).load(profilePic).into(bannerIcon);
                         });
                     }
                 }

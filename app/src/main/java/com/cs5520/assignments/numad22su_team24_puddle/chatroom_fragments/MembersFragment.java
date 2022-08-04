@@ -66,7 +66,6 @@ public class MembersFragment extends Fragment {
                         for (DataSnapshot snap: snapshot.getChildren()) {
                             String username = snap.child("username").getValue(String.class);
                             String profile_url = snap.child("profile_url").getValue(String.class);
-//                            Log.d("here",profile_url);
                             memberList.add(new Member(username,profile_url));
                         }
 

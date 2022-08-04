@@ -232,7 +232,7 @@
                 <ImageView
                     android:id="@+id/selected_pud_img"
                     android:layout_width="match_parent"
-                    android:layout_height="200dp"
+                    android:layout_height="250sp"
                     android:layout_marginLeft="16dp"
                     android:layout_marginRight="16dp"
                     android:background="#F6F6F6"
@@ -241,7 +241,7 @@
                 <LinearLayout
                     android:id="@+id/add_event_upload_image"
                     android:layout_width="fill_parent"
-                    android:layout_height="170dp"
+                    android:layout_height="250sp"
                     android:gravity="center">
 
                     <ImageView
