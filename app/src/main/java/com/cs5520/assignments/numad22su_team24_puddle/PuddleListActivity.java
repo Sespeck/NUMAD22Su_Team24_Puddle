@@ -297,6 +297,7 @@ public class PuddleListActivity extends AppCompatActivity implements View.OnClic
         im.setImageBitmap(puddle.getDisplayImage());
         MaterialButton button = layoutView.findViewById(R.id.puddle_modal_join_btn);
         button.setOnClickListener(v -> {
+            dialog.dismiss();
             Intent intent = new Intent(context, PuddleChatroomActivity.class);
             context.startActivity(intent);
         });
