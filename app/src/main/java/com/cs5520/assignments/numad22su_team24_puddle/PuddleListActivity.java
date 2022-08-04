@@ -17,6 +17,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
@@ -209,8 +210,8 @@ public class PuddleListActivity extends AppCompatActivity implements View.OnClic
             if (LocationPermissionActivity.checkLocationPermission(this)) {
                 puddleListRecyclerView.setLayoutManager(new LinearLayoutManager(this));
                 puddleListRecyclerView.setAdapter(new PuddleListAdapter(this, getPuddleList()));
-                nearMeBtn.setBackgroundColor(ContextCompat.getColor(this, R.color.purple_700));
-                myPuddlesBtn.setBackgroundColor(ContextCompat.getColor(this, R.color.purple_200));
+                setSelectedButton(nearMeBtn);
+                setUnselectedButton(myPuddlesBtn);
             } else {
                 LocationPermissionActivity.requestPermission(this, REQUEST_CODE_LOCATION_FOR_NEAR_ME);
             }
@@ -218,10 +219,20 @@ public class PuddleListActivity extends AppCompatActivity implements View.OnClic
         } else {
             puddleListRecyclerView.setLayoutManager(new GridLayoutManager(this, 2));
             puddleListRecyclerView.setAdapter(new MyPuddlesAdapter(this));
-            nearMeBtn.setBackgroundColor(ContextCompat.getColor(this, R.color.purple_200));
-            myPuddlesBtn.setBackgroundColor(ContextCompat.getColor(this, R.color.purple_700));
+            setSelectedButton(myPuddlesBtn);
+            setUnselectedButton(nearMeBtn);
         }
 
+    }
+
+    private void setSelectedButton(Button btn) {
+        btn.setBackgroundColor(ContextCompat.getColor(this, R.color.purple_700));
+        btn.setTextColor(ContextCompat.getColor(this, R.color.white));
+    }
+
+    private void setUnselectedButton(Button btn) {
+        btn.setBackgroundColor(ContextCompat.getColor(this, com.google.android.libraries.places.R.color.quantum_grey200));
+        btn.setTextColor(ContextCompat.getColor(this, R.color.black));
     }
 
     // Testing Firestore + Firebase DB
