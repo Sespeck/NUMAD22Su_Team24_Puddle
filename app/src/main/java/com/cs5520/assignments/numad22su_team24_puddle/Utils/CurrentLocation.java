@@ -52,7 +52,7 @@ public class CurrentLocation extends AppCompatActivity {
                 finish();
 
             }
-            else{LocationPermissionActivity.requestPermission(this);}
+            else{LocationPermissionActivity.requestPermission(this, LocationPermissionActivity.REQUEST_CODE_FINE_LOCATION);}
 
 
 

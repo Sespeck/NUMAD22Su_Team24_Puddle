@@ -19,7 +19,7 @@ import com.google.firebase.auth.FirebaseUser;
 public class LoginActivity extends AppCompatActivity {
 
     private Button loginButton, signupButton;
-    private TextInputEditText usernameEditText;
+    private TextInputEditText usernameEditText, passwordEditText;
 
     FirebaseAuth auth;
     FirebaseUser firebaseUser;
@@ -45,6 +45,7 @@ public class LoginActivity extends AppCompatActivity {
         loginButton = findViewById(R.id.button_login);
         signupButton = findViewById(R.id.button_signup);
         usernameEditText = findViewById(R.id.username_et);
+        passwordEditText = findViewById(R.id.login_password_et);
 
         loginButton.setOnClickListener(v -> {
             if (!Util.isNetworkConnected(this)) {
@@ -53,7 +54,7 @@ public class LoginActivity extends AppCompatActivity {
             }
             FirebaseDB.getInstanceFirebaseAuth().signInWithEmailAndPassword(
                     usernameEditText.getText().toString().trim()+"@puddle.com",
-                    "123456").addOnCompleteListener(task -> {
+                    passwordEditText.getText().toString()).addOnCompleteListener(task -> {
                 if(task.isSuccessful()){
                     // Successfully Logged in
                     Intent intent = new Intent(LoginActivity.this, PuddleListActivity.class);

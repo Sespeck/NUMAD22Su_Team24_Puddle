@@ -3,16 +3,21 @@ package com.cs5520.assignments.numad22su_team24_puddle;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.content.res.AppCompatResources;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.ContentResolver;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
@@ -20,6 +25,7 @@ import android.view.View;
 import android.webkit.MimeTypeMap;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.cs5520.assignments.numad22su_team24_puddle.Adapter.MyPuddlesAdapter;
@@ -27,6 +33,8 @@ import com.cs5520.assignments.numad22su_team24_puddle.Adapter.PuddleListAdapter;
 import com.cs5520.assignments.numad22su_team24_puddle.Model.User;
 import com.cs5520.assignments.numad22su_team24_puddle.Utils.FirebaseDB;
 import com.cs5520.assignments.numad22su_team24_puddle.Utils.LocationPermissionActivity;
+import com.google.android.material.button.MaterialButton;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.imageview.ShapeableImageView;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -59,6 +67,9 @@ public class PuddleListActivity extends AppCompatActivity implements View.OnClic
     DatabaseReference userRef;
     DatabaseReference imgRef;
     StorageReference storeRef;
+
+    public static final int REQUEST_CODE_LOCATION_FOR_CREATE = 100;
+    public static final int REQUEST_CODE_LOCATION_FOR_NEAR_ME = 101;
 
     private HashMap<String, String> userDetails;
     private Uri imageUri;
@@ -104,7 +115,26 @@ public class PuddleListActivity extends AppCompatActivity implements View.OnClic
 
 
         updateRecyclerView(myPuddlesBtn);
-        LocationPermissionActivity.checkPermission(this);
+        LocationPermissionActivity.checkLocationPermission(this);
+
+        handleAppLink(getIntent());
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        handleAppLink(intent);
+    }
+
+    private void handleAppLink(Intent intent) {
+        String appLinkAction = intent.getAction();
+        Uri appLinkData = intent.getData();
+        if (Intent.ACTION_VIEW.equals(appLinkAction) && appLinkData != null) {
+//            updateRecyclerView(nearMeBtn);
+            String puddleId = appLinkData.getLastPathSegment();
+            Puddle puddle = new Puddle("Link Puddle", puddleId, BitmapFactory.decodeResource(this.getResources(), R.drawable.puddle));
+            showJoinPuddleDialogue(this, puddle);
+        }
     }
 
     private List<List<Puddle>> getPuddleList() {
@@ -159,15 +189,18 @@ public class PuddleListActivity extends AppCompatActivity implements View.OnClic
         } else if (view.equals(nearMeBtn) || view.equals(myPuddlesBtn)) {
             updateRecyclerView(view);
         } else if (view.equals(createIcon)) {
-            Intent newPud = new Intent(PuddleListActivity.this, CreatePuddle.class);
-            startActivity(newPud);
+            if (LocationPermissionActivity.checkLocationPermission(this)) {
+                startActivity(new Intent(PuddleListActivity.this, CreatePuddle.class));
+            } else {
+                LocationPermissionActivity.requestPermission(this, REQUEST_CODE_LOCATION_FOR_CREATE);
+            }
+
         } else if (view.equals(navigationIcon)) {
-            if(LocationPermissionActivity.checkMapServices(this)){
-                if(LocationPermissionActivity.locationPermissionGranted){
+            if (LocationPermissionActivity.checkMapServices(this)) {
+                if (LocationPermissionActivity.locationPermissionGranted) {
                     startActivity(new Intent(this, MapActivity.class));
-                }
-                else{
-                    LocationPermissionActivity.requestPermission(this);
+                } else {
+                    LocationPermissionActivity.requestPermission(this, LocationPermissionActivity.REQUEST_CODE_FINE_LOCATION);
                 }
             }
         } else if (view.equals(filterIcon)) {
@@ -178,28 +211,43 @@ public class PuddleListActivity extends AppCompatActivity implements View.OnClic
     private void updateRecyclerView(View view) {
         // Initializing RecyclerView
         if (view.equals(nearMeBtn)) {
-            puddleListRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-            puddleListRecyclerView.setAdapter(new PuddleListAdapter(this, getPuddleList()));
-            nearMeBtn.setBackgroundColor(getResources().getColor(R.color.purple_700));
-            myPuddlesBtn.setBackgroundColor(getResources().getColor(R.color.purple_200));
+            if (LocationPermissionActivity.checkLocationPermission(this)) {
+                puddleListRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+                puddleListRecyclerView.setAdapter(new PuddleListAdapter(this, getPuddleList()));
+                setSelectedButton(nearMeBtn);
+                setUnselectedButton(myPuddlesBtn);
+            } else {
+                LocationPermissionActivity.requestPermission(this, REQUEST_CODE_LOCATION_FOR_NEAR_ME);
+            }
+
         } else {
             puddleListRecyclerView.setLayoutManager(new GridLayoutManager(this, 2));
             puddleListRecyclerView.setAdapter(new MyPuddlesAdapter(this));
-            nearMeBtn.setBackgroundColor(getResources().getColor(R.color.purple_200));
-            myPuddlesBtn.setBackgroundColor(getResources().getColor(R.color.purple_700));
+            setSelectedButton(myPuddlesBtn);
+            setUnselectedButton(nearMeBtn);
         }
 
     }
 
+    private void setSelectedButton(Button btn) {
+        btn.setBackgroundColor(ContextCompat.getColor(this, R.color.purple_700));
+        btn.setTextColor(ContextCompat.getColor(this, R.color.white));
+    }
+
+    private void setUnselectedButton(Button btn) {
+        btn.setBackgroundColor(ContextCompat.getColor(this, com.google.android.libraries.places.R.color.quantum_grey200));
+        btn.setTextColor(ContextCompat.getColor(this, R.color.black));
+    }
+
     // Testing Firestore + Firebase DB
-    public void uploadImageToFb(){
+    public void uploadImageToFb() {
         imgRef = FirebaseDB.getDataReference("images");
         imgRef.setValue("url");
 
         storeRef = FirebaseDB.storageRef;
     }
 
-    public void uploadToFirebase(Uri uri){
+    public void uploadToFirebase(Uri uri) {
         StorageReference ref = storeRef.child(System.currentTimeMillis() + "." + getFileExtension(uri));
         ref.putFile(uri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
             @Override
@@ -227,7 +275,7 @@ public class PuddleListActivity extends AppCompatActivity implements View.OnClic
         });
     }
 
-    public String getFileExtension(Uri muri){
+    public String getFileExtension(Uri muri) {
         ContentResolver cr = getContentResolver();
         MimeTypeMap mime = MimeTypeMap.getSingleton();
         return mime.getExtensionFromMimeType(cr.getType(muri));
@@ -238,11 +286,10 @@ public class PuddleListActivity extends AppCompatActivity implements View.OnClic
         super.onActivityResult(requestCode, resultCode, data);
         switch (requestCode) {
             case LocationPermissionActivity.PERMISSIONS_REQUEST_ENABLE_GPS: {
-                if(LocationPermissionActivity.locationPermissionGranted){
+                if (LocationPermissionActivity.locationPermissionGranted) {
                     startActivity(new Intent(this, MapActivity.class));
-                }
-                else{
-                    LocationPermissionActivity.requestPermission(this);
+                } else {
+                    LocationPermissionActivity.requestPermission(this, LocationPermissionActivity.REQUEST_CODE_FINE_LOCATION);
                 }
             }
         }
@@ -253,17 +300,50 @@ public class PuddleListActivity extends AppCompatActivity implements View.OnClic
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
 
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode == LocationPermissionActivity.REQUEST_CODE_FINE_LOCATION) {
-
-            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                LocationPermissionActivity.locationPermissionGranted = true;
-                Toast.makeText(this, "Location access successfully granted", Toast.LENGTH_SHORT).show();
-                startActivity(new Intent(this, MapActivity.class));
-            }
-            else {
-                Toast.makeText(this, "Location access is not granted", Toast.LENGTH_SHORT).show();
-            }
-
+        switch (requestCode) {
+            case LocationPermissionActivity.REQUEST_CODE_FINE_LOCATION:
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    LocationPermissionActivity.locationPermissionGranted = true;
+                    Toast.makeText(this, "Location access successfully granted", Toast.LENGTH_SHORT).show();
+                    startActivity(new Intent(this, MapActivity.class));
+                } else {
+                    Toast.makeText(this, "Location access is not granted", Toast.LENGTH_SHORT).show();
+                }
+                break;
+            case REQUEST_CODE_LOCATION_FOR_CREATE:
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    LocationPermissionActivity.locationPermissionGranted = true;
+                    Toast.makeText(this, "Location access successfully granted", Toast.LENGTH_SHORT).show();
+                    startActivity(new Intent(PuddleListActivity.this, CreatePuddle.class));
+                } else {
+                    Toast.makeText(this, "Location access is not granted", Toast.LENGTH_SHORT).show();
+                }
+                break;
+            case REQUEST_CODE_LOCATION_FOR_NEAR_ME:
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    LocationPermissionActivity.locationPermissionGranted = true;
+                    Toast.makeText(this, "Location access successfully granted", Toast.LENGTH_SHORT).show();
+                    updateRecyclerView(nearMeBtn);
+                } else {
+                    Toast.makeText(this, "Location access is not granted", Toast.LENGTH_SHORT).show();
+                }
+                break;
         }
+    }
+
+    public static void showJoinPuddleDialogue(Context context, Puddle puddle) {
+        View layoutView = View.inflate(context, R.layout.puddle_modal, null);
+        AlertDialog dialog = new MaterialAlertDialogBuilder(context).setTitle(puddle.getName()).setView(layoutView).create();
+        TextView tv = layoutView.findViewById(R.id.puddle_modal_name_tv);
+        tv.setText(puddle.getDescription());
+        ShapeableImageView im = layoutView.findViewById(R.id.puddle_modal_item_image);
+        im.setImageBitmap(puddle.getDisplayImage());
+        MaterialButton button = layoutView.findViewById(R.id.puddle_modal_join_btn);
+        button.setOnClickListener(v -> {
+            dialog.dismiss();
+            Intent intent = new Intent(context, PuddleChatroomActivity.class);
+            context.startActivity(intent);
+        });
+        dialog.show();
     }
 }
