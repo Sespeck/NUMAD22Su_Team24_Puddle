@@ -22,6 +22,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.cs5520.assignments.numad22su_team24_puddle.Utils.FirebaseDB;
@@ -44,6 +45,7 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
 import java.util.HashMap;
+import java.util.Locale;
 
 public class CreatePuddle extends AppCompatActivity {
 
@@ -61,10 +63,12 @@ public class CreatePuddle extends AppCompatActivity {
     RelativeLayout addBanner;
     AutoCompleteTextView menu;
     ImageView selectedImg;
+    TextView rangeVal;
 
-    Uri imgUri;
+    Uri imgUri = null;
     String bannerUrl = "";
     Handler apiHandler = new Handler();
+    double selectedRange = 0.0;
 
     ActivityResultLauncher<Intent> startActivityForResult = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
@@ -73,7 +77,6 @@ public class CreatePuddle extends AppCompatActivity {
                     Intent data = result.getData();
                     imgUri = data.getData();
                     selectedImg.setImageURI(imgUri);
-//                    uploadImageToStore(imgUri);
                 }
             }
     );
@@ -92,8 +95,17 @@ public class CreatePuddle extends AppCompatActivity {
         addBanner = findViewById(R.id.add_banner);
         menu = findViewById(R.id.category_menu);
         selectedImg = findViewById(R.id.selected_pud_img);
+        rangeVal = findViewById(R.id.range_val);
 
-        String[] options = {"Select", "Music", "Sports", "Education"};
+        // Options for the menu in the dropdown
+        String[] options = {
+                Category.SELECT.toString(),
+                Category.MUSIC.toString(),
+                Category.TRAVEL.toString(),
+                Category.FINANCE.toString(),
+                Category.EDUCATION.toString()
+        };
+
         ArrayAdapter arrayAdapter = new ArrayAdapter(this, R.layout.category_options, options);
         menu.setText(arrayAdapter.getItem(0).toString(), false);
         menu.setAdapter(arrayAdapter);
@@ -107,10 +119,28 @@ public class CreatePuddle extends AppCompatActivity {
                 startActivityForResult.launch(gallery);
             }
         });
+
+        range.addOnSliderTouchListener(new Slider.OnSliderTouchListener() {
+            @Override
+            public void onStartTrackingTouch(@NonNull Slider slider) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(@NonNull Slider slider) {
+                Log.i("chanegd value", String.valueOf(slider.getValue()));
+                selectedRange = slider.getValue();
+                rangeVal.setText(String.valueOf(slider.getValue()) + "m");
+            }
+        });
     }
 
     public void makeApiCalls(View view){
-        getLocation();
+        if(checkValues()){
+            getLocation();
+        } else {
+            Toast.makeText(this, "Please provide all values to proceed", Toast.LENGTH_SHORT).show();
+        }
     }
 
     public void uploadImageToStore(Uri uri){
@@ -168,6 +198,7 @@ public class CreatePuddle extends AppCompatActivity {
         puddleMap.put("bannerUrl", bannerUrl);
         puddleMap.put("range", String.valueOf(range.getValue()));
         puddleMap.put("category", menu.getText().toString());
+        puddleMap.put("count", 1);
 
         HashMap<String, String> location = new HashMap<>();
         location.put("latitude", String.valueOf(lat));
@@ -226,5 +257,19 @@ public class CreatePuddle extends AppCompatActivity {
     public void updateMyPuddles(String key){
         DatabaseReference myPuddles = FirebaseDB.getDataReference("Users").child(FirebaseDB.getCurrentUser().getUid());
         myPuddles.child("my_puddles").push().setValue(key);
+    }
+
+    public boolean checkValues(){
+        boolean allValues = false;
+
+        if(
+           puddleName.getText().toString() != "" &&
+           puddleBio.getText().toString() != "" && imgUri != null &&
+           selectedRange > 0.0 && menu.getText().toString().toLowerCase() != "select"
+        ) {
+            allValues = true;
+        }
+
+        return allValues;
     }
 }
