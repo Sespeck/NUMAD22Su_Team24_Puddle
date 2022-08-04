@@ -105,13 +105,10 @@ public class CreatePuddle extends AppCompatActivity {
                 startActivityForResult.launch(gallery);
             }
         });
+    }
 
-        createPuddle.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                new Thread(new CreatePuddleApiCalls()).start();
-            }
-        });
+    public void makeApiCalls(View view){
+        new Thread(new CreatePuddleApiCalls()).start();
     }
 
     public void uploadImageToStore(Uri uri){
@@ -194,31 +191,18 @@ public class CreatePuddle extends AppCompatActivity {
                     return;
                 }
                 fusedLocationProviderClient.getLastLocation().addOnSuccessListener(this, location -> {
-                    Log.d("location", location.toString());
                     if (location != null) {
                         lat = location.getLatitude();
                         lng = location.getLongitude();
 
                         uploadImageToStore(imgUri); // 2. Upload image to firestore if location fetch success
-//                        sendPuddleToFirebase();
                     } else {
                         Toast.makeText(CreatePuddle.this, "Failed to get user location, Please provide location acccess to continue", Toast.LENGTH_LONG).show();
                     }
                 });
-                Bundle extras = new Bundle();
-                extras.putDouble("latitude",lat);
-                extras.putDouble("longitude",lng);
-
-                Intent intent = new Intent();
-                intent.putExtras(extras);
-
-                setResult(100, intent);
-                finish();
 
             }
             else{LocationPermissionActivity.requestPermission(this);}
-
-
 
         } else {
 
