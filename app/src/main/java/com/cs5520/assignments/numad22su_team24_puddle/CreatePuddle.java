@@ -71,7 +71,7 @@ public class CreatePuddle extends AppCompatActivity {
                     Intent data = result.getData();
                     imgUri = data.getData();
                     selectedImg.setImageURI(imgUri);
-                    uploadImageToStore(imgUri);
+//                    uploadImageToStore(imgUri);
                 }
             }
     );
@@ -109,7 +109,7 @@ public class CreatePuddle extends AppCompatActivity {
         createPuddle.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                getLocation();
+                new Thread(new CreatePuddleApiCalls()).start();
             }
         });
     }
@@ -127,7 +127,8 @@ public class CreatePuddle extends AppCompatActivity {
 
                         if(bannerUrl != null || bannerUrl != ""){
 //                            sendPuddleToFirebase(bannerUrl);
-                            Toast.makeText(CreatePuddle.this, "Success!!!", Toast.LENGTH_SHORT).show();
+                            sendPuddleToFirebase(); // 3. Send the collected data to Firebase
+//                            Toast.makeText(CreatePuddle.this, "Success!!!", Toast.LENGTH_SHORT).show();
                         } else {
                             Toast.makeText(CreatePuddle.this, "Error sending image to Store", Toast.LENGTH_SHORT).show();
                         }
@@ -198,7 +199,8 @@ public class CreatePuddle extends AppCompatActivity {
                         lat = location.getLatitude();
                         lng = location.getLongitude();
 
-                        sendPuddleToFirebase();
+                        uploadImageToStore(imgUri); // 2. Upload image to firestore if location fetch success
+//                        sendPuddleToFirebase();
                     } else {
                         Toast.makeText(CreatePuddle.this, "Failed to get user location, Please provide location acccess to continue", Toast.LENGTH_LONG).show();
                     }
@@ -227,5 +229,14 @@ public class CreatePuddle extends AppCompatActivity {
         DatabaseReference myPuddles = FirebaseDB.getDataReference("Users").child(FirebaseDB.getCurrentUser().getUid());
 
         myPuddles.child("my_puddles").push().setValue(key);
+    }
+
+    // Making a worker thread to put all the api call instead of main thread
+    class CreatePuddleApiCalls implements Runnable{
+
+        @Override
+        public void run() {
+            getLocation(); // 1. To get Location
+        }
     }
 }
