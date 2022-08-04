@@ -14,12 +14,12 @@ import androidx.fragment.app.FragmentPagerAdapter;
 import androidx.fragment.app.FragmentStatePagerAdapter;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 
-import com.cs5520.assignments.numad22su_team24_puddle.model.PuddleMarker;
+import com.cs5520.assignments.numad22su_team24_puddle.Model.PuddleMarker;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class MapViewPagerAdapter extends FragmentPagerAdapter {
+public class MapViewPagerAdapter extends FragmentStatePagerAdapter {
     List<PuddleMarker> list ;
     List<MapFragment> fragmentList = new ArrayList<>();
 

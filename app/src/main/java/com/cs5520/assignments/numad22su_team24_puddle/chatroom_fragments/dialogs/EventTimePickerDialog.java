@@ -11,12 +11,20 @@ import android.widget.TimePicker;
 
 import androidx.fragment.app.DialogFragment;
 
+import com.cs5520.assignments.numad22su_team24_puddle.R;
+
 public class EventTimePickerDialog extends DialogFragment
         implements TimePickerDialog.OnTimeSetListener {
 
     private TextView view;
+    private AddNewEventDialog dialog;
 
     public EventTimePickerDialog(View v){
+        this.view = (TextView) v;
+    }
+
+    public EventTimePickerDialog(View v, AddNewEventDialog dialog){
+        this.dialog = dialog;
         this.view = (TextView) v;
     }
     @Override
@@ -33,5 +41,11 @@ public class EventTimePickerDialog extends DialogFragment
 
     public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
         this.view.setText(DateTimeFormatUtil.formatEventTime(hourOfDay,minute));
+        if (view.getId() == R.id.starting_time_text_view){
+            dialog.acceptPickerStartTime(DateTimeFormatUtil.formatEventTime(hourOfDay,minute));
+        }
+        else{
+            dialog.acceptPickerEndingTime(DateTimeFormatUtil.formatEventTime(hourOfDay,minute));
+        }
     }
 }

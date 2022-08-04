@@ -17,8 +17,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.viewpager.widget.ViewPager;
 
+
+import com.cs5520.assignments.numad22su_team24_puddle.Model.PuddleMarker;
 import com.cs5520.assignments.numad22su_team24_puddle.Utils.LocationPermissionActivity;
-import com.cs5520.assignments.numad22su_team24_puddle.model.PuddleMarker;
 import com.cs5520.assignments.numad22su_team24_puddle.services.MapService;
 import com.cs5520.assignments.numad22su_team24_puddle.services.MarkerService;
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -52,7 +53,8 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     MapService mapService;
     ViewPager viewPager;
     MapViewPagerAdapter mapViewPagerAdapter;
-    List<PuddleMarker> puddleList, filteredPuddleList;
+    List<PuddleMarker> puddleList;
+    List<PuddleMarker> filteredPuddleList;
     HashSet<String> categories;
     ChipGroup chipGroup;
 
@@ -87,7 +89,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             @Override
             public void onLocationResult(LocationResult locationResult) {
                 super.onLocationResult(locationResult);
-                Log.d(TAG, "onLocationResult: " + locationResult.getLastLocation());
                 if (mMap != null) {
                     if (mapInitiated == true) {
                         Location location = locationResult.getLastLocation();
@@ -144,6 +145,14 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     }
 
     private void updatePuddles(){
+        int position = 0;
+        for (PuddleMarker puddle: filteredPuddleList){
+            Log.d(TAG, "filteredPuddleList: " + puddle.getName());
+            Log.d(TAG, "filteredPuddleList: position " + position);
+
+            puddle.setPosition(position++);
+            MarkerService.addMarker(puddle, mMap);
+        }
         mapViewPagerAdapter = new MapViewPagerAdapter(getSupportFragmentManager(), filteredPuddleList);
         viewPager.setAdapter(mapViewPagerAdapter);
         viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
@@ -163,12 +172,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             }
 
         });
-        int position = 0;
-        for (PuddleMarker puddle: filteredPuddleList){
-            puddle.setPosition(position++);
-            MarkerService.addMarker(puddle, mMap);
-            categories.add(puddle.getCategory());
-        }
+
     }
 
     @Override
@@ -207,7 +211,8 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         }
     }
     private void startLocationUpdates() {
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) !=
+                PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             return;
         }
         fusedLocationProviderClient.requestLocationUpdates(locationRequest, locationCallback, Looper.getMainLooper());

@@ -46,7 +46,12 @@ public class ChatroomAdapter extends RecyclerView.Adapter<ChatroomAdapter.Chatro
     @Override
     public void onBindViewHolder(@NonNull ChatroomAdapter.ChatroomViewHolder holder, int position) {
 //        holder.profilePicture.setImageBitmap(messageList.get(position).getProfilePicture());
-//
+        holder.messageBody.setText(messageList.get(position).text);
+    }
+
+    public void addNewMessage(Message message){
+        messageList.add(message);
+        notifyItemChanged(getItemCount()-1);
     }
 
     @Override
