@@ -5,6 +5,7 @@ import android.content.ContentResolver;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -34,6 +35,10 @@ import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 
 public class AddNewEventDialog extends DialogFragment {
     private Button exitButton;
@@ -49,6 +54,7 @@ public class AddNewEventDialog extends DialogFragment {
     private ImageView banner;
     private StorageReference storeRef;
     private DatabaseReference imgRef;
+    private TextView startingDateTextView;
 
 
 
@@ -78,14 +84,11 @@ public class AddNewEventDialog extends DialogFragment {
         upload = view.findViewById(R.id.add_banner);
         exitButton = view.findViewById(R.id.add_event_dialog_exit_button);
         title = view.findViewById(R.id.add_title_edit_text);
-        toolbar = view.findViewById(R.id.add_event_toolbar);
         banner = view.findViewById(R.id.selected_pud_img);
+        startingDateTextView = view.findViewById(R.id.starting_date_text_view);
+        toolbar = view.findViewById(R.id.add_event_toolbar);
         parent.setSupportActionBar(toolbar);
-        toolbar.setNavigationIcon(R.drawable.ic_baseline_arrow_back_24);
-        toolbar.setTitle("Add New Event");
-        toolbar.setNavigationOnClickListener(v -> {
-            dismiss();
-        });
+        initializeToolbar();
         initializeAllTextViewOnClicks(view);
         exitButton.setOnClickListener(v -> dismiss());
         upload.setOnClickListener(v -> {
@@ -102,6 +105,14 @@ public class AddNewEventDialog extends DialogFragment {
         return view;
     }
 
+    private void initializeToolbar(){
+        toolbar.setNavigationIcon(R.drawable.ic_baseline_arrow_back_24);
+        toolbar.setTitle("Add New Event");
+        toolbar.setNavigationOnClickListener(v -> {
+            dismiss();
+        });
+    }
+
     public void uploadToFirebase(Uri uri){
         StorageReference ref = storeRef.child(System.currentTimeMillis() + "." + getFileExtension(uri));
         ref.putFile(uri).addOnSuccessListener(taskSnapshot
@@ -110,11 +121,8 @@ public class AddNewEventDialog extends DialogFragment {
             imgRef.setValue(imgUrl);
         })).addOnProgressListener(snapshot -> {
 
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
+        }).addOnFailureListener(e -> {
 
-            }
         });
     }
 
@@ -132,6 +140,8 @@ public class AddNewEventDialog extends DialogFragment {
         TextView startingDateView = view.findViewById(R.id.starting_date_text_view);
         TextView endingDateView = view.findViewById(R.id.ending_date_text_view);
         String[] initalTime = DateTimeFormatUtil.formatPresetTime(java.time.LocalTime.now().toString());
+        startingDate = java.time.LocalDate.now().toString();
+        endingDate = java.time.LocalDate.now().toString();
         String date = DateTimeFormatUtil.formatEventDate(java.time.LocalDate.now().toString());
         startingTimeView.setText(initalTime[0]);
         endingTimeView.setText(initalTime[1]);
@@ -160,6 +170,18 @@ public class AddNewEventDialog extends DialogFragment {
     public void showTimePickerDialog(View v) {
         DialogFragment newFragment = new EventTimePickerDialog(v, this);
         newFragment.show(getParentFragmentManager(), "timePicker");
+    }
+
+    public boolean balanceStartPickerDates(String date) throws ParseException {
+        Date newDate = new SimpleDateFormat("yyyy-MM-dd").parse(date);
+        Date startingDate = new SimpleDateFormat("yyyy-MM-dd").parse(this.startingDate);
+        if (newDate != null && newDate.before(startingDate)) {
+            Log.d("date",date);
+            this.startingDate = date;
+            startingDateTextView.setText(DateTimeFormatUtil.formatEventDate(date));
+            return true;
+        }
+        return false;
     }
 
     public void acceptPickerStartTime(String startingTime){
