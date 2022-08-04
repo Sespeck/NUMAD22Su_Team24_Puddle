@@ -68,18 +68,28 @@ public class ChatroomFragment extends Fragment {
     private void createNewMessageListener(){
         sendButton.setOnClickListener(v -> {
             if (chatEditText.getText() != null){
-                String textResult = chatEditText.getText().toString();
-                HashMap<String, Object> newMessage = new HashMap<>();
-                newMessage.put("timestamp", Instant.now().toString());
-                newMessage.put("username", "Chris");
-                newMessage.put("body",textResult);
-                newMessage.put("profile_url","https://firebasestorage.googleapis.com/v0/b/android-chat-85561.appspot.com/o/1659466819026.png?alt=media&token=d17c60ee-9b7e-41ee-a48c-32440f4f493c");
-                // Add a new message based off current time, the edittext body, the current user's
-                // Pfp and name
-               adapter.addNewMessage(new Message("Chris",textResult,Instant.now().toString(),"https://firebasestorage.googleapis.com/v0/b/android-chat-85561.appspot.com/o/1659466819026.png?alt=media&token=d17c60ee-9b7e-41ee-a48c-32440f4f493c"));
-               recyclerView.scrollToPosition(adapter.getItemCount()-1);
-               chatEditText.getText().clear();
-               messageRef.child(puddleID).push().setValue(newMessage);
+                class PushNewMsgToDB implements Runnable{
+                    @Override
+                    public void run() {
+                        String textResult = chatEditText.getText().toString();
+                        HashMap<String, Object> newMessage = new HashMap<>();
+                        newMessage.put("timestamp", Instant.now().toString());
+                        newMessage.put("username", "Chris");
+                        newMessage.put("body",textResult);
+                        newMessage.put("profile_url","https://firebasestorage.googleapis.com/v0/b/android-chat-85561.appspot.com/o/1659466819026.png?alt=media&token=d17c60ee-9b7e-41ee-a48c-32440f4f493c");
+                        // Add a new message based off current time, the edittext body, the current user's
+                        // Pfp and name
+                        adapter.addNewMessage(new Message("Chris",textResult,Instant.now().toString(),
+                                "https://firebasestorage.googleapis.com/v0/b/android-chat-85561.appspot.com/o/1659466819026.png?alt=media&token=d17c60ee-9b7e-41ee-a48c-32440f4f493c"));
+                        handler.post(()-> {
+                            recyclerView.scrollToPosition(adapter.getItemCount()-1);
+                            chatEditText.getText().clear();
+                        });
+                        messageRef.child(puddleID).push().setValue(newMessage);
+                    }
+                }
+                Thread worker = new Thread(new PushNewMsgToDB());
+                worker.start();
             }
         });
     }
@@ -97,9 +107,7 @@ public class ChatroomFragment extends Fragment {
                             String body = snap.child("body").getValue(String.class);
                             String profile_url = snap.child("profile_url").getValue(String.class);
                             String timestamp = Util.convertTocurrentDateTime(snap.child("timestamp").getValue(String.class));
-                            Log.d("here",timestamp);
                             chatroomList.add(new Message(username, body, timestamp, profile_url));
-
                         }
                         handler.post(()->{
                             adapter = new ChatroomAdapter(chatroomList,getContext());

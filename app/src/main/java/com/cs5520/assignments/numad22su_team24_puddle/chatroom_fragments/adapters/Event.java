@@ -6,19 +6,22 @@ import android.location.Location;
 public class Event {
     Boolean isOnline;
     String name;
-    String datetime;
+    String startingDatetime;
+    String endingDatetime;
     Location location;
     String description;
-    Bitmap backgroundImg;
+    String backgroundImgUri;
     int attendanceCount;
 
 
-    public Event(String name, String datetime, Location location, String description, Bitmap backgroundImg, int attendanceCount){
+    public Event(String name, String startingDatetime, String endingDatetime, Location location,
+                 String description, String backgroundImgUri, int attendanceCount){
         this.name = name;
-        this.datetime = datetime;
+        this.startingDatetime = startingDatetime;
+        this.endingDatetime = endingDatetime;
         this.location = location;
         this.description = description;
-        this.backgroundImg = backgroundImg;
+        this.backgroundImgUri = backgroundImgUri;
         this.attendanceCount = attendanceCount;
     }
 
@@ -26,8 +29,16 @@ public class Event {
         return name;
     }
 
-    public String getDatetime() {
-        return datetime;
+    public String getBackgroundImgUri() {
+        return backgroundImgUri;
+    }
+
+    public String getEndingDatetime() {
+        return endingDatetime;
+    }
+
+    public String getStartingDatetime() {
+        return startingDatetime;
     }
 
     public Location getLocation(){
@@ -38,9 +49,6 @@ public class Event {
         return description;
     }
 
-    public Bitmap getBackgroundImg() {
-        return backgroundImg;
-    }
 
     public int getAttendanceCount(){
         return attendanceCount;

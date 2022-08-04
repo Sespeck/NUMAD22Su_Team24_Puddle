@@ -75,7 +75,7 @@ public class PuddleChatroomActivity extends AppCompatActivity {
             changeVisibleFragment(R.id.members_tab, new MembersFragment(puddleID), "members");
         } else if (tab.getPosition() == 3) {
             fab.setVisibility(View.VISIBLE);
-            changeVisibleFragment(R.id.events_tab, new EventsFragment(), "events");
+            changeVisibleFragment(R.id.events_tab, new EventsFragment(puddleID), "events");
         }
 }
 
