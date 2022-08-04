@@ -66,7 +66,7 @@ public class LocationPermissionActivity {
         return true;
     }
 
-    public static void requestPermission(Activity activity) {
+    public static void requestPermission(Activity activity, int requestCode) {
 
         if (ContextCompat.checkSelfPermission(activity.getApplicationContext(),
                 android.Manifest.permission.ACCESS_FINE_LOCATION)
@@ -75,20 +75,22 @@ public class LocationPermissionActivity {
         } else {
             ActivityCompat.requestPermissions(activity,
                     new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
-                    REQUEST_CODE_FINE_LOCATION);
+                    requestCode);
         }
 
     }
 
-    public static void checkPermission(Activity activity) {
+    public static boolean checkLocationPermission(Activity activity) {
 
         if (ContextCompat.checkSelfPermission(activity.getApplicationContext(),
                 android.Manifest.permission.ACCESS_FINE_LOCATION)
                 == PackageManager.PERMISSION_GRANTED) {
             locationPermissionGranted = true;
+            return true;
         }
         else{
             locationPermissionGranted = false;
+            return false;
         }
 
     }

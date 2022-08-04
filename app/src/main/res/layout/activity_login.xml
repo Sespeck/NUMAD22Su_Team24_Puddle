@@ -9,7 +9,7 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="@dimen/fit_constraint"
+        android:layout_height="wrap_content"
         android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -56,6 +56,35 @@
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/username_et"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/font_size_mid"
+                android:textStyle="bold" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/login_password_layout"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/margin_xl"
+            android:layout_marginTop="@dimen/margin_large"
+            android:layout_marginEnd="@dimen/margin_xl"
+            android:hint="Password"
+            android:textColorHint="@color/login_signup_text_color"
+            app:boxCornerRadiusBottomEnd="@dimen/login_signup_rounded_corners"
+            app:boxCornerRadiusBottomStart="@dimen/login_signup_rounded_corners"
+            app:boxCornerRadiusTopEnd="@dimen/login_signup_rounded_corners"
+            app:boxCornerRadiusTopStart="@dimen/login_signup_rounded_corners"
+            app:boxStrokeWidth="3dp"
+            app:hintAnimationEnabled="true"
+            app:hintEnabled="true"
+            app:startIconDrawable="@drawable/password"
+            app:startIconTint="@color/login_signup_text_color">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/login_password_et"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textSize="@dimen/font_size_mid"

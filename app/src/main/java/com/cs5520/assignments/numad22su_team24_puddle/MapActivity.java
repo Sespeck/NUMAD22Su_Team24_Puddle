@@ -183,7 +183,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                 startLocationUpdates();
             }
             else{
-                LocationPermissionActivity.requestPermission(this);
+                LocationPermissionActivity.requestPermission(this, LocationPermissionActivity.REQUEST_CODE_FINE_LOCATION);
             }
         }
     }

@@ -3,8 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.cs5520.assignments.numad22su_team24_puddle">
 
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.INTERNET" />
 
@@ -25,12 +25,23 @@
         <activity
             android:name=".MapActivity"
             android:configChanges="screenSize|orientation"
-            android:exported="false"
-            />
+            android:exported="false" />
         <activity
             android:name=".PuddleListActivity"
-            android:exported="false"
-            android:theme="@style/Theme.NUMAD22Su_Team24_Puddle.NoActionBar" />
+            android:exported="true"
+            android:theme="@style/Theme.NUMAD22Su_Team24_Puddle.NoActionBar">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data
+                    android:scheme="http"
+                    android:host="puddle-team24-app.com"
+                    android:pathPrefix="/join" />
+            </intent-filter>
+        </activity>
 
         <activity
             android:name=".SignupActivity"
@@ -52,6 +63,7 @@
         <activity
             android:name=".MainActivity"
             android:exported="false" />
+
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
@@ -59,10 +71,5 @@
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyDTbzxCT5jOJFnvWSRrQzlMJi97daSIDwg" />
     </application>
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <uses-permission android:name="android.permission.INTERNET" />
-
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 
 </manifest>

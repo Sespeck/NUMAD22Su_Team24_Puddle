@@ -9,6 +9,7 @@ import android.widget.TextView;
 
 import com.cs5520.assignments.numad22su_team24_puddle.Puddle;
 import com.cs5520.assignments.numad22su_team24_puddle.PuddleChatroomActivity;
+import com.cs5520.assignments.numad22su_team24_puddle.PuddleListActivity;
 import com.cs5520.assignments.numad22su_team24_puddle.R;
 
 import androidx.annotation.NonNull;
@@ -55,18 +56,7 @@ public class PuddleAdapter extends RecyclerView.Adapter<PuddleAdapter.PuddleView
         holder.puddleImage.setShapeAppearanceModel(holder.puddleImage.getShapeAppearanceModel().withCornerSize(25));
         holder.puddleImage.setColorFilter(R.color.black);
         holder.itemView.setOnClickListener(view -> {
-            View layoutView = View.inflate(context, R.layout.puddle_modal, null);
-            AlertDialog dialog = new MaterialAlertDialogBuilder(context).setTitle(puddle.getName()).setView(layoutView).create();
-            TextView tv = layoutView.findViewById(R.id.puddle_modal_name_tv);
-            tv.setText(puddle.getDescription());
-            ShapeableImageView im = layoutView.findViewById(R.id.puddle_modal_item_image);
-            im.setImageBitmap(puddle.getDisplayImage());
-            MaterialButton button = layoutView.findViewById(R.id.puddle_modal_join_btn);
-            button.setOnClickListener(v -> {
-                Intent intent = new Intent(context, PuddleChatroomActivity.class);
-                context.startActivity(intent);
-            });
-            dialog.show();
+            PuddleListActivity.showJoinPuddleDialogue(context, puddle);
         });
     }
 
