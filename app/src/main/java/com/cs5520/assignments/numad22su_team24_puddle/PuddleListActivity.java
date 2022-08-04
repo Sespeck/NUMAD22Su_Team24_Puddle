@@ -3,28 +3,34 @@ package com.cs5520.assignments.numad22su_team24_puddle;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.ContentResolver;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.webkit.MimeTypeMap;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.cs5520.assignments.numad22su_team24_puddle.Adapter.MyPuddlesAdapter;
 import com.cs5520.assignments.numad22su_team24_puddle.Adapter.PuddleListAdapter;
 import com.cs5520.assignments.numad22su_team24_puddle.Utils.FirebaseDB;
 import com.cs5520.assignments.numad22su_team24_puddle.Utils.LocationPermissionActivity;
+import com.google.android.material.button.MaterialButton;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.imageview.ShapeableImageView;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -103,6 +109,25 @@ public class PuddleListActivity extends AppCompatActivity implements View.OnClic
 
         updateRecyclerView(myPuddlesBtn);
         LocationPermissionActivity.checkPermission(this);
+
+        handleAppLink(getIntent());
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        handleAppLink(intent);
+    }
+
+    private void handleAppLink(Intent intent) {
+        String appLinkAction = intent.getAction();
+        Uri appLinkData = intent.getData();
+        if (Intent.ACTION_VIEW.equals(appLinkAction) && appLinkData != null){
+            updateRecyclerView(nearMeBtn);
+            String puddleId = appLinkData.getLastPathSegment();
+            Puddle puddle = new Puddle("Link Puddle", puddleId, BitmapFactory.decodeResource(this.getResources(), R.drawable.puddle));
+            showJoinPuddleDialogue(this, puddle);
+        }
     }
 
     private List<List<Puddle>> getPuddleList() {
@@ -261,5 +286,20 @@ public class PuddleListActivity extends AppCompatActivity implements View.OnClic
             }
 
         }
+    }
+
+    public static void showJoinPuddleDialogue(Context context, Puddle puddle) {
+        View layoutView = View.inflate(context, R.layout.puddle_modal, null);
+        AlertDialog dialog = new MaterialAlertDialogBuilder(context).setTitle(puddle.getName()).setView(layoutView).create();
+        TextView tv = layoutView.findViewById(R.id.puddle_modal_name_tv);
+        tv.setText(puddle.getDescription());
+        ShapeableImageView im = layoutView.findViewById(R.id.puddle_modal_item_image);
+        im.setImageBitmap(puddle.getDisplayImage());
+        MaterialButton button = layoutView.findViewById(R.id.puddle_modal_join_btn);
+        button.setOnClickListener(v -> {
+            Intent intent = new Intent(context, PuddleChatroomActivity.class);
+            context.startActivity(intent);
+        });
+        dialog.show();
     }
 }
