@@ -51,6 +51,7 @@ import com.google.firebase.storage.UploadTask;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class PuddleListActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -76,6 +77,7 @@ public class PuddleListActivity extends AppCompatActivity implements View.OnClic
     private Uri imageUri;
     private HashMap<String, Puddles> allPuddlesData;
     private HashMap<String, Puddles> myPuddlesData;
+    private HashMap<String, List<Puddles>> categoryPuddlesData;
 
 
     ActivityResultLauncher<Intent> startActivityForResult = registerForActivityResult(
@@ -377,7 +379,9 @@ public class PuddleListActivity extends AppCompatActivity implements View.OnClic
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 for(DataSnapshot snap: snapshot.getChildren()){
                     String key = snap.getValue(String.class);
-                    myPuddlesData.put(key, allPuddlesData.get(key));
+                    if(key != null){
+                        myPuddlesData.put(key, allPuddlesData.get(key));
+                    }
                 }
             }
 
@@ -386,5 +390,22 @@ public class PuddleListActivity extends AppCompatActivity implements View.OnClic
 
             }
         });
+    }
+
+    public void initializePuddles(){
+        categoryPuddlesData.put(Category.MUSIC.toString(), new ArrayList<>());
+        categoryPuddlesData.put(Category.EDUCATION.toString(), new ArrayList<>());
+        categoryPuddlesData.put(Category.TRAVEL.toString(), new ArrayList<>());
+        categoryPuddlesData.put(Category.FINANCE.toString(), new ArrayList<>());
+    }
+
+    // To categorize puddles for near me screen
+    public void categorizePuddles(){
+        initializePuddles();
+
+        for(Map.Entry<String, Puddles> puddle: allPuddlesData.entrySet()){
+            categoryPuddlesData.get(puddle.getKey()).add(puddle.getValue());
+        }
+
     }
 }
