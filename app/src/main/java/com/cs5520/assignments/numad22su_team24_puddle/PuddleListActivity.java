@@ -30,6 +30,7 @@ import android.widget.Toast;
 
 import com.cs5520.assignments.numad22su_team24_puddle.Adapter.MyPuddlesAdapter;
 import com.cs5520.assignments.numad22su_team24_puddle.Adapter.PuddleListAdapter;
+import com.cs5520.assignments.numad22su_team24_puddle.Model.Puddles;
 import com.cs5520.assignments.numad22su_team24_puddle.Model.User;
 import com.cs5520.assignments.numad22su_team24_puddle.Utils.FirebaseDB;
 import com.cs5520.assignments.numad22su_team24_puddle.Utils.LocationPermissionActivity;
@@ -73,6 +74,9 @@ public class PuddleListActivity extends AppCompatActivity implements View.OnClic
 
     private HashMap<String, String> userDetails;
     private Uri imageUri;
+    private HashMap<String, Puddles> allPuddlesData;
+    private HashMap<String, Puddles> myPuddlesData;
+
 
     ActivityResultLauncher<Intent> startActivityForResult = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
@@ -92,6 +96,7 @@ public class PuddleListActivity extends AppCompatActivity implements View.OnClic
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_puddle_list);
         userDetails = new HashMap<>();
+        allPuddlesData = new HashMap<>();
 
         profileIcon = findViewById(R.id.puddle_list_header_profile_icon);
         profileIcon.setOnClickListener(this);
@@ -108,7 +113,8 @@ public class PuddleListActivity extends AppCompatActivity implements View.OnClic
 
         // Api Calls
         fetchCurrentUserData();
-        uploadImageToFb();
+//        uploadImageToFb();
+        fetchAllPuddles();
 
         // Initializing Widgets
         puddleListRecyclerView = findViewById(R.id.puddle_list_rv);
@@ -163,11 +169,7 @@ public class PuddleListActivity extends AppCompatActivity implements View.OnClic
         userRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-//                for (DataSnapshot snap : snapshot) {
-//                    userDetails.put(snap.getKey(), snap.getValue(String.class));
-//                }
                 User currentUser = snapshot.getValue(User.class);
-                Log.d("currentUser", currentUser.toString());
             }
 
             @Override
@@ -219,7 +221,6 @@ public class PuddleListActivity extends AppCompatActivity implements View.OnClic
             } else {
                 LocationPermissionActivity.requestPermission(this, REQUEST_CODE_LOCATION_FOR_NEAR_ME);
             }
-
         } else {
             puddleListRecyclerView.setLayoutManager(new GridLayoutManager(this, 2));
             puddleListRecyclerView.setAdapter(new MyPuddlesAdapter(this));
@@ -345,5 +346,45 @@ public class PuddleListActivity extends AppCompatActivity implements View.OnClic
             context.startActivity(intent);
         });
         dialog.show();
+    }
+
+    // To capture all the puddles
+    public void fetchAllPuddles(){
+        DatabaseReference pudRef = FirebaseDB.getDataReference("Puddles");
+        pudRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for(DataSnapshot snap: snapshot.getChildren()){
+                    Puddles puddle = snap.getValue(Puddles.class);
+                    if(puddle != null){
+                        allPuddlesData.put(snap.getKey(), puddle);
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+    }
+
+    // To store the current user puddles
+    public void fetchMyPuddles(){
+        DatabaseReference myPuds = FirebaseDB.getDataReference("Users").child(FirebaseDB.getCurrentUser().getUid()).child("my_puddles");
+        myPuds.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for(DataSnapshot snap: snapshot.getChildren()){
+                    String key = snap.getValue(String.class);
+                    myPuddlesData.put(key, allPuddlesData.get(key));
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
     }
 }
