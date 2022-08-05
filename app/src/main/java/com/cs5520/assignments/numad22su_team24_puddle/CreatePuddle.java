@@ -21,6 +21,7 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -64,6 +65,7 @@ public class CreatePuddle extends AppCompatActivity {
     AutoCompleteTextView menu;
     ImageView selectedImg;
     TextView rangeVal;
+    ProgressBar apiLoader;
 
     Uri imgUri = null;
     String bannerUrl = "";
@@ -96,6 +98,10 @@ public class CreatePuddle extends AppCompatActivity {
         menu = findViewById(R.id.category_menu);
         selectedImg = findViewById(R.id.selected_pud_img);
         rangeVal = findViewById(R.id.range_val);
+        apiLoader = findViewById(R.id.apiLoader);
+
+        // Making the loader invisible by default
+        apiLoader.setVisibility(ProgressBar.GONE);
 
         // Options for the menu in the dropdown
         String[] options = {
@@ -137,6 +143,7 @@ public class CreatePuddle extends AppCompatActivity {
 
     public void makeApiCalls(View view){
         if(checkValues()){
+            apiLoader.setVisibility(ProgressBar.VISIBLE);
             getLocation();
         } else {
             Toast.makeText(this, "Please provide all values to proceed", Toast.LENGTH_SHORT).show();
@@ -160,6 +167,9 @@ public class CreatePuddle extends AppCompatActivity {
                                 if(bannerUrl != null || bannerUrl != ""){
                                     sendPuddleToFirebase(); // 3. Send the collected data to Firebase
                                 } else {
+                                    apiHandler.post(()->{
+                                        apiLoader.setVisibility(ProgressBar.GONE);
+                                    });
                                     Toast.makeText(CreatePuddle.this, "Error sending image to Store", Toast.LENGTH_SHORT).show();
                                 }
                             }
@@ -175,7 +185,8 @@ public class CreatePuddle extends AppCompatActivity {
         }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
-
+                apiLoader.setVisibility(ProgressBar.GONE);
+                Toast.makeText(CreatePuddle.this, "Failed to upload banner", Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -217,6 +228,7 @@ public class CreatePuddle extends AppCompatActivity {
         updateMyPuddles(pud_key);
 
         apiHandler.post(() -> {
+            apiLoader.setVisibility(ProgressBar.GONE);
             Intent intent = new Intent(CreatePuddle.this, PuddleChatroomActivity.class);
             CreatePuddle.this.startActivity(intent);
         });
@@ -229,6 +241,7 @@ public class CreatePuddle extends AppCompatActivity {
             if (LocationPermissionActivity.locationPermissionGranted) {
                 FusedLocationProviderClient fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
                 if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                    apiLoader.setVisibility(ProgressBar.GONE);
                     return;
                 }
                 fusedLocationProviderClient.getLastLocation().addOnSuccessListener(this, location -> {
@@ -240,6 +253,9 @@ public class CreatePuddle extends AppCompatActivity {
                                 lng = location.getLongitude();
                                 uploadImageToStore(imgUri); // 2. Upload image to firestore if location fetch success
                             } else {
+                                apiHandler.post(() -> {
+                                    apiLoader.setVisibility(ProgressBar.GONE);
+                                });
                                 Toast.makeText(CreatePuddle.this, "Failed to get user location, Please provide location acccess to continue", Toast.LENGTH_LONG).show();
                             }
                         }
@@ -247,10 +263,13 @@ public class CreatePuddle extends AppCompatActivity {
                 });
 
             }
-            else{LocationPermissionActivity.requestPermission(this, LocationPermissionActivity.REQUEST_CODE_FINE_LOCATION);}
+            else{
+                apiLoader.setVisibility(ProgressBar.GONE);
+                LocationPermissionActivity.requestPermission(this, LocationPermissionActivity.REQUEST_CODE_FINE_LOCATION);
+            }
 
         } else {
-
+            apiLoader.setVisibility(ProgressBar.GONE);
         }
     }
 

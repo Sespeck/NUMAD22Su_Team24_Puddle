@@ -19,6 +19,21 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
+            <Button
+                android:id="@+id/create"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="24dp"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                android:layout_marginTop="36dp"
+                android:onClick="makeApiCalls"
+                android:text="Create Puddle"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/menu" />
+
             <RelativeLayout
                 android:id="@+id/add_banner"
                 android:layout_width="wrap_content"
@@ -28,8 +43,7 @@
                 android:layout_marginTop="24dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/private_pud"
-                >
+                app:layout_constraintTop_toBottomOf="@id/private_pud">
 
                 <ImageView
                     android:id="@+id/selected_pud_img"
@@ -103,6 +117,22 @@
                 app:layout_constraintBottom_toBottomOf="@+id/range"
                 app:layout_constraintEnd_toEndOf="parent" />
 
+            <com.google.android.material.slider.Slider
+                android:id="@+id/range_filter"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="8dp"
+                android:layout_marginRight="8dp"
+                android:stepSize="5"
+                android:value="0"
+                android:valueFrom="0"
+                android:valueTo="50"
+                app:layout_anchorGravity="bottom|clip_vertical"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/range"
+                tools:ignore="SpeakableTextPresentCheck" />
+
             <com.google.android.material.switchmaterial.SwitchMaterial
                 android:id="@+id/private_pud"
                 android:layout_width="match_parent"
@@ -127,12 +157,12 @@
                 android:layout_marginRight="16dp"
                 android:layout_marginTop="24dp"
                 android:hint="Puddle Name"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
                 app:counterEnabled="true"
                 app:counterMaxLength="25"
                 app:counterOverflowTextColor="@android:color/holo_red_light"
                 app:counterTextAppearance="@style/HelperTextAppearance"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/create_pud">
 
                 <com.google.android.material.textfield.TextInputEditText
@@ -166,22 +196,6 @@
                     android:gravity="top" />
             </com.google.android.material.textfield.TextInputLayout>
 
-            <com.google.android.material.slider.Slider
-                android:id="@+id/range_filter"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="8dp"
-                android:layout_marginRight="8dp"
-                android:stepSize="5"
-                android:value="0"
-                android:valueFrom="0"
-                android:valueTo="50"
-                app:layout_anchorGravity="bottom|clip_vertical"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/range"
-                tools:ignore="SpeakableTextPresentCheck" />
-
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/menu"
                 style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox.ExposedDropdownMenu"
@@ -190,10 +204,10 @@
                 android:layout_marginLeft="16dp"
                 android:layout_marginRight="16dp"
                 android:layout_marginTop="24dp"
+                android:hint="Category"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/range_filter"
-                android:hint="Category">
+                app:layout_constraintTop_toBottomOf="@id/range_filter">
 
                 <AutoCompleteTextView
                     android:id="@+id/category_menu"
@@ -203,20 +217,15 @@
 
             </com.google.android.material.textfield.TextInputLayout>
 
-            <Button
-                android:id="@+id/create"
+            <ProgressBar
+                android:id="@+id/apiLoader"
+                style="?android:attr/progressBarStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="24dp"
-                android:layout_marginLeft="16dp"
-                android:layout_marginRight="16dp"
-                android:layout_marginTop="36dp"
-                android:onClick="makeApiCalls"
-                android:text="Create Puddle"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/menu" />
+                app:layout_constraintTop_toTopOf="parent" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>
