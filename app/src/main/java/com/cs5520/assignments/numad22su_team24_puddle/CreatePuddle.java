@@ -26,6 +26,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.cs5520.assignments.numad22su_team24_puddle.Model.ApiLoaderBar;
 import com.cs5520.assignments.numad22su_team24_puddle.Utils.FirebaseDB;
 import com.cs5520.assignments.numad22su_team24_puddle.Utils.LocationPermissionActivity;
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -65,12 +66,12 @@ public class CreatePuddle extends AppCompatActivity {
     AutoCompleteTextView menu;
     ImageView selectedImg;
     TextView rangeVal;
-    ProgressBar apiLoader;
 
     Uri imgUri = null;
     String bannerUrl = "";
     Handler apiHandler = new Handler();
     double selectedRange = 0.0;
+    final ApiLoaderBar apiBar = new ApiLoaderBar(CreatePuddle.this);
 
     ActivityResultLauncher<Intent> startActivityForResult = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
@@ -98,10 +99,6 @@ public class CreatePuddle extends AppCompatActivity {
         menu = findViewById(R.id.category_menu);
         selectedImg = findViewById(R.id.selected_pud_img);
         rangeVal = findViewById(R.id.range_val);
-        apiLoader = findViewById(R.id.apiLoader);
-
-        // Making the loader invisible by default
-        apiLoader.setVisibility(ProgressBar.GONE);
 
         // Options for the menu in the dropdown
         String[] options = {
@@ -143,7 +140,7 @@ public class CreatePuddle extends AppCompatActivity {
 
     public void makeApiCalls(View view){
         if(checkValues()){
-            apiLoader.setVisibility(ProgressBar.VISIBLE);
+            apiBar.showDialog();
             getLocation();
         } else {
             Toast.makeText(this, "Please provide all values to proceed", Toast.LENGTH_SHORT).show();
@@ -168,7 +165,7 @@ public class CreatePuddle extends AppCompatActivity {
                                     sendPuddleToFirebase(); // 3. Send the collected data to Firebase
                                 } else {
                                     apiHandler.post(()->{
-                                        apiLoader.setVisibility(ProgressBar.GONE);
+                                        apiBar.dismissBar();
                                     });
                                     Toast.makeText(CreatePuddle.this, "Error sending image to Store", Toast.LENGTH_SHORT).show();
                                 }
@@ -185,7 +182,7 @@ public class CreatePuddle extends AppCompatActivity {
         }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
-                apiLoader.setVisibility(ProgressBar.GONE);
+                apiBar.dismissBar();
                 Toast.makeText(CreatePuddle.this, "Failed to upload banner", Toast.LENGTH_SHORT).show();
             }
         });
@@ -228,7 +225,7 @@ public class CreatePuddle extends AppCompatActivity {
         updateMyPuddles(pud_key);
 
         apiHandler.post(() -> {
-            apiLoader.setVisibility(ProgressBar.GONE);
+            apiBar.dismissBar();
             Intent intent = new Intent(CreatePuddle.this, PuddleChatroomActivity.class);
             CreatePuddle.this.startActivity(intent);
         });
@@ -241,7 +238,7 @@ public class CreatePuddle extends AppCompatActivity {
             if (LocationPermissionActivity.locationPermissionGranted) {
                 FusedLocationProviderClient fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
                 if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                    apiLoader.setVisibility(ProgressBar.GONE);
+                    apiBar.dismissBar();
                     return;
                 }
                 fusedLocationProviderClient.getLastLocation().addOnSuccessListener(this, location -> {
@@ -254,7 +251,7 @@ public class CreatePuddle extends AppCompatActivity {
                                 uploadImageToStore(imgUri); // 2. Upload image to firestore if location fetch success
                             } else {
                                 apiHandler.post(() -> {
-                                    apiLoader.setVisibility(ProgressBar.GONE);
+                                    apiBar.dismissBar();
                                 });
                                 Toast.makeText(CreatePuddle.this, "Failed to get user location, Please provide location acccess to continue", Toast.LENGTH_LONG).show();
                             }
@@ -264,12 +261,12 @@ public class CreatePuddle extends AppCompatActivity {
 
             }
             else{
-                apiLoader.setVisibility(ProgressBar.GONE);
+                apiBar.dismissBar();
                 LocationPermissionActivity.requestPermission(this, LocationPermissionActivity.REQUEST_CODE_FINE_LOCATION);
             }
 
         } else {
-            apiLoader.setVisibility(ProgressBar.GONE);
+            apiBar.dismissBar();
         }
     }
 
