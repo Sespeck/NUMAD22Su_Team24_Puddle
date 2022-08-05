@@ -64,18 +64,28 @@ public class PuddleChatroomActivity extends AppCompatActivity {
     }
 
     private void completeFragmentNavigation(TabLayout.Tab tab) {
+        Bundle bundle = new Bundle();
+        bundle.putString("puddleID",puddleID);
         if (tab.getPosition() == 0) {
             fab.setVisibility(View.INVISIBLE);
-            changeVisibleFragment(R.id.chat_tab, new ChatroomFragment(puddleID), "chatroom");
+            ChatroomFragment chatroomFragment = new ChatroomFragment();
+            chatroomFragment.setArguments(bundle);
+            changeVisibleFragment(R.id.chat_tab, chatroomFragment, "chatroom");
         } else if (tab.getPosition() == 1) {
             fab.setVisibility(View.INVISIBLE);
-            changeVisibleFragment(R.id.about_tab, new AboutFragment(puddleID), "about");
+            AboutFragment aboutFragment = new AboutFragment();
+            aboutFragment.setArguments(bundle);
+            changeVisibleFragment(R.id.about_tab,  aboutFragment,"about");
         } else if (tab.getPosition() == 2) {
             fab.setVisibility(View.INVISIBLE);
-            changeVisibleFragment(R.id.members_tab, new MembersFragment(puddleID), "members");
+            MembersFragment membersFragment = new MembersFragment();
+            membersFragment.setArguments(bundle);
+            changeVisibleFragment(R.id.members_tab, membersFragment, "members");
         } else if (tab.getPosition() == 3) {
             fab.setVisibility(View.VISIBLE);
-            changeVisibleFragment(R.id.events_tab, new EventsFragment(puddleID), "events");
+            EventsFragment eventsFragment = new EventsFragment();
+            eventsFragment.setArguments(bundle);
+            changeVisibleFragment(R.id.events_tab,  eventsFragment, "events");
         }
 }
 

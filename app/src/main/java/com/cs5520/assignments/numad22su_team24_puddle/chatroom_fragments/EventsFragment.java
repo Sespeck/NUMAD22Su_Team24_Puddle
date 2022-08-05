@@ -38,15 +38,11 @@ public class EventsFragment extends Fragment {
     private DatabaseReference eventsRef;
 
 
-    public EventsFragment(String puddleID){
-        this.puddleID = puddleID;
-    }
-
-
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.events_fragment,container,false);
+        puddleID = getArguments().getString("puddleID");
         this.recyclerView = view.findViewById(R.id.event_recycler_view);
         recyclerView.hasFixedSize();
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));

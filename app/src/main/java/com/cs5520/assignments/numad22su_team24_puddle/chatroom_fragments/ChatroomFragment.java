@@ -43,16 +43,12 @@ public class ChatroomFragment extends Fragment {
     private String puddleID;
     private DatabaseReference messageRef;
 
-    public ChatroomFragment(String puddleID){
-        this.puddleID = puddleID;
-    }
-
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        Log.d("here",Instant.now().toString());
         View view = inflater.inflate(R.layout.chatroom_fragment,container,false);
+        puddleID = getArguments().getString("puddleID");
         this.recyclerView = view.findViewById(R.id.chatroom_recycler_view);
         this.sendButton = view.findViewById(R.id.chat_room_send_button);
         this.chatEditText = view.findViewById(R.id.chat_room_edit_text);
