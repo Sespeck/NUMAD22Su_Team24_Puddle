@@ -45,7 +45,10 @@ public class EventsFragment extends Fragment {
         puddleID = getArguments().getString("puddleID");
         this.recyclerView = view.findViewById(R.id.event_recycler_view);
         recyclerView.hasFixedSize();
-        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
+        layoutManager.setReverseLayout(true);
+        layoutManager.setStackFromEnd(true);
+        recyclerView.setLayoutManager(layoutManager);
         eventsRef = FirebaseDB.getDataReference("Events");
         initializeRecyclerView();
         initializeFragmentResultListener();
@@ -77,7 +80,7 @@ public class EventsFragment extends Fragment {
                     newEvent.put("image_uri",backgroundImgUri);
                     newEvent.put("attendance_counter","0");
                     handler.post(()->{
-                        eventsAdapter.addNewEvent(new Event(title,startingTimestamp,endingTimestamp,null,description,backgroundImgUri,0));
+                        eventsAdapter.addNewEvent(new Event(title,startingTimestamp,endingTimestamp,null,description,result.getString("image_uri"),0));
                     });
                     eventsRef.child(puddleID).push().setValue(newEvent);
                 }

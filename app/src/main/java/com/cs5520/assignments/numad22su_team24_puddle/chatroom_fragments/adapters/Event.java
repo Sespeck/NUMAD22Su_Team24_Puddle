@@ -2,6 +2,7 @@ package com.cs5520.assignments.numad22su_team24_puddle.chatroom_fragments.adapte
 
 import android.graphics.Bitmap;
 import android.location.Location;
+import android.util.Log;
 
 public class Event {
     Boolean isOnline;
@@ -16,6 +17,8 @@ public class Event {
 
     public Event(String name, String startingDatetime, String endingDatetime, Location location,
                  String description, String backgroundImgUri, int attendanceCount){
+        Log.d("starting",startingDatetime);
+        Log.d("ending",endingDatetime);
         this.name = name;
         this.startingDatetime = startingDatetime;
         this.endingDatetime = endingDatetime;

@@ -4,6 +4,7 @@ import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.icu.util.Calendar;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.DatePicker;
 import android.widget.TextView;
@@ -44,10 +45,12 @@ public class EventCalendarPickerDialog extends DialogFragment
     public void onDateSet(DatePicker view, int year, int month, int day) {
         // Dates stored as yy-mm-dd
         String date = year + "-" + (month + 1) + "-" + day;
-        if (view.getId() == R.id.starting_date_text_view) {
+        if (this.view.getId() == R.id.starting_date_text_view) {
+            Log.d("if",date);
             dialog.acceptPickerStartingDate(date);
             this.view.setText(DateTimeFormatUtil.formatEventDate(date));
         } else {
+            Log.d("else", date);
             try {
                 // Check if the ending date is before the starting date
                 if (dialog.balanceStartPickerDates(date)) {

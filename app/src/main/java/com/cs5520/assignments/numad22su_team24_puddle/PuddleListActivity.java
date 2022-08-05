@@ -179,6 +179,12 @@ public class PuddleListActivity extends AppCompatActivity implements View.OnClic
 
     }
 
+    private void handleFilterResults(){
+        getSupportFragmentManager().setFragmentResultListener("event_creation_result",this,((requestKey, result) -> {
+
+        }));
+    }
+
     @Override
     public void onClick(View view) {
         if (view.equals(profileIcon)) {
@@ -204,7 +210,8 @@ public class PuddleListActivity extends AppCompatActivity implements View.OnClic
                 }
             }
         } else if (view.equals(filterIcon)) {
-
+            BottomFilterModal modal = new BottomFilterModal();
+            modal.show(getSupportFragmentManager(),"filter");
         }
     }
 
