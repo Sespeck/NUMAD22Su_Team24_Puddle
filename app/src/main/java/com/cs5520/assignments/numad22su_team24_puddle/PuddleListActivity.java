@@ -3,6 +3,7 @@ package com.cs5520.assignments.numad22su_team24_puddle;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
@@ -38,6 +39,7 @@ import com.google.android.material.imageview.ShapeableImageView;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -309,6 +311,11 @@ public class PuddleListActivity extends AppCompatActivity implements View.OnClic
 
     // To store the current user puddles
     public void fetchMyPuddles(){
+        puddleListRecyclerView.setLayoutManager(new GridLayoutManager(PuddleListActivity.this, 2));
+        puddleListRecyclerView.setAdapter(new MyPuddlesAdapter(PuddleListActivity.this, myPuddlesData));
+        setSelectedButton(myPuddlesBtn);
+        setUnselectedButton(nearMeBtn);
+
         DatabaseReference myPuds = FirebaseDB.getDataReference("Users").child(FirebaseDB.getCurrentUser().getUid()).child("my_puddles");
         myPuds.addValueEventListener(new ValueEventListener() {
             @Override
@@ -324,10 +331,6 @@ public class PuddleListActivity extends AppCompatActivity implements View.OnClic
                     setSelectedButton(myPuddlesBtn);
                     setUnselectedButton(nearMeBtn);
                 }
-
-
-//                setSelectedButton(myPuddlesBtn);
-//                setUnselectedButton(nearMeBtn);
             }
 
             @Override
