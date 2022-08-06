@@ -28,6 +28,7 @@ import com.google.android.material.slider.Slider;
 import org.w3c.dom.Text;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class BottomFilterModal extends BottomSheetDialogFragment {
