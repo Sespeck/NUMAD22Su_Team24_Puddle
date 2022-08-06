@@ -1,6 +1,6 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
-    <style name="Theme.NUMAD22Su_Team24_Puddle" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
+    <style name="Theme.NUMAD22Su_Team24_Puddle" parent="Theme.Material3.DayNight">
         <!-- Primary brand color. -->
         <item name="colorPrimary">@color/purple_500</item>
         <item name="colorPrimaryVariant">@color/purple_700</item>
@@ -14,7 +14,7 @@
         <!-- Customize your theme here. -->
     </style>
 
-    <style name="Theme.NUMAD22Su_Team24_Puddle.NoActionBar" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+    <style name="Theme.NUMAD22Su_Team24_Puddle.NoActionBar" parent="Theme.Material3.DayNight.NoActionBar">
         <!-- Primary brand color. -->
         <item name="colorPrimary">@color/purple_500</item>
         <item name="colorPrimaryVariant">@color/purple_700</item>
@@ -75,5 +75,10 @@
         <item name="android:textSize">@dimen/font_size_mid</item>
         <item name="color">@color/black</item>
     </style>
+
+    <style name="ShapeAppearanceOverlay.App.RoundedCorners" parent="">
+        <item name="cornerSize">50%</item>
+    </style>
+
 
 </resources>

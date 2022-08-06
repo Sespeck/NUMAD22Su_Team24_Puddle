@@ -39,39 +39,50 @@
         app:layout_constraintTop_toTopOf="@+id/imageView2" />
 
         <ImageView
-        android:id="@+id/recycler_view_item_bg_image"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:contentDescription="@string/bgimg"
-        android:scaleType="fitXY"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+            android:id="@+id/recycler_view_item_bg_image"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:contentDescription="@string/bgimg"
+            android:scaleType="fitXY"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            />
 
         <TextView
-            android:id="@+id/recycler_view_event_date_time"
+            android:id="@+id/recycler_view_event_ending_datetime"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="15sp"
             android:layout_marginRight="15sp"
-            android:layout_marginBottom="3sp"
+            android:layout_marginBottom="5sp"
             android:textColor="@color/white"
             android:textSize="18sp"
             app:layout_constraintBottom_toTopOf="@+id/imageView2"
             app:layout_constraintStart_toStartOf="parent" />
 
         <TextView
+            android:id="@+id/recycler_view_event_starting_datetime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="15dp"
+            android:layout_marginBottom="5sp"
+            android:textColor="@color/white"
+            android:textSize="18sp"
+            app:layout_constraintBottom_toTopOf="@+id/recycler_view_event_ending_datetime"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <TextView
             android:id="@+id/recycler_view_item_event_name"
             android:layout_width="0sp"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="15sp"
-            android:layout_marginRight="15sp"
-            android:layout_marginBottom="3sp"
+            android:layout_marginBottom="5sp"
+            android:layout_marginStart="15dp"
             android:singleLine="false"
             android:textColor="@color/white"
             android:textSize="22sp"
-            app:layout_constraintBottom_toTopOf="@+id/recycler_view_event_date_time"
+            app:layout_constraintBottom_toTopOf="@+id/recycler_view_event_starting_datetime"
             app:layout_constraintStart_toStartOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>

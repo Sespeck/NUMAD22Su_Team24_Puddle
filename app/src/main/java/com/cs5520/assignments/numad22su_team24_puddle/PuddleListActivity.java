@@ -80,19 +80,6 @@ public class PuddleListActivity extends AppCompatActivity implements View.OnClic
     private HashMap<String, List<Puddles>> categoryPuddlesData;
 
 
-    ActivityResultLauncher<Intent> startActivityForResult = registerForActivityResult(
-            new ActivityResultContracts.StartActivityForResult(),
-            result -> {
-                if (result.getResultCode() == AppCompatActivity.RESULT_OK) {
-                    Intent data = result.getData();
-                    imageUri = data.getData();
-                    profileIcon.setImageURI(imageUri);
-
-                    uploadToFirebase(imageUri);
-                }
-            }
-    );
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -115,7 +102,8 @@ public class PuddleListActivity extends AppCompatActivity implements View.OnClic
         navigationIcon.setOnClickListener(this);
 
         // Api Calls
-        fetchCurrentUserData();
+        FirebaseDB.fetchCurrentUserData();
+        uploadImageToFb();
 //        uploadImageToFb();
         fetchAllPuddles();
 
@@ -165,32 +153,10 @@ public class PuddleListActivity extends AppCompatActivity implements View.OnClic
         return puddlesList;
     }
 
-    public void fetchCurrentUserData() {
-        current_user = FirebaseDB.getCurrentUser();
-
-        userRef = FirebaseDB.getDataReference(getString(R.string.users)).child(current_user.getUid());
-        userRef.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                User currentUser = snapshot.getValue(User.class);
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-
-            }
-        });
-
-
-    }
-
     @Override
     public void onClick(View view) {
         if (view.equals(profileIcon)) {
-            Intent gallery = new Intent();
-            gallery.setAction(Intent.ACTION_GET_CONTENT);
-            gallery.setType("image/*");
-            startActivityForResult.launch(gallery);
+            startActivity(new Intent(this, ProfileActivity.class));
         } else if (view.equals(nearMeBtn) || view.equals(myPuddlesBtn)) {
             updateRecyclerView(view);
         } else if (view.equals(createIcon)) {
@@ -233,9 +199,6 @@ public class PuddleListActivity extends AppCompatActivity implements View.OnClic
             });
             setSelectedButton(myPuddlesBtn);
             setUnselectedButton(nearMeBtn);
-
-//            puddleListRecyclerView.setLayoutManager(new GridLayoutManager(this, 2));
-//            puddleListRecyclerView.setAdapter(new MyPuddlesAdapter(this));
         }
 
     }
@@ -256,40 +219,6 @@ public class PuddleListActivity extends AppCompatActivity implements View.OnClic
         imgRef.setValue("url");
 
         storeRef = FirebaseDB.storageRef;
-    }
-
-    public void uploadToFirebase(Uri uri) {
-        StorageReference ref = storeRef.child(System.currentTimeMillis() + "." + getFileExtension(uri));
-        ref.putFile(uri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-            @Override
-            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-
-                ref.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-                    @Override
-                    public void onSuccess(Uri uri) {
-                        String imgUrl = uri.toString();
-                        imgRef.setValue(imgUrl);
-                    }
-                });
-                Toast.makeText(PuddleListActivity.this, "Success!", Toast.LENGTH_SHORT).show();
-            }
-        }).addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
-            @Override
-            public void onProgress(@NonNull UploadTask.TaskSnapshot snapshot) {
-
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-
-            }
-        });
-    }
-
-    public String getFileExtension(Uri muri) {
-        ContentResolver cr = getContentResolver();
-        MimeTypeMap mime = MimeTypeMap.getSingleton();
-        return mime.getExtensionFromMimeType(cr.getType(muri));
     }
 
     @Override
