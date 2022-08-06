@@ -57,6 +57,7 @@ public class MyPuddlesAdapter extends RecyclerView.Adapter<MyPuddlesAdapter.MyPu
 
         holder.itemView.setOnClickListener((v) -> {
             Intent intent = new Intent(ct, PuddleChatroomActivity.class);
+            intent.putExtra("puddleID", myPuddleKeys.get(position));
             ct.startActivity(intent);
         });
     }

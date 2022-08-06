@@ -14,7 +14,7 @@ import androidx.fragment.app.DialogFragment;
 
 import com.cs5520.assignments.numad22su_team24_puddle.R;
 
-public class EventTimePickerDialog extends DialogFragment
+public class EventEndingTimePickerDialog extends DialogFragment
         implements TimePickerDialog.OnTimeSetListener {
 
     private TextView view;
@@ -36,13 +36,10 @@ public class EventTimePickerDialog extends DialogFragment
     }
 
     public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-//        this.view.setText(DateTimeFormatUtil.formatEventTime(hourOfDay,minute));
-//        if (this.view.getId() == R.id.starting_time_text_view){
-//            dialog.acceptPickerStartTime(DateTimeFormatUtil.formatEventTime(hourOfDay,minute));
-//        }
-//        else{
-//            dialog.acceptPickerEndingTime(DateTimeFormatUtil.formatEventTime(hourOfDay,minute));
-//        }
-//    }
+        Bundle bundle = new Bundle();
+        bundle.putInt("ending_hour",hourOfDay);
+        bundle.putInt("ending_minute",minute);
+        getParentFragmentManager().setFragmentResult("ending_time",bundle);
     }
 }
+
