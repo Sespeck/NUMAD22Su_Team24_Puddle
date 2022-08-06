@@ -42,5 +42,8 @@
     <string name="user_name">username</string>
     <string name="_0">0</string>
     <string name="save">Save</string>
+    <string name="display_name">Display Name</string>
+    <string name="bio">Bio</string>
+    <string name="phone_number">Phone Number</string>
 
 </resources>

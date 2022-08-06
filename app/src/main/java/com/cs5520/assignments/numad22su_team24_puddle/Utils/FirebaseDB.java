@@ -2,11 +2,13 @@ package com.cs5520.assignments.numad22su_team24_puddle.Utils;
 
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 
 import com.cs5520.assignments.numad22su_team24_puddle.MainActivity;
+import com.cs5520.assignments.numad22su_team24_puddle.ProfileActivity;
 import com.cs5520.assignments.numad22su_team24_puddle.PuddleListActivity;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -23,23 +25,24 @@ import java.util.HashMap;
 public class FirebaseDB {
 
     public static StorageReference storageRef = FirebaseStorage.getInstance().getReference();
-    public static FirebaseAuth getInstanceFirebaseAuth(){
+
+    public static FirebaseAuth getInstanceFirebaseAuth() {
         return FirebaseAuth.getInstance();
     }
 
-    public static FirebaseUser getCurrentUser(){
+    public static FirebaseUser getCurrentUser() {
         return FirebaseAuth.getInstance().getCurrentUser();
     }
 
-    public static DatabaseReference getDataReference(String path){
+    public static DatabaseReference getDataReference(String path) {
         return FirebaseDatabase.getInstance().getReference(path);
     }
 
-    public static void registerUser(String email, String password, String username, Context ct){
+    public static void registerUser(String email, String password, String username, Context ct) {
         getInstanceFirebaseAuth().createUserWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
-                if(task.isSuccessful()){
+                if (task.isSuccessful()) {
                     FirebaseUser firebaseUser = getCurrentUser();
                     String userid = firebaseUser.getUid();
                     DatabaseReference ref = getDataReference("Users").child(userid);
@@ -51,8 +54,8 @@ public class FirebaseDB {
                     ref.setValue(hashMap).addOnCompleteListener(new OnCompleteListener<Void>() {
                         @Override
                         public void onComplete(@NonNull Task<Void> task) {
-                            if(task.isSuccessful()){
-                                Intent intent = new Intent(ct, PuddleListActivity.class);
+                            if (task.isSuccessful()) {
+                                Intent intent = new Intent(ct, ProfileActivity.class);
                                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
                                 ct.startActivity(intent);
                             } else {
@@ -61,7 +64,8 @@ public class FirebaseDB {
                         }
                     });
                 } else {
-                    Toast.makeText(ct, "Username already in use.", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(ct, "Authentication failed.",
+                            Toast.LENGTH_SHORT).show();
                 }
             }
         });

@@ -182,10 +182,11 @@ public class PuddleListActivity extends AppCompatActivity implements View.OnClic
     @Override
     public void onClick(View view) {
         if (view.equals(profileIcon)) {
-            Intent gallery = new Intent();
-            gallery.setAction(Intent.ACTION_GET_CONTENT);
-            gallery.setType("image/*");
-            startActivityForResult.launch(gallery);
+            startActivity(new Intent(this, ProfileActivity.class));
+//            Intent gallery = new Intent();
+//            gallery.setAction(Intent.ACTION_GET_CONTENT);
+//            gallery.setType("image/*");
+//            startActivityForResult.launch(gallery);
         } else if (view.equals(nearMeBtn) || view.equals(myPuddlesBtn)) {
             updateRecyclerView(view);
         } else if (view.equals(createIcon)) {

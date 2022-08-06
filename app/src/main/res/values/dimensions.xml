@@ -23,6 +23,7 @@
     <dimen name="login_signup_rounded_corners">16dp</dimen>
 
     <dimen name="profile_icon_small">60dp</dimen>
+    <dimen name="profile_icon_large">120dp</dimen>
     <dimen name="icon_size_small">30dp</dimen>
     <dimen name="icon_size_lg">120dp</dimen>
 </resources>

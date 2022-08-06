@@ -19,9 +19,11 @@
         android:theme="@style/Theme.NUMAD22Su_Team24_Puddle"
         tools:targetApi="31">
         <activity
+            android:name=".ProfileActivity"
+            android:exported="false" />
+        <activity
             android:name=".CreatePuddle"
             android:exported="false" />
-
         <activity
             android:name=".MapActivity"
             android:configChanges="screenSize|orientation"
@@ -37,12 +39,11 @@
                 <category android:name="android.intent.category.BROWSABLE" />
 
                 <data
-                    android:scheme="http"
                     android:host="puddle-team24-app.com"
-                    android:pathPrefix="/join" />
+                    android:pathPrefix="/join"
+                    android:scheme="http" />
             </intent-filter>
         </activity>
-
         <activity
             android:name=".SignupActivity"
             android:exported="false" />
@@ -58,8 +59,7 @@
         <activity
             android:name=".PuddleChatroomActivity"
             android:exported="true"
-            android:theme="@style/Theme.NUMAD22Su_Team24_Puddle.NoActionBar"
-            />
+            android:theme="@style/Theme.NUMAD22Su_Team24_Puddle.NoActionBar" />
         <activity
             android:name=".MainActivity"
             android:exported="false" />
