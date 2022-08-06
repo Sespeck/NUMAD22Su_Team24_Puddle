@@ -9,6 +9,7 @@ import android.content.ContentResolver;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -17,6 +18,8 @@ import android.webkit.MimeTypeMap;
 import android.widget.Button;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
+import com.cs5520.assignments.numad22su_team24_puddle.Model.ApiLoaderBar;
 import com.cs5520.assignments.numad22su_team24_puddle.Utils.FirebaseDB;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -36,10 +39,13 @@ public class ProfileActivity extends AppCompatActivity {
     ShapeableImageView profileIcon;
     TextInputEditText displayET, usernameET, bioET, phoneNumberET;
     Button saveBtn;
-    Uri imageUri;
+    Uri imageUri = null;
+    String dpUrl = "";
 
     DatabaseReference imgRef;
     StorageReference storeRef;
+    Handler apiHandler = new Handler();
+    final ApiLoaderBar apiBar = new ApiLoaderBar(ProfileActivity.this);
 
     ActivityResultLauncher<Intent> startActivityForResult = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
@@ -87,13 +93,25 @@ public class ProfileActivity extends AppCompatActivity {
         usernameET.setText(FirebaseDB.currentUser.getUsername());
         bioET.setText(FirebaseDB.currentUser.getBio());
         phoneNumberET.setText(FirebaseDB.currentUser.getPhone_number());
+
+        if(!FirebaseDB.currentUser.getProfile_icon().equals("")){
+            dpUrl = FirebaseDB.currentUser.getProfile_icon();
+            Glide.with(ProfileActivity.this).load(dpUrl).into(profileIcon);
+        }
     }
 
     private void saveBtnClick() {
-        DatabaseReference ref = FirebaseDB.getDataReference("Users").child(FirebaseDB.currentUser.getId());
+        apiBar.showDialog();
+        if(imageUri != null){
+            uploadImageToStore(imageUri);
+        } else {
+            uploadDataToFB();
+        }
+    }
 
+    public void uploadDataToFB(){
+        DatabaseReference ref = FirebaseDB.getDataReference("Users").child(FirebaseDB.currentUser.getId());
         HashMap<String, Object> hashMap = new HashMap<>();
-//        hashMap.put("username", usernameET.getText().toString());
         hashMap.put("id", FirebaseDB.currentUser.getId());
         hashMap.put("username", FirebaseDB.currentUser.getUsername());
         hashMap.put("password", FirebaseDB.currentUser.getPassword());
@@ -101,16 +119,20 @@ public class ProfileActivity extends AppCompatActivity {
         hashMap.put("display_name", displayET.getText().toString());
         hashMap.put("bio", bioET.getText().toString());
         hashMap.put("phone_number", phoneNumberET.getText().toString());
-        hashMap.put("profile_icon", "");
+        hashMap.put("profile_icon", dpUrl);
 
         ref.setValue(hashMap).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
+                apiHandler.post(()->{
+                    apiBar.dismissBar();
+                });
+
                 if (task.isSuccessful()) {
                     FirebaseDB.currentUser.setDisplay_name(displayET.getText().toString());
                     FirebaseDB.currentUser.setBio(bioET.getText().toString());
                     FirebaseDB.currentUser.setPhone_number(phoneNumberET.getText().toString());
-                    FirebaseDB.currentUser.setProfile_icon("");
+                    FirebaseDB.currentUser.setProfile_icon(dpUrl);
                     Intent intent = new Intent(ProfileActivity.this, PuddleListActivity.class);
                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
                     getApplicationContext().startActivity(intent);
@@ -119,40 +141,6 @@ public class ProfileActivity extends AppCompatActivity {
                 }
             }
         });
-    }
-
-    public void uploadToFirebase(Uri uri) {
-        StorageReference ref = storeRef.child(System.currentTimeMillis() + "." + getFileExtension(uri));
-        ref.putFile(uri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-            @Override
-            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-
-                ref.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-                    @Override
-                    public void onSuccess(Uri uri) {
-                        String imgUrl = uri.toString();
-                        imgRef.setValue(imgUrl);
-                    }
-                });
-                Toast.makeText(ProfileActivity.this, "Success!", Toast.LENGTH_SHORT).show();
-            }
-        }).addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
-            @Override
-            public void onProgress(@NonNull UploadTask.TaskSnapshot snapshot) {
-
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-
-            }
-        });
-    }
-
-    public String getFileExtension(Uri muri) {
-        ContentResolver cr = getContentResolver();
-        MimeTypeMap mime = MimeTypeMap.getSingleton();
-        return mime.getExtensionFromMimeType(cr.getType(muri));
     }
 
     @Override
@@ -173,4 +161,53 @@ public class ProfileActivity extends AppCompatActivity {
         }
         return super.onOptionsItemSelected(item);
     }
+
+    public void uploadImageToStore(Uri uri){
+        StorageReference ref = FirebaseDB.storageRef.child(System.currentTimeMillis() + "." + getFileExtension(uri));
+        ref.putFile(uri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+            @Override
+            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+
+                ref.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                    @Override
+                    public void onSuccess(Uri uri) {
+                        new Thread(new Runnable() {
+                            @Override
+                            public void run() {
+                                dpUrl = uri.toString();
+
+                                if(dpUrl != null || dpUrl != ""){
+                                    uploadDataToFB();
+                                } else {
+                                    apiHandler.post(()->{
+                                        apiBar.dismissBar();
+                                    });
+                                    Toast.makeText(ProfileActivity.this, "Error sending image to Store", Toast.LENGTH_SHORT).show();
+                                }
+                            }
+                        }).start();
+                    }
+                });
+            }
+        }).addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
+            @Override
+            public void onProgress(@NonNull UploadTask.TaskSnapshot snapshot) {
+
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                apiBar.dismissBar();
+                Toast.makeText(ProfileActivity.this, "Failed to upload DP", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    public String getFileExtension(Uri muri) {
+        ContentResolver cr = getContentResolver();
+        MimeTypeMap mime = MimeTypeMap.getSingleton();
+        return mime.getExtensionFromMimeType(cr.getType(muri));
+    }
+
+
 }
