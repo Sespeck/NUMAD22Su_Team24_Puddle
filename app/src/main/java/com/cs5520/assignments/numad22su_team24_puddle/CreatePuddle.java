@@ -12,6 +12,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.webkit.MimeTypeMap;
@@ -20,9 +21,12 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import com.cs5520.assignments.numad22su_team24_puddle.Model.ApiLoaderBar;
 import com.cs5520.assignments.numad22su_team24_puddle.Utils.FirebaseDB;
 import com.cs5520.assignments.numad22su_team24_puddle.Utils.LocationPermissionActivity;
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -43,13 +47,14 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
 import java.util.HashMap;
+import java.util.Locale;
 
 public class CreatePuddle extends AppCompatActivity {
 
 
     private double lat =0.0 , lng = 0.0;
 
-    FusedLocationProviderClient fusedLocationProviderClient;
+//    FusedLocationProviderClient fusedLocationProviderClient;
 
     // Widgets
     TextInputEditText puddleName;
@@ -60,9 +65,13 @@ public class CreatePuddle extends AppCompatActivity {
     RelativeLayout addBanner;
     AutoCompleteTextView menu;
     ImageView selectedImg;
+    TextView rangeVal;
 
-    Uri imgUri;
+    Uri imgUri = null;
     String bannerUrl = "";
+    Handler apiHandler = new Handler();
+    double selectedRange = 0.0;
+    final ApiLoaderBar apiBar = new ApiLoaderBar(CreatePuddle.this);
 
     ActivityResultLauncher<Intent> startActivityForResult = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
@@ -71,7 +80,6 @@ public class CreatePuddle extends AppCompatActivity {
                     Intent data = result.getData();
                     imgUri = data.getData();
                     selectedImg.setImageURI(imgUri);
-//                    uploadImageToStore(imgUri);
                 }
             }
     );
@@ -90,8 +98,17 @@ public class CreatePuddle extends AppCompatActivity {
         addBanner = findViewById(R.id.add_banner);
         menu = findViewById(R.id.category_menu);
         selectedImg = findViewById(R.id.selected_pud_img);
+        rangeVal = findViewById(R.id.range_val);
 
-        String[] options = {"Select", "Music", "Sports", "Education"};
+        // Options for the menu in the dropdown
+        String[] options = {
+                Category.SELECT.toString(),
+                Category.MUSIC.toString(),
+                Category.TRAVEL.toString(),
+                Category.FINANCE.toString(),
+                Category.EDUCATION.toString()
+        };
+
         ArrayAdapter arrayAdapter = new ArrayAdapter(this, R.layout.category_options, options);
         menu.setText(arrayAdapter.getItem(0).toString(), false);
         menu.setAdapter(arrayAdapter);
@@ -105,10 +122,29 @@ public class CreatePuddle extends AppCompatActivity {
                 startActivityForResult.launch(gallery);
             }
         });
+
+        range.addOnSliderTouchListener(new Slider.OnSliderTouchListener() {
+            @Override
+            public void onStartTrackingTouch(@NonNull Slider slider) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(@NonNull Slider slider) {
+                Log.i("chanegd value", String.valueOf(slider.getValue()));
+                selectedRange = slider.getValue();
+                rangeVal.setText(String.valueOf(slider.getValue()) + "m");
+            }
+        });
     }
 
     public void makeApiCalls(View view){
-        new Thread(new CreatePuddleApiCalls()).start();
+        if(checkValues()){
+            apiBar.showDialog();
+            getLocation();
+        } else {
+            Toast.makeText(this, "Please provide all values to proceed", Toast.LENGTH_SHORT).show();
+        }
     }
 
     public void uploadImageToStore(Uri uri){
@@ -120,18 +156,23 @@ public class CreatePuddle extends AppCompatActivity {
                 ref.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                     @Override
                     public void onSuccess(Uri uri) {
-                        bannerUrl = uri.toString();
+                        new Thread(new Runnable() {
+                            @Override
+                            public void run() {
+                                bannerUrl = uri.toString();
 
-                        if(bannerUrl != null || bannerUrl != ""){
-//                            sendPuddleToFirebase(bannerUrl);
-                            sendPuddleToFirebase(); // 3. Send the collected data to Firebase
-//                            Toast.makeText(CreatePuddle.this, "Success!!!", Toast.LENGTH_SHORT).show();
-                        } else {
-                            Toast.makeText(CreatePuddle.this, "Error sending image to Store", Toast.LENGTH_SHORT).show();
-                        }
+                                if(bannerUrl != null || bannerUrl != ""){
+                                    sendPuddleToFirebase(); // 3. Send the collected data to Firebase
+                                } else {
+                                    apiHandler.post(()->{
+                                        apiBar.dismissBar();
+                                    });
+                                    Toast.makeText(CreatePuddle.this, "Error sending image to Store", Toast.LENGTH_SHORT).show();
+                                }
+                            }
+                        }).start();
                     }
                 });
-//                Toast.makeText(PuddleListActivity.this, "Success!", Toast.LENGTH_SHORT).show();
             }
         }).addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
             @Override
@@ -141,7 +182,8 @@ public class CreatePuddle extends AppCompatActivity {
         }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
-
+                apiBar.dismissBar();
+                Toast.makeText(CreatePuddle.this, "Failed to upload banner", Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -164,6 +206,7 @@ public class CreatePuddle extends AppCompatActivity {
         puddleMap.put("bannerUrl", bannerUrl);
         puddleMap.put("range", String.valueOf(range.getValue()));
         puddleMap.put("category", menu.getText().toString());
+        puddleMap.put("count", 1);
 
         HashMap<String, String> location = new HashMap<>();
         location.put("latitude", String.valueOf(lat));
@@ -181,46 +224,68 @@ public class CreatePuddle extends AppCompatActivity {
         // update the puddles in my list
         updateMyPuddles(pud_key);
 
+        apiHandler.post(() -> {
+            apiBar.dismissBar();
+            Intent intent = new Intent(CreatePuddle.this, PuddleChatroomActivity.class);
+            CreatePuddle.this.startActivity(intent);
+        });
+
     }
 
     public void getLocation(){
+
         if (LocationPermissionActivity.checkMapServices(this)) {
             if (LocationPermissionActivity.locationPermissionGranted) {
-                fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
+                FusedLocationProviderClient fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
                 if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                    apiBar.dismissBar();
                     return;
                 }
                 fusedLocationProviderClient.getLastLocation().addOnSuccessListener(this, location -> {
-                    if (location != null) {
-                        lat = location.getLatitude();
-                        lng = location.getLongitude();
-
-                        uploadImageToStore(imgUri); // 2. Upload image to firestore if location fetch success
-                    } else {
-                        Toast.makeText(CreatePuddle.this, "Failed to get user location, Please provide location acccess to continue", Toast.LENGTH_LONG).show();
-                    }
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (location != null) {
+                                lat = location.getLatitude();
+                                lng = location.getLongitude();
+                                uploadImageToStore(imgUri); // 2. Upload image to firestore if location fetch success
+                            } else {
+                                apiHandler.post(() -> {
+                                    apiBar.dismissBar();
+                                });
+                                Toast.makeText(CreatePuddle.this, "Failed to get user location, Please provide location acccess to continue", Toast.LENGTH_LONG).show();
+                            }
+                        }
+                    }).start();
                 });
 
             }
-            else{LocationPermissionActivity.requestPermission(this, LocationPermissionActivity.REQUEST_CODE_FINE_LOCATION);}
+            else{
+                apiBar.dismissBar();
+                LocationPermissionActivity.requestPermission(this, LocationPermissionActivity.REQUEST_CODE_FINE_LOCATION);
+            }
 
         } else {
-
+            apiBar.dismissBar();
         }
     }
 
     public void updateMyPuddles(String key){
         DatabaseReference myPuddles = FirebaseDB.getDataReference("Users").child(FirebaseDB.getCurrentUser().getUid());
-
         myPuddles.child("my_puddles").push().setValue(key);
     }
 
-    // Making a worker thread to put all the api call instead of main thread
-    class CreatePuddleApiCalls implements Runnable{
+    public boolean checkValues(){
+        boolean allValues = false;
 
-        @Override
-        public void run() {
-            getLocation(); // 1. To get Location
+        if(
+           puddleName.getText().toString() != "" &&
+           puddleBio.getText().toString() != "" && imgUri != null &&
+           selectedRange > 0.0 && menu.getText().toString().toLowerCase() != "select"
+        ) {
+            allValues = true;
         }
+
+        return allValues;
     }
 }

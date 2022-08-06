@@ -17,17 +17,12 @@
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/signup_username_layout"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             android:layout_width="@dimen/fit_constraint"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/margin_xl"
             android:layout_marginEnd="@dimen/margin_xl"
             android:hint="@string/username"
             android:textColorHint="@color/login_signup_text_color"
-            app:boxCornerRadiusBottomEnd="@dimen/login_signup_rounded_corners"
-            app:boxCornerRadiusBottomStart="@dimen/login_signup_rounded_corners"
-            app:boxCornerRadiusTopEnd="@dimen/login_signup_rounded_corners"
-            app:boxCornerRadiusTopStart="@dimen/login_signup_rounded_corners"
             app:boxStrokeWidth="3dp"
             app:counterEnabled="true"
             app:counterMaxLength="15"
@@ -56,7 +51,6 @@
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/signup_password_layout"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/margin_xl"
@@ -64,10 +58,6 @@
             android:layout_marginEnd="@dimen/margin_xl"
             android:hint="Password"
             android:textColorHint="@color/login_signup_text_color"
-            app:boxCornerRadiusBottomEnd="@dimen/login_signup_rounded_corners"
-            app:boxCornerRadiusBottomStart="@dimen/login_signup_rounded_corners"
-            app:boxCornerRadiusTopEnd="@dimen/login_signup_rounded_corners"
-            app:boxCornerRadiusTopStart="@dimen/login_signup_rounded_corners"
             app:boxStrokeWidth="3dp"
             app:hintAnimationEnabled="true"
             app:hintEnabled="true"
@@ -89,7 +79,6 @@
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/signup_email_layout"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/margin_xl"
@@ -97,10 +86,6 @@
             android:layout_marginEnd="@dimen/margin_xl"
             android:hint="@string/email"
             android:textColorHint="@color/login_signup_text_color"
-            app:boxCornerRadiusBottomEnd="@dimen/login_signup_rounded_corners"
-            app:boxCornerRadiusBottomStart="@dimen/login_signup_rounded_corners"
-            app:boxCornerRadiusTopEnd="@dimen/login_signup_rounded_corners"
-            app:boxCornerRadiusTopStart="@dimen/login_signup_rounded_corners"
             app:boxStrokeWidth="3dp"
             app:hintAnimationEnabled="true"
             app:hintEnabled="true"
