@@ -30,6 +30,7 @@ import android.widget.Toast;
 
 import com.cs5520.assignments.numad22su_team24_puddle.Adapter.MyPuddlesAdapter;
 import com.cs5520.assignments.numad22su_team24_puddle.Adapter.PuddleListAdapter;
+import com.cs5520.assignments.numad22su_team24_puddle.Model.Puddles;
 import com.cs5520.assignments.numad22su_team24_puddle.Model.User;
 import com.cs5520.assignments.numad22su_team24_puddle.Utils.FirebaseDB;
 import com.cs5520.assignments.numad22su_team24_puddle.Utils.LocationPermissionActivity;
@@ -50,6 +51,7 @@ import com.google.firebase.storage.UploadTask;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class PuddleListActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -73,25 +75,18 @@ public class PuddleListActivity extends AppCompatActivity implements View.OnClic
 
     private HashMap<String, String> userDetails;
     private Uri imageUri;
+    private HashMap<String, Puddles> allPuddlesData;
+    private HashMap<String, Puddles> myPuddlesData;
+    private HashMap<String, List<Puddles>> categoryPuddlesData;
 
-    ActivityResultLauncher<Intent> startActivityForResult = registerForActivityResult(
-            new ActivityResultContracts.StartActivityForResult(),
-            result -> {
-                if (result.getResultCode() == AppCompatActivity.RESULT_OK) {
-                    Intent data = result.getData();
-                    imageUri = data.getData();
-                    Log.d("here",imageUri.toString());
-                    profileIcon.setImageURI(imageUri);
-                    uploadToFirebase(imageUri);
-                }
-            }
-    );
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_puddle_list);
         userDetails = new HashMap<>();
+        allPuddlesData = new HashMap<>();
+        myPuddlesData = new HashMap<>();
 
         profileIcon = findViewById(R.id.puddle_list_header_profile_icon);
         profileIcon.setOnClickListener(this);
@@ -108,8 +103,10 @@ public class PuddleListActivity extends AppCompatActivity implements View.OnClic
         // Register for the filter results
         handleFilterResults();
         // Api Calls
-        fetchCurrentUserData();
+        FirebaseDB.fetchCurrentUserData();
         uploadImageToFb();
+//        uploadImageToFb();
+        fetchAllPuddles();
 
         // Initializing Widgets
         puddleListRecyclerView = findViewById(R.id.puddle_list_rv);
@@ -189,10 +186,7 @@ public class PuddleListActivity extends AppCompatActivity implements View.OnClic
     @Override
     public void onClick(View view) {
         if (view.equals(profileIcon)) {
-            Intent gallery = new Intent();
-            gallery.setAction(Intent.ACTION_GET_CONTENT);
-            gallery.setType("image/*");
-            startActivityForResult.launch(gallery);
+            startActivity(new Intent(this, ProfileActivity.class));
         } else if (view.equals(nearMeBtn) || view.equals(myPuddlesBtn)) {
             updateRecyclerView(view);
         } else if (view.equals(createIcon)) {
@@ -228,10 +222,13 @@ public class PuddleListActivity extends AppCompatActivity implements View.OnClic
             } else {
                 LocationPermissionActivity.requestPermission(this, REQUEST_CODE_LOCATION_FOR_NEAR_ME);
             }
-
         } else {
-            puddleListRecyclerView.setLayoutManager(new GridLayoutManager(this, 2));
-            puddleListRecyclerView.setAdapter(new MyPuddlesAdapter(this));
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    fetchMyPuddles();
+                }
+            });
             setSelectedButton(myPuddlesBtn);
             setUnselectedButton(nearMeBtn);
         }
@@ -254,40 +251,6 @@ public class PuddleListActivity extends AppCompatActivity implements View.OnClic
         imgRef.setValue("url");
 
         storeRef = FirebaseDB.storageRef;
-    }
-
-    public void uploadToFirebase(Uri uri) {
-        StorageReference ref = storeRef.child(System.currentTimeMillis() + "." + getFileExtension(uri));
-        ref.putFile(uri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-            @Override
-            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-
-                ref.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-                    @Override
-                    public void onSuccess(Uri uri) {
-                        String imgUrl = uri.toString();
-                        imgRef.setValue(imgUrl);
-                    }
-                });
-                Toast.makeText(PuddleListActivity.this, "Success!", Toast.LENGTH_SHORT).show();
-            }
-        }).addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
-            @Override
-            public void onProgress(@NonNull UploadTask.TaskSnapshot snapshot) {
-
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-
-            }
-        });
-    }
-
-    public String getFileExtension(Uri muri) {
-        ContentResolver cr = getContentResolver();
-        MimeTypeMap mime = MimeTypeMap.getSingleton();
-        return mime.getExtensionFromMimeType(cr.getType(muri));
     }
 
     @Override
@@ -354,5 +317,74 @@ public class PuddleListActivity extends AppCompatActivity implements View.OnClic
             context.startActivity(intent);
         });
         dialog.show();
+    }
+
+    // To capture all the puddles
+    public void fetchAllPuddles(){
+        DatabaseReference pudRef = FirebaseDB.getDataReference("Puddles");
+        pudRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for(DataSnapshot snap: snapshot.getChildren()){
+                    Puddles puddle = snap.getValue(Puddles.class);
+                    if(puddle != null){
+                        allPuddlesData.put(snap.getKey(), puddle);
+                    }
+                }
+                fetchMyPuddles();
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+    }
+
+    // To store the current user puddles
+    public void fetchMyPuddles(){
+        DatabaseReference myPuds = FirebaseDB.getDataReference("Users").child(FirebaseDB.getCurrentUser().getUid()).child("my_puddles");
+        myPuds.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                Log.d("snap data", snapshot.toString());
+                for(DataSnapshot snap: snapshot.getChildren()){
+                    String key = snap.getValue(String.class);
+                    if(key != null){
+                        myPuddlesData.put(key, allPuddlesData.get(key));
+                    }
+                    puddleListRecyclerView.setLayoutManager(new GridLayoutManager(PuddleListActivity.this, 2));
+                    puddleListRecyclerView.setAdapter(new MyPuddlesAdapter(PuddleListActivity.this, myPuddlesData));
+                    setSelectedButton(myPuddlesBtn);
+                    setUnselectedButton(nearMeBtn);
+                }
+
+
+//                setSelectedButton(myPuddlesBtn);
+//                setUnselectedButton(nearMeBtn);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+    }
+
+    public void initializePuddles(){
+        categoryPuddlesData.put(Category.MUSIC.toString(), new ArrayList<>());
+        categoryPuddlesData.put(Category.EDUCATION.toString(), new ArrayList<>());
+        categoryPuddlesData.put(Category.TRAVEL.toString(), new ArrayList<>());
+        categoryPuddlesData.put(Category.FINANCE.toString(), new ArrayList<>());
+    }
+
+    // To categorize puddles for near me screen
+    public void categorizePuddles(){
+        initializePuddles();
+
+        for(Map.Entry<String, Puddles> puddle: allPuddlesData.entrySet()){
+            categoryPuddlesData.get(puddle.getKey()).add(puddle.getValue());
+        }
+
     }
 }

@@ -10,12 +10,12 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:gravity="center_vertical"
         android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:gravity="center_vertical">
+        app:layout_constraintTop_toTopOf="parent">
 
 
         <ImageView
@@ -23,24 +23,18 @@
             android:layout_width="@dimen/icon_size_lg"
             android:layout_height="@dimen/icon_size_lg"
             android:layout_gravity="center"
-            android:src="@drawable/icon_puddle"
-            />
+            android:src="@drawable/icon_puddle" />
 
         <com.google.android.material.textfield.TextInputLayout
 
             android:id="@+id/username_layout"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/margin_xl"
-            android:layout_marginEnd="@dimen/margin_xl"
             android:layout_marginTop="@dimen/margin_large"
+            android:layout_marginEnd="@dimen/margin_xl"
             android:hint="@string/username"
             android:textColorHint="@color/login_signup_text_color"
-            app:boxCornerRadiusBottomEnd="@dimen/login_signup_rounded_corners"
-            app:boxCornerRadiusBottomStart="@dimen/login_signup_rounded_corners"
-            app:boxCornerRadiusTopEnd="@dimen/login_signup_rounded_corners"
-            app:boxCornerRadiusTopStart="@dimen/login_signup_rounded_corners"
             app:boxStrokeWidth="3dp"
             app:counterEnabled="true"
             app:counterMaxLength="15"
@@ -65,7 +59,6 @@
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/login_password_layout"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/margin_xl"
@@ -73,10 +66,6 @@
             android:layout_marginEnd="@dimen/margin_xl"
             android:hint="Password"
             android:textColorHint="@color/login_signup_text_color"
-            app:boxCornerRadiusBottomEnd="@dimen/login_signup_rounded_corners"
-            app:boxCornerRadiusBottomStart="@dimen/login_signup_rounded_corners"
-            app:boxCornerRadiusTopEnd="@dimen/login_signup_rounded_corners"
-            app:boxCornerRadiusTopStart="@dimen/login_signup_rounded_corners"
             app:boxStrokeWidth="3dp"
             app:hintAnimationEnabled="true"
             app:hintEnabled="true"
@@ -97,12 +86,13 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:orientation="horizontal">
+
             <Button
-                android:layout_margin="@dimen/margin_large"
                 android:id="@+id/button_login"
                 style="@style/Widget.Material3.Button.TonalButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_margin="@dimen/margin_large"
                 android:backgroundTint="@color/login_signup_button_background"
                 android:text="@string/login"
                 android:textColor="@color/login_signup_text_color"
@@ -110,11 +100,11 @@
                 android:textStyle="bold" />
 
             <Button
-                android:layout_margin="@dimen/margin_large"
                 android:id="@+id/button_signup"
                 style="@style/Widget.Material3.Button.TonalButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_margin="@dimen/margin_large"
                 android:backgroundTint="@color/login_signup_button_background"
                 android:text="@string/signup"
                 android:textColor="@color/login_signup_text_color"

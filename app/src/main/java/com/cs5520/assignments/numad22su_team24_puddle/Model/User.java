@@ -3,12 +3,34 @@ package com.cs5520.assignments.numad22su_team24_puddle.Model;
 import java.util.HashMap;
 
 public class User {
-    public String id;
-    public String username;
-    public HashMap<String, String> my_puddles;
+    private String id;
+    private String username;
+    private String bio;
+    private String display_name;
+    private String email;
+    private String password;
+    private String phone_number;
+    private String profile_icon;
+    private HashMap<String, String> my_puddles;
 
     // Constructors
-    public User(){}
+    public User() {
+    }
+
+    public User(String id, String username, String password, String email, String display_name,
+                String profile_icon, String bio, String phone_number, HashMap<String, String> my_puddles) {
+        this.id = id;
+        this.username = username;
+
+        this.bio = bio;
+        this.display_name = display_name;
+        this.phone_number = phone_number;
+        this.email = email;
+        this.password = password;
+        this.profile_icon = profile_icon;
+
+        this.my_puddles = my_puddles;
+    }
 
     public String getId() {
         return id;
@@ -34,9 +56,68 @@ public class User {
         this.my_puddles = my_puddles;
     }
 
-    public User(String id, String username, HashMap<String, String> my_puddles) {
-        this.id = id;
-        this.username = username;
-        this.my_puddles = my_puddles;
+
+
+    public String getBio() {
+        return bio;
+    }
+
+    public void setBio(String bio) {
+        this.bio = bio;
+    }
+
+    public String getDisplay_name() {
+        return display_name;
+    }
+
+    public void setDisplay_name(String display_name) {
+        this.display_name = display_name;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public String getPhone_number() {
+        return phone_number;
+    }
+
+    public void setPhone_number(String phone_number) {
+        this.phone_number = phone_number;
+    }
+
+    public String getProfile_icon() {
+        return profile_icon;
+    }
+
+    public void setProfile_icon(String profile_icon) {
+        this.profile_icon = profile_icon;
+    }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "id='" + id + '\'' +
+                ", username='" + username + '\'' +
+                ", bio='" + bio + '\'' +
+                ", display_name='" + display_name + '\'' +
+                ", email='" + email + '\'' +
+                ", password='" + password + '\'' +
+                ", phone_number='" + phone_number + '\'' +
+                ", profile_icon='" + profile_icon + '\'' +
+                ", my_puddles=" + my_puddles +
+                '}';
     }
 }

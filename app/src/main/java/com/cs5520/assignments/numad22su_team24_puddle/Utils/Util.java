@@ -4,6 +4,7 @@ import android.content.Context;
 import android.net.ConnectivityManager;
 
 import com.cs5520.assignments.numad22su_team24_puddle.Category;
+import com.cs5520.assignments.numad22su_team24_puddle.Model.User;
 
 import java.text.SimpleDateFormat;
 import java.time.Instant;
@@ -18,6 +19,8 @@ import java.util.TimeZone;
 public class Util {
 
     public static Map<Integer, Category> categoryMap = getCategoryMap();
+
+    public static User user;
 
     private static Map<Integer, Category> getCategoryMap() {
         Map<Integer, Category> map = new HashMap<>();
@@ -123,6 +126,4 @@ public class Util {
 
         return dateToShow;
     }
-
-
 }
