@@ -36,12 +36,13 @@ public class EventTimePickerDialog extends DialogFragment
     }
 
     public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-        this.view.setText(DateTimeFormatUtil.formatEventTime(hourOfDay,minute));
-        if (this.view.getId() == R.id.starting_time_text_view){
-            dialog.acceptPickerStartTime(DateTimeFormatUtil.formatEventTime(hourOfDay,minute));
-        }
-        else{
-            dialog.acceptPickerEndingTime(DateTimeFormatUtil.formatEventTime(hourOfDay,minute));
-        }
+//        this.view.setText(DateTimeFormatUtil.formatEventTime(hourOfDay,minute));
+//        if (this.view.getId() == R.id.starting_time_text_view){
+//            dialog.acceptPickerStartTime(DateTimeFormatUtil.formatEventTime(hourOfDay,minute));
+//        }
+//        else{
+//            dialog.acceptPickerEndingTime(DateTimeFormatUtil.formatEventTime(hourOfDay,minute));
+//        }
+//    }
     }
 }
