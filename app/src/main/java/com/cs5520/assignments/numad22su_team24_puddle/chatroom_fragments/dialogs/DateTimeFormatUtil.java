@@ -31,7 +31,7 @@ public class DateTimeFormatUtil {
     public static String formatEventTime(int hours, int minutes){
         String amOrPm = hours < 12 ? "AM" : "PM";
         String hour = hours % 12 != 0 ? String.valueOf(hours % 12) : "12";
-        return (minutes == 0) ? hour+":"+"00 " +amOrPm : hour+":"+minutes+" "+amOrPm;
+        return (minutes < 10) ? hour+":"+"0"+minutes+" " +amOrPm : hour+":"+minutes+" "+amOrPm;
     }
 
     public static String formatEventDate(String date) {

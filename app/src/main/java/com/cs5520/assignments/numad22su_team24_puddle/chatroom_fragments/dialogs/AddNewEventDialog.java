@@ -19,7 +19,6 @@ import androidx.appcompat.widget.Toolbar;
 
 import com.bumptech.glide.Glide;
 import com.cs5520.assignments.numad22su_team24_puddle.R;
-import com.cs5520.assignments.numad22su_team24_puddle.Utils.Util;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.storage.StorageReference;
@@ -90,9 +89,10 @@ public class AddNewEventDialog extends AppCompatActivity {
             result.putString("ending_date", endingDate);
             result.putString("starting_time", DateTimeFormatUtil.formatEventTime(startingTime[0],startingTime[1]));
             result.putString("ending_time", DateTimeFormatUtil.formatEventTime(endingTime[0],endingTime[1]));
+            Log.d("here",title.getEditText().getText().toString());
             // Title is required
-            if (title.getEditText().getText() == null) {
-                Toast.makeText(this, "Please Enter a title!", Toast.LENGTH_SHORT).show();
+            if (title.getEditText().getText() == null || title.getEditText().getText().toString().equals("")) {
+                Toast.makeText(this, "Please enter a title!", Toast.LENGTH_SHORT).show();
                 return;
             } else {
                 result.putString("title", title.getEditText().getText().toString());
@@ -157,6 +157,8 @@ public class AddNewEventDialog extends AppCompatActivity {
             endingDate = savedInstanceState.getString("ending_date");
             startingDateView.setText(DateTimeFormatUtil.formatEventDate(startingDate));
             endingDateView.setText(DateTimeFormatUtil.formatEventDate(endingDate));
+            imageUri = Uri.parse(savedInstanceState.getString("image_uri"));
+            Glide.with(this).load(imageUri).into(banner);
         } else{
             int[][] initalTime = DateTimeFormatUtil.formatPresetTime(java.time.LocalTime.now().toString());
             startingTime = initalTime[0];
@@ -255,29 +257,9 @@ public class AddNewEventDialog extends AppCompatActivity {
         Log.d("here",startingDate.toString());
         // If the dates are the same
         if (Objects.requireNonNull(endingDate).equals(startingDate)) {
-            if (hours == endingTime[0]) {
-                // And the hours are the same
-                if (minutes >= endingTime[1]) {
-                    // If the selected time is greater than > 30, round the ending time to the
-                    // nearest hour
-                    if (endingTime[1] > 30) {
-                        endingTime[0] = endingTime[0] + 1 % 25;
-                        endingTime[1] = 0;
-                    } else {
-                        endingTime[1] = minutes + 30;
-                    }
-                }
-            }
-            if (hours > endingTime[0]) {
-
-                Log.d("here","first_conditional");
-                    if (minutes >= 30) {
-                        endingTime[0] = hours + 1 % 25;
-                        endingTime[1] = 0;
-                    } else {
-                        endingTime[0] = hours;
-                        endingTime[1] = minutes + 30;
-                    }
+            if (hours >= endingTime[0]) {
+                endingTime[0] = hours + 1 % 25;
+                endingTime[1] = minutes;
             }
         }
         endingTimeTextView.setText(DateTimeFormatUtil.formatEventTime(endingTime[0],endingTime[1]));
@@ -316,6 +298,9 @@ public class AddNewEventDialog extends AppCompatActivity {
         outState.putInt("ending_mins",endingTime[1]);
         outState.putString("starting_date",startingDate);
         outState.putString("ending_date",endingDate);
+        if (imageUri != null) {
+            outState.putString("image_uri", imageUri.toString());
+        }
         super.onSaveInstanceState(outState);
     }
 }

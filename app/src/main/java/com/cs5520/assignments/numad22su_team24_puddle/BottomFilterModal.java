@@ -141,10 +141,10 @@ public class BottomFilterModal extends BottomSheetDialogFragment {
     public void initalizeSpinnerAdapter(Spinner spinner) {
         List<String> interests = new ArrayList<>();
         interests.add(0, "Filter by Category");
-        interests.add("Music");
-        interests.add("Travel");
-        interests.add("Business");
-        interests.add("Education");
+        interests.add(Category.MUSIC.toString());
+        interests.add(Category.TRAVEL.toString());
+        interests.add(Category.FINANCE.toString());
+        interests.add(Category.EDUCATION.toString());
         fullAdapter = new ArrayAdapter(getActivity(), R.layout.filter_spinner_item, interests);
         fullAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner.setAdapter(fullAdapter);
