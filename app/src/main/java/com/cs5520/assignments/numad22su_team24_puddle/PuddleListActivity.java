@@ -176,7 +176,8 @@ public class PuddleListActivity extends AppCompatActivity implements View.OnClic
     }
 
     private void handleFilterResults(){
-        getSupportFragmentManager().setFragmentResultListener("filter_result",this,((requestKey, result) -> {
+        getSupportFragmentManager().setFragmentResultListener("filter_result",this,
+                ((requestKey, result) -> {
             Log.d("here",result.toString());
         }));
     }
@@ -205,7 +206,6 @@ public class PuddleListActivity extends AppCompatActivity implements View.OnClic
         } else if (view.equals(filterIcon)) {
             BottomFilterModal modal = new BottomFilterModal();
             modal.show(getSupportFragmentManager(),"filter");
-            handleFilterResults();
         }
     }
 
