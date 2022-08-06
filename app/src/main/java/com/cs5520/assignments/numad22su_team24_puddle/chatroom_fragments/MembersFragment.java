@@ -38,14 +38,12 @@ public class MembersFragment extends Fragment {
     private MembersAdapter membersAdapter;
     private Context context;
 
-    public MembersFragment(String puddleID){
-        this.puddleID = puddleID;
-    }
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.members_fragment,container,false);
+        puddleID = getArguments().getString("puddleID");
         membersRef = FirebaseDB.getDataReference("Members").child(puddleID);
         recyclerView = view.findViewById(R.id.members_recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));

@@ -43,14 +43,11 @@ public class AboutFragment extends Fragment {
     private TextView puddleName;
     private Handler handler = new Handler();
 
-    public AboutFragment(String puddleID){
-        this.puddleID = puddleID;
-    }
-
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.about_fragment,container,false);
+        puddleID = getArguments().getString("puddleID");
         this.bioTextView = view.findViewById(R.id.about_tab_bio_text_view);
         this.bannerIcon = view.findViewById(R.id.about_tab_banner_pic);
         this.tagsTextView = view.findViewById(R.id.about_tab_tags_text_view);

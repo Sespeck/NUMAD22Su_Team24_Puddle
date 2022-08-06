@@ -1,6 +1,8 @@
 package com.cs5520.assignments.numad22su_team24_puddle;
 
 import android.os.Bundle;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.view.View;
 
 import androidx.annotation.NonNull;
@@ -28,7 +30,8 @@ public class PuddleChatroomActivity extends AppCompatActivity {
     private TabLayout.Tab currentTab;
     private FloatingActionButton fab;
     private Toolbar toolbar;
-    private String puddleID = "-N8UvZrmPAwDGKuo6hJ-";
+    private String puddleID = "-N8lixPAncVn1ilKLArZ";
+    private boolean modalOpen = false;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -38,8 +41,16 @@ public class PuddleChatroomActivity extends AppCompatActivity {
         toolbar = findViewById(R.id.toolbar);
         toolbar.setNavigationIcon(R.drawable.ic_baseline_arrow_back_24);
         toolbar.setNavigationOnClickListener(v -> onBackPressed());
+        AddNewEventDialog fragment = new AddNewEventDialog();
+        fragment.acceptParent(this);
         initializeOnTabSelectedListener();
         this.fab = findViewById(R.id.fab);
+        if (savedInstanceState != null){
+            puddleID = savedInstanceState.getString("puddleID");
+            currentTab = tabLayout.getTabAt(savedInstanceState.getInt("current_tab"));
+            tabLayout.selectTab(currentTab);
+            completeFragmentNavigation(currentTab);
+        }
         FirebaseDB.getDataReference("Puddles").child(puddleID).addValueEventListener(new ValueEventListener() {
                  @Override
                  public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -52,11 +63,10 @@ public class PuddleChatroomActivity extends AppCompatActivity {
 
                  }
              });
-                // Opens the full screen add new event modal
+        // Opens the full screen add new event modal
         fab.setOnClickListener(v -> {
             currentTab = tabLayout.getTabAt(3);
             FragmentManager fragmentManager = getSupportFragmentManager();
-            AddNewEventDialog fragment = new AddNewEventDialog(this);
             FragmentTransaction transaction = fragmentManager.beginTransaction();
             transaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
             transaction.add(android.R.id.content, fragment).addToBackStack(null).commit();
@@ -64,18 +74,28 @@ public class PuddleChatroomActivity extends AppCompatActivity {
     }
 
     private void completeFragmentNavigation(TabLayout.Tab tab) {
+        Bundle bundle = new Bundle();
+        bundle.putString("puddleID",puddleID);
         if (tab.getPosition() == 0) {
             fab.setVisibility(View.INVISIBLE);
-            changeVisibleFragment(R.id.chat_tab, new ChatroomFragment(puddleID), "chatroom");
+            ChatroomFragment chatroomFragment = new ChatroomFragment();
+            chatroomFragment.setArguments(bundle);
+            changeVisibleFragment(R.id.chat_tab, chatroomFragment, "chatroom");
         } else if (tab.getPosition() == 1) {
             fab.setVisibility(View.INVISIBLE);
-            changeVisibleFragment(R.id.about_tab, new AboutFragment(puddleID), "about");
+            AboutFragment aboutFragment = new AboutFragment();
+            aboutFragment.setArguments(bundle);
+            changeVisibleFragment(R.id.about_tab,  aboutFragment,"about");
         } else if (tab.getPosition() == 2) {
             fab.setVisibility(View.INVISIBLE);
-            changeVisibleFragment(R.id.members_tab, new MembersFragment(puddleID), "members");
+            MembersFragment membersFragment = new MembersFragment();
+            membersFragment.setArguments(bundle);
+            changeVisibleFragment(R.id.members_tab, membersFragment, "members");
         } else if (tab.getPosition() == 3) {
             fab.setVisibility(View.VISIBLE);
-            changeVisibleFragment(R.id.events_tab, new EventsFragment(puddleID), "events");
+            EventsFragment eventsFragment = new EventsFragment();
+            eventsFragment.setArguments(bundle);
+            changeVisibleFragment(R.id.events_tab,  eventsFragment, "events");
         }
 }
 
@@ -107,11 +127,24 @@ public class PuddleChatroomActivity extends AppCompatActivity {
     }
 
     @Override
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
+        outState.putString("puddleID",puddleID);
+        outState.putInt("current_tab",currentTab.getPosition());
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
     protected void onStart() {
         super.onStart();
         if (currentTab == null){
             currentTab = tabLayout.getTabAt(0);
         }
         completeFragmentNavigation(currentTab);
+    }
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        onBackPressed();
+        return true;
     }
 }

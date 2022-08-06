@@ -12,10 +12,7 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.webkit.MimeTypeMap;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -23,18 +20,15 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.AppCompatButton;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.DialogFragment;
 
 import com.bumptech.glide.Glide;
 import com.cs5520.assignments.numad22su_team24_puddle.R;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
-import com.google.firebase.storage.UploadTask;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -43,7 +37,6 @@ import java.util.Date;
 
 public class AddNewEventDialog extends DialogFragment {
     private Button exitButton;
-    private AppCompatActivity parent;
     private Toolbar toolbar;
     private String startingTime;
     private String endingTime;
@@ -56,6 +49,8 @@ public class AddNewEventDialog extends DialogFragment {
     private StorageReference storeRef;
     private DatabaseReference imgRef;
     private TextView startingDateTextView;
+    private TextView endingDateTextView;
+    private AppCompatActivity parent;
 
 
 
@@ -71,10 +66,6 @@ public class AddNewEventDialog extends DialogFragment {
             }
     );
 
-    public AddNewEventDialog(AppCompatActivity parent){
-        this.parent = parent;
-    }
-
 
     /** the system calls this to get the dialogfragment's layout, regardless
      of whether it's being displayed as a dialog or an embedded fragment. */
@@ -87,6 +78,7 @@ public class AddNewEventDialog extends DialogFragment {
         description = view.findViewById(R.id.dialog_description_edit_text);
         banner = view.findViewById(R.id.selected_pud_img);
         startingDateTextView = view.findViewById(R.id.starting_date_text_view);
+        endingDateTextView = view.findViewById(R.id.ending_date_text_view);
         toolbar = view.findViewById(R.id.add_event_toolbar);
         parent.setSupportActionBar(toolbar);
         initializeToolbar();
@@ -171,8 +163,8 @@ public class AddNewEventDialog extends DialogFragment {
         endingTimeView.setText(initalTime[1]);
         startingDateView.setText(date);
         endingDateView.setText(date);
-        startingDateView.setOnClickListener(this::showDatePickerDialog);
-        endingDateView.setOnClickListener(this::showDatePickerDialog);
+        startingDateView.setOnClickListener(v -> showStartingDatePickerDialog());
+        endingDateView.setOnClickListener(v -> showEndingDatePickerDialog());
         startingTimeView.setOnClickListener(this::showTimePickerDialog);
         endingTimeView.setOnClickListener(this::showTimePickerDialog);
     }
@@ -186,13 +178,55 @@ public class AddNewEventDialog extends DialogFragment {
         return dialog;
     }
 
-    public void showDatePickerDialog(View v) {
-        DialogFragment newFragment = new EventCalendarPickerDialog(v, this);
+    public void showStartingDatePickerDialog() {
+        EventCalendarStartingDatePickerDialog newFragment = new EventCalendarStartingDatePickerDialog();
+        getParentFragmentManager().setFragmentResultListener("starting_date",this,((requestKey, result) -> {
+                    String date = result.getString("date");
+                    try {
+                        if (balanceEndingPickerDates(date)){
+                            startingDate = date;
+                            endingDate = date;
+                            startingDateTextView.setText(DateTimeFormatUtil.formatEventDate(date));
+                        }
+                        else{
+                            startingDate = date;
+                            startingDateTextView.setText(DateTimeFormatUtil.formatEventDate(date));
+                        }
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
+        }));
+        newFragment.show(getParentFragmentManager(), "datePicker");
+    }
+
+    public void showEndingDatePickerDialog(){
+        EventCalendarEndingDatePickerDialog newFragment = new EventCalendarEndingDatePickerDialog();
+        getParentFragmentManager().setFragmentResultListener("ending_date",this,((requestKey, result) -> {
+            String date = result.getString("date");
+            try {
+                // Check if the ending date is before the starting date
+                if (balanceStartPickerDates(date)) {
+                    // If it is, set them to be the same date
+                    startingDate = date;
+                    endingDate = date;
+                    endingDateTextView.setText(DateTimeFormatUtil.formatEventDate(date));
+                }
+                else{
+                    // Otherwise just proceed as normal
+                    endingDate = date;
+                    endingDateTextView.setText(DateTimeFormatUtil.formatEventDate(date));
+                }
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+
+        }));
         newFragment.show(getParentFragmentManager(), "datePicker");
     }
 
     public void showTimePickerDialog(View v) {
-        DialogFragment newFragment = new EventTimePickerDialog(v, this);
+        EventTimePickerDialog newFragment = new EventTimePickerDialog();
+        newFragment.acceptViews((TextView) v, this);
         newFragment.show(getParentFragmentManager(), "timePicker");
     }
 
@@ -208,25 +242,32 @@ public class AddNewEventDialog extends DialogFragment {
         return false;
     }
 
+    public Boolean balanceEndingPickerDates(String date) throws ParseException{
+        Date newDate = new SimpleDateFormat("yyyy-MM-dd").parse(date);
+        Date endingDate = new SimpleDateFormat("yyyy-MM-dd").parse(this.endingDate);
+        if (newDate != null && newDate.after(endingDate)) {
+            Log.d("date",date);
+            this.endingDate = date;
+            endingDateTextView.setText(DateTimeFormatUtil.formatEventDate(date));
+            return true;
+        }
+        return false;
+    }
+
 //    public boolean balanceStartPickerTimes(int hours, int minutes){
 //        if (startingDate.equals(endingDate)){
 //
 //        }
 //    }
 
+    public void acceptParent(AppCompatActivity activity){
+        parent = activity;
+    }
     public void acceptPickerStartTime(String startingTime){
         this.startingTime = startingTime;
     }
 
     public void acceptPickerEndingTime(String endingTime){
         this.endingTime = endingTime;
-    }
-
-    public void acceptPickerStartingDate(String startingDate){
-        this.startingDate = startingDate;
-    }
-
-    public void acceptPickerEndingDate(String endingDate){
-        this.endingDate = endingDate;
     }
 }

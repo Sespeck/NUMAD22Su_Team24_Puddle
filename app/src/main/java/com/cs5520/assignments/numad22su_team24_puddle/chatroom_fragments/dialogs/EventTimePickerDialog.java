@@ -5,6 +5,7 @@ import android.app.TimePickerDialog;
 import android.icu.util.Calendar;
 import android.os.Bundle;
 import android.text.format.DateFormat;
+import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.TimePicker;
@@ -18,14 +19,9 @@ public class EventTimePickerDialog extends DialogFragment
 
     private TextView view;
     private AddNewEventDialog dialog;
-
-    public EventTimePickerDialog(View v){
-        this.view = (TextView) v;
-    }
-
-    public EventTimePickerDialog(View v, AddNewEventDialog dialog){
+    public void acceptViews(TextView view, AddNewEventDialog dialog){
+        this.view = view;
         this.dialog = dialog;
-        this.view = (TextView) v;
     }
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -41,7 +37,7 @@ public class EventTimePickerDialog extends DialogFragment
 
     public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
         this.view.setText(DateTimeFormatUtil.formatEventTime(hourOfDay,minute));
-        if (view.getId() == R.id.starting_time_text_view){
+        if (this.view.getId() == R.id.starting_time_text_view){
             dialog.acceptPickerStartTime(DateTimeFormatUtil.formatEventTime(hourOfDay,minute));
         }
         else{

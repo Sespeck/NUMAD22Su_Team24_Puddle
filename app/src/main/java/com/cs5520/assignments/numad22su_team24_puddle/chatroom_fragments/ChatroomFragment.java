@@ -43,16 +43,12 @@ public class ChatroomFragment extends Fragment {
     private String puddleID;
     private DatabaseReference messageRef;
 
-    public ChatroomFragment(String puddleID){
-        this.puddleID = puddleID;
-    }
-
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        Log.d("here",Instant.now().toString());
         View view = inflater.inflate(R.layout.chatroom_fragment,container,false);
+        puddleID = getArguments().getString("puddleID");
         this.recyclerView = view.findViewById(R.id.chatroom_recycler_view);
         this.sendButton = view.findViewById(R.id.chat_room_send_button);
         this.chatEditText = view.findViewById(R.id.chat_room_edit_text);
@@ -76,12 +72,12 @@ public class ChatroomFragment extends Fragment {
                         newMessage.put("timestamp", Instant.now().toString());
                         newMessage.put("username", "Chris");
                         newMessage.put("body",textResult);
-                        newMessage.put("profile_url","https://firebasestorage.googleapis.com/v0/b/android-chat-85561.appspot.com/o/1659466819026.png?alt=media&token=d17c60ee-9b7e-41ee-a48c-32440f4f493c");
+                        newMessage.put("profile_url","https://firebasestorage.googleapis.com/v0/b/android-chat-85561.appspot.com/o/1659737464403.jpg?alt=media&token=65a5f276-7954-4e07-a236-1b50732b0e6e");
                         // Add a new message based off current time, the edittext body, the current user's
                         // Pfp and name
-                        adapter.addNewMessage(new Message("Chris",textResult,Instant.now().toString(),
-                                "https://firebasestorage.googleapis.com/v0/b/android-chat-85561.appspot.com/o/1659466819026.png?alt=media&token=d17c60ee-9b7e-41ee-a48c-32440f4f493c"));
                         handler.post(()-> {
+                            adapter.addNewMessage(new Message("Chris",textResult,Instant.now().toString(),
+                                    "https://firebasestorage.googleapis.com/v0/b/android-chat-85561.appspot.com/o/1659737464403.jpg?alt=media&token=65a5f276-7954-4e07-a236-1b50732b0e6e"));
                             recyclerView.scrollToPosition(adapter.getItemCount()-1);
                             chatEditText.getText().clear();
                         });

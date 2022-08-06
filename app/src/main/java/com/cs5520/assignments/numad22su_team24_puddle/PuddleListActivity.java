@@ -98,7 +98,8 @@ public class PuddleListActivity extends AppCompatActivity implements View.OnClic
         filterIcon.setOnClickListener(this);
         navigationIcon = findViewById(R.id.header_navigation_icon);
         navigationIcon.setOnClickListener(this);
-
+        // Register for the filter results
+        handleFilterResults();
         // Api Calls
         FirebaseDB.fetchCurrentUserData();
         uploadImageToFb();
@@ -151,6 +152,35 @@ public class PuddleListActivity extends AppCompatActivity implements View.OnClic
         return puddlesList;
     }
 
+    public void fetchCurrentUserData() {
+        current_user = FirebaseDB.getCurrentUser();
+
+        userRef = FirebaseDB.getDataReference(getString(R.string.users)).child(current_user.getUid());
+        userRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+//                for (DataSnapshot snap : snapshot) {
+//                    userDetails.put(snap.getKey(), snap.getValue(String.class));
+//                }
+                User currentUser = snapshot.getValue(User.class);
+                Log.d("currentUser", currentUser.toString());
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+
+
+    }
+
+    private void handleFilterResults(){
+        getSupportFragmentManager().setFragmentResultListener("filter_result",this,((requestKey, result) -> {
+            Log.d("here",result.toString());
+        }));
+    }
+
     @Override
     public void onClick(View view) {
         if (view.equals(profileIcon)) {
@@ -173,7 +203,9 @@ public class PuddleListActivity extends AppCompatActivity implements View.OnClic
                 }
             }
         } else if (view.equals(filterIcon)) {
-
+            BottomFilterModal modal = new BottomFilterModal();
+            modal.show(getSupportFragmentManager(),"filter");
+            handleFilterResults();
         }
     }
 
