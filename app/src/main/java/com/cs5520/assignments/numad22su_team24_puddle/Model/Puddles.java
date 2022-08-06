@@ -9,19 +9,40 @@ public class Puddles {
     private String isPrivate;
     private String name;
     private String range;
+    private int count;
+    private HashMap<String, String> Location = new HashMap<>();
 
     public Puddles(){}
-    public Puddles(String bannerUrl, String bio, String category, String isPrivate, String name, String range) {
+
+    public Puddles(String bannerUrl, String bio, String category, String isPrivate, String name, String range, int count, HashMap<String, String> location) {
         this.bannerUrl = bannerUrl;
         this.bio = bio;
         this.category = category;
         this.isPrivate = isPrivate;
         this.name = name;
         this.range = range;
+        this.count = count;
+        Location = location;
     }
 
     public String getBannerUrl() {
         return bannerUrl;
+    }
+
+    public int getCount() {
+        return count;
+    }
+
+    public void setCount(int count) {
+        this.count = count;
+    }
+
+    public HashMap<String, String> getLocation() {
+        return Location;
+    }
+
+    public void setLocation(HashMap<String, String> location) {
+        Location = location;
     }
 
     public void setBannerUrl(String bannerUrl) {
