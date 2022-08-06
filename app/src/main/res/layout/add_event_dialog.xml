@@ -200,15 +200,19 @@
 
             <Button
                 android:id="@+id/add_event_save_button"
-                style="@style/Theme.NUMAD22Su_Team24_Puddle.CustomButtonTheme"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginBottom="24dp"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                android:layout_marginTop="36dp"
                 android:text="@string/save"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.5"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/add_banner" />
+
 
             <View
                 android:id="@+id/view5"

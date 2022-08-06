@@ -105,7 +105,8 @@ public class PuddleListActivity extends AppCompatActivity implements View.OnClic
         filterIcon.setOnClickListener(this);
         navigationIcon = findViewById(R.id.header_navigation_icon);
         navigationIcon.setOnClickListener(this);
-
+        // Register for the filter results
+        handleFilterResults();
         // Api Calls
         fetchCurrentUserData();
         uploadImageToFb();
@@ -180,8 +181,8 @@ public class PuddleListActivity extends AppCompatActivity implements View.OnClic
     }
 
     private void handleFilterResults(){
-        getSupportFragmentManager().setFragmentResultListener("event_creation_result",this,((requestKey, result) -> {
-
+        getSupportFragmentManager().setFragmentResultListener("filter_result",this,((requestKey, result) -> {
+            Log.d("here",result.toString());
         }));
     }
 
@@ -212,6 +213,7 @@ public class PuddleListActivity extends AppCompatActivity implements View.OnClic
         } else if (view.equals(filterIcon)) {
             BottomFilterModal modal = new BottomFilterModal();
             modal.show(getSupportFragmentManager(),"filter");
+            handleFilterResults();
         }
     }
 

@@ -1,6 +1,8 @@
 package com.cs5520.assignments.numad22su_team24_puddle;
 
 import android.os.Bundle;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.view.View;
 
 import androidx.annotation.NonNull;
@@ -29,6 +31,7 @@ public class PuddleChatroomActivity extends AppCompatActivity {
     private FloatingActionButton fab;
     private Toolbar toolbar;
     private String puddleID = "-N8UvZrmPAwDGKuo6hJ-";
+    private boolean modalOpen = false;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -40,6 +43,12 @@ public class PuddleChatroomActivity extends AppCompatActivity {
         toolbar.setNavigationOnClickListener(v -> onBackPressed());
         initializeOnTabSelectedListener();
         this.fab = findViewById(R.id.fab);
+        if (savedInstanceState != null){
+            puddleID = savedInstanceState.getString("puddleID");
+            currentTab = tabLayout.getTabAt(savedInstanceState.getInt("current_tab"));
+            tabLayout.selectTab(currentTab);
+            completeFragmentNavigation(currentTab);
+        }
         FirebaseDB.getDataReference("Puddles").child(puddleID).addValueEventListener(new ValueEventListener() {
                  @Override
                  public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -56,7 +65,7 @@ public class PuddleChatroomActivity extends AppCompatActivity {
         fab.setOnClickListener(v -> {
             currentTab = tabLayout.getTabAt(3);
             FragmentManager fragmentManager = getSupportFragmentManager();
-            AddNewEventDialog fragment = new AddNewEventDialog(this);
+            AddNewEventDialog fragment = new AddNewEventDialog();
             FragmentTransaction transaction = fragmentManager.beginTransaction();
             transaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
             transaction.add(android.R.id.content, fragment).addToBackStack(null).commit();
@@ -117,11 +126,24 @@ public class PuddleChatroomActivity extends AppCompatActivity {
     }
 
     @Override
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
+        outState.putString("puddleID",puddleID);
+        outState.putInt("current_tab",currentTab.getPosition());
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
     protected void onStart() {
         super.onStart();
         if (currentTab == null){
             currentTab = tabLayout.getTabAt(0);
         }
         completeFragmentNavigation(currentTab);
+    }
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        onBackPressed();
+        return true;
     }
 }

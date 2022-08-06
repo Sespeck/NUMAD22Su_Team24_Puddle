@@ -17,8 +17,6 @@ public class Event {
 
     public Event(String name, String startingDatetime, String endingDatetime, Location location,
                  String description, String backgroundImgUri, int attendanceCount){
-        Log.d("starting",startingDatetime);
-        Log.d("ending",endingDatetime);
         this.name = name;
         this.startingDatetime = startingDatetime;
         this.endingDatetime = endingDatetime;

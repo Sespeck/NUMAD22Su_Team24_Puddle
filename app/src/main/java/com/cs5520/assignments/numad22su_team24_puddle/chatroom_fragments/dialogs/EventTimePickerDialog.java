@@ -19,14 +19,9 @@ public class EventTimePickerDialog extends DialogFragment
 
     private TextView view;
     private AddNewEventDialog dialog;
-
-    public EventTimePickerDialog(View v){
-        this.view = (TextView) v;
-    }
-
-    public EventTimePickerDialog(View v, AddNewEventDialog dialog){
+    public void acceptViews(TextView view, AddNewEventDialog dialog){
+        this.view = view;
         this.dialog = dialog;
-        this.view = (TextView) v;
     }
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
