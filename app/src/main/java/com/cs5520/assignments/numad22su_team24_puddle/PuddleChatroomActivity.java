@@ -41,6 +41,8 @@ public class PuddleChatroomActivity extends AppCompatActivity {
         toolbar = findViewById(R.id.toolbar);
         toolbar.setNavigationIcon(R.drawable.ic_baseline_arrow_back_24);
         toolbar.setNavigationOnClickListener(v -> onBackPressed());
+        AddNewEventDialog fragment = new AddNewEventDialog();
+        fragment.acceptParent(this);
         initializeOnTabSelectedListener();
         this.fab = findViewById(R.id.fab);
         if (savedInstanceState != null){
@@ -61,11 +63,10 @@ public class PuddleChatroomActivity extends AppCompatActivity {
 
                  }
              });
-                // Opens the full screen add new event modal
+        // Opens the full screen add new event modal
         fab.setOnClickListener(v -> {
             currentTab = tabLayout.getTabAt(3);
             FragmentManager fragmentManager = getSupportFragmentManager();
-            AddNewEventDialog fragment = new AddNewEventDialog();
             FragmentTransaction transaction = fragmentManager.beginTransaction();
             transaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
             transaction.add(android.R.id.content, fragment).addToBackStack(null).commit();

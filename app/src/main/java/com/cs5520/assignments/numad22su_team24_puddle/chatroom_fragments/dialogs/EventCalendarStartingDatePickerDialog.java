@@ -15,7 +15,7 @@ import com.cs5520.assignments.numad22su_team24_puddle.R;
 
 import java.text.ParseException;
 
-public class EventCalendarPickerDialog extends DialogFragment
+public class EventCalendarStartingDatePickerDialog extends DialogFragment
         implements DatePickerDialog.OnDateSetListener {
     private TextView view;
     private AddNewEventDialog dialog;
@@ -39,27 +39,9 @@ public class EventCalendarPickerDialog extends DialogFragment
     public void onDateSet(DatePicker view, int year, int month, int day) {
         // Dates stored as yy-mm-dd
         String date = year + "-" + (month + 1) + "-" + day;
-        if (this.view.getId() == R.id.starting_date_text_view) {
-            dialog.acceptPickerStartingDate(date);
-            this.view.setText(DateTimeFormatUtil.formatEventDate(date));
-        } else {
-            try {
-                // Check if the ending date is before the starting date
-                if (dialog.balanceStartPickerDates(date)) {
-                    // If it is, set them to be the same date
-                    dialog.acceptPickerStartingDate(date);
-                    dialog.acceptPickerEndingDate(date);
-                    this.view.setText(DateTimeFormatUtil.formatEventDate(date));
-                }
-                else{
-                    // Otherwise just proceed as normal
-                    dialog.acceptPickerEndingDate(date);
-                    this.view.setText(DateTimeFormatUtil.formatEventDate(date));
-                }
-            } catch (ParseException e) {
-                e.printStackTrace();
-            }
+        Bundle bundle = new Bundle();
+        bundle.putString("date",date);
+        getParentFragmentManager().setFragmentResult("starting_date",bundle);
 
-        }
     }
 }
