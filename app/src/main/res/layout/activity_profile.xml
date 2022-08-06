@@ -10,16 +10,15 @@
         android:id="@+id/profile_user_icon"
         android:layout_width="@dimen/profile_icon_large"
         android:layout_height="@dimen/profile_icon_large"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
         android:layout_marginTop="@dimen/margin_xl"
-        android:src="@drawable/blank_image"
-        app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.App.RoundedCorners"
         android:padding="5dp"
-        app:strokeWidth="5dp"
+        android:src="@drawable/blank_image"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.App.RoundedCorners"
         app:strokeColor="@color/black"
-        />
+        app:strokeWidth="5dp" />
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/profile_display_name_layout"
@@ -53,8 +52,8 @@
         android:layout_width="@dimen/fit_constraint"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/margin_xl"
-        android:layout_marginEnd="@dimen/margin_xl"
         android:layout_marginTop="@dimen/margin_large"
+        android:layout_marginEnd="@dimen/margin_xl"
         android:hint="@string/username"
         android:textColorHint="@color/login_signup_text_color"
         app:boxStrokeWidth="3dp"
@@ -67,11 +66,11 @@
         app:helperTextTextAppearance="@style/HelperTextAppearance"
         app:hintAnimationEnabled="true"
         app:hintEnabled="true"
-        app:startIconDrawable="@drawable/account_circle"
-        app:startIconTint="@color/login_signup_text_color"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/profile_display_name_layout">
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/profile_display_name_layout"
+        app:startIconDrawable="@drawable/account_circle"
+        app:startIconTint="@color/login_signup_text_color">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/profile_username_et"
@@ -89,12 +88,12 @@
         android:layout_marginStart="@dimen/margin_xl"
         android:layout_marginTop="@dimen/margin_large"
         android:layout_marginEnd="@dimen/margin_xl"
+        android:gravity="top|start"
         android:hint="@string/bio"
         android:textColorHint="@color/login_signup_text_color"
         app:boxStrokeWidth="3dp"
         app:hintAnimationEnabled="true"
         app:hintEnabled="true"
-        android:gravity="top|start"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/profile_username_layout"
@@ -118,12 +117,12 @@
         android:layout_marginStart="@dimen/margin_xl"
         android:layout_marginTop="@dimen/margin_large"
         android:layout_marginEnd="@dimen/margin_xl"
+        android:gravity="top|start"
         android:hint="@string/phone_number"
         android:textColorHint="@color/login_signup_text_color"
         app:boxStrokeWidth="3dp"
         app:hintAnimationEnabled="true"
         app:hintEnabled="true"
-        android:gravity="top|start"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/profile_description_layout"
@@ -141,7 +140,21 @@
 
     </com.google.android.material.textfield.TextInputLayout>
 
-
+    <Button
+        android:id="@+id/profile_save_btn"
+        style="@style/Widget.Material3.Button.TonalButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:backgroundTint="@color/login_signup_button_background"
+        android:text="@string/save"
+        android:textColor="@color/login_signup_text_color"
+        android:textSize="@dimen/font_size_mid"
+        android:textStyle="bold"
+        android:layout_marginTop="@dimen/margin_xl"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/profile_phone_number_layout" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -45,5 +45,6 @@
     <string name="display_name">Display Name</string>
     <string name="bio">Bio</string>
     <string name="phone_number">Phone Number</string>
+    <string name="logout">Logout</string>
 
 </resources>
