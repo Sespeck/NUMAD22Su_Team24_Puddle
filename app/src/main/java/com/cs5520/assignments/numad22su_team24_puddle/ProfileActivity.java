@@ -18,6 +18,7 @@ import android.webkit.MimeTypeMap;
 import android.widget.Button;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.cs5520.assignments.numad22su_team24_puddle.Model.ApiLoaderBar;
 import com.cs5520.assignments.numad22su_team24_puddle.Utils.FirebaseDB;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -38,7 +39,7 @@ public class ProfileActivity extends AppCompatActivity {
     ShapeableImageView profileIcon;
     TextInputEditText displayET, usernameET, bioET, phoneNumberET;
     Button saveBtn;
-    Uri imageUri;
+    Uri imageUri = null;
     String dpUrl = "";
 
     DatabaseReference imgRef;
@@ -92,11 +93,20 @@ public class ProfileActivity extends AppCompatActivity {
         usernameET.setText(FirebaseDB.currentUser.getUsername());
         bioET.setText(FirebaseDB.currentUser.getBio());
         phoneNumberET.setText(FirebaseDB.currentUser.getPhone_number());
+
+        if(!FirebaseDB.currentUser.getProfile_icon().equals("")){
+            dpUrl = FirebaseDB.currentUser.getProfile_icon();
+            Glide.with(ProfileActivity.this).load(dpUrl).into(profileIcon);
+        }
     }
 
     private void saveBtnClick() {
         apiBar.showDialog();
-        uploadImageToStore(imageUri);
+        if(imageUri != null){
+            uploadImageToStore(imageUri);
+        } else {
+            uploadDataToFB();
+        }
     }
 
     public void uploadDataToFB(){
