@@ -113,14 +113,11 @@ public class CreatePuddle extends AppCompatActivity {
         menu.setText(arrayAdapter.getItem(0).toString(), false);
         menu.setAdapter(arrayAdapter);
 
-        addBanner.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent gallery = new Intent();
-                gallery.setAction(Intent.ACTION_GET_CONTENT);
-                gallery.setType("image/*");
-                startActivityForResult.launch(gallery);
-            }
+        addBanner.setOnClickListener(view -> {
+            Intent gallery = new Intent();
+            gallery.setAction(Intent.ACTION_GET_CONTENT);
+            gallery.setType("image/*");
+            startActivityForResult.launch(gallery);
         });
 
         range.addOnSliderTouchListener(new Slider.OnSliderTouchListener() {
@@ -223,12 +220,13 @@ public class CreatePuddle extends AppCompatActivity {
 
         // update the puddles in my list
         updateMyPuddles(pud_key);
-
         apiHandler.post(() -> {
             apiBar.dismissBar();
             Intent intent = new Intent(CreatePuddle.this, PuddleChatroomActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             intent.putExtra("puddleID",pud_key);
             CreatePuddle.this.startActivity(intent);
+            this.finish();
         });
 
     }
@@ -243,19 +241,16 @@ public class CreatePuddle extends AppCompatActivity {
                     return;
                 }
                 fusedLocationProviderClient.getLastLocation().addOnSuccessListener(this, location -> {
-                    new Thread(new Runnable() {
-                        @Override
-                        public void run() {
-                            if (location != null) {
-                                lat = location.getLatitude();
-                                lng = location.getLongitude();
-                                uploadImageToStore(imgUri); // 2. Upload image to firestore if location fetch success
-                            } else {
-                                apiHandler.post(() -> {
-                                    apiBar.dismissBar();
-                                });
-                                Toast.makeText(CreatePuddle.this, "Failed to get user location, Please provide location acccess to continue", Toast.LENGTH_LONG).show();
-                            }
+                    new Thread(() -> {
+                        if (location != null) {
+                            lat = location.getLatitude();
+                            lng = location.getLongitude();
+                            uploadImageToStore(imgUri); // 2. Upload image to firestore if location fetch success
+                        } else {
+                            apiHandler.post(() -> {
+                                apiBar.dismissBar();
+                            });
+                            Toast.makeText(CreatePuddle.this, "Failed to get user location, Please provide location acccess to continue", Toast.LENGTH_LONG).show();
                         }
                     }).start();
                 });

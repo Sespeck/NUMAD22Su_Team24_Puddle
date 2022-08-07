@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 
 import androidx.activity.result.ActivityResultLauncher;
@@ -136,7 +137,6 @@ public class PuddleChatroomActivity extends AppCompatActivity {
     private void changeVisibleFragment(int id, Fragment fragment, String fragmentName){
         getSupportFragmentManager().beginTransaction().replace(R.id.chatroom_fragment_container,
                 fragment, fragmentName).commit();
-
     }
 
     @Override
@@ -159,5 +159,22 @@ public class PuddleChatroomActivity extends AppCompatActivity {
     public boolean onSupportNavigateUp() {
         onBackPressed();
         return true;
+    }
+
+    public void navigateHome(MenuItem item) {
+        Intent intent = new Intent(this, PuddleListActivity.class);
+        startActivity(intent);
+    }
+
+
+    public void navigateToMap(MenuItem item) {
+        Intent intent = new Intent(this, MapActivity.class);
+        startActivity(intent);
+    }
+
+
+    public void navigateToSettings(MenuItem item) {
+        Intent intent = new Intent(this, SettingsActivity.class);
+        startActivity(intent);
     }
 }
