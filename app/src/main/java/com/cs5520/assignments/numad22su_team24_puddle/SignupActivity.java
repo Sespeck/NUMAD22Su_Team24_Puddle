@@ -1,7 +1,6 @@
 package com.cs5520.assignments.numad22su_team24_puddle;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
 
 import android.os.Bundle;
 import android.widget.Button;

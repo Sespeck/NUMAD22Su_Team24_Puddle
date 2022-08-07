@@ -227,6 +227,7 @@ public class CreatePuddle extends AppCompatActivity {
         apiHandler.post(() -> {
             apiBar.dismissBar();
             Intent intent = new Intent(CreatePuddle.this, PuddleChatroomActivity.class);
+            intent.putExtra("puddleID",pud_key);
             CreatePuddle.this.startActivity(intent);
         });
 
