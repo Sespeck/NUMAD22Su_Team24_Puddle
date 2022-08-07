@@ -180,7 +180,27 @@ public class PuddleListActivity extends AppCompatActivity implements View.OnClic
     private void handleFilterResults(){
         getSupportFragmentManager().setFragmentResultListener("filter_result",this,
                 ((requestKey, result) -> {
-            Log.d("here",result.toString());
+                    // result extras can be null if user didn't select them
+                    if (result.getString("start_date") != null && result.getString("end_date") != null){
+                        String startDate = result.getString("start_date");
+                        String endDate = result.getString("end_date");
+                    }
+                    Category category = null;
+                    if (result.getString("category") != null) {
+                        switch (result.getString("category")) {
+                            case "Music":
+                                category = Category.MUSIC;
+                                break;
+                            case "Finance":
+                                category = Category.FINANCE;
+                                break;
+                            case "Travel":
+                                category = Category.TRAVEL;
+                            case "Education":
+                                category = Category.EDUCATION;
+                        }
+                    }
+                    double distance = result.getDouble("distance");
         }));
     }
 
