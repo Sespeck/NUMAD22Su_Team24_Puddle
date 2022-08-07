@@ -8,6 +8,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -17,9 +18,11 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.cs5520.assignments.numad22su_team24_puddle.R;
 import com.cs5520.assignments.numad22su_team24_puddle.Utils.FirebaseDB;
+import com.cs5520.assignments.numad22su_team24_puddle.Utils.Util;
 import com.cs5520.assignments.numad22su_team24_puddle.chatroom_fragments.adapters.Event;
 import com.cs5520.assignments.numad22su_team24_puddle.chatroom_fragments.adapters.EventsAdapter;
 import com.cs5520.assignments.numad22su_team24_puddle.chatroom_fragments.dialogs.DateTimeFormatUtil;
+import com.facebook.shimmer.ShimmerFrameLayout;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -36,6 +39,21 @@ public class EventsFragment extends Fragment {
     private Handler handler = new Handler();
     private String puddleID;
     private DatabaseReference eventsRef;
+    private ShimmerFrameLayout shimmerFrameLayout;
+    private endShimmerEffectCallback callback = new endShimmerEffectCallback(){
+        @Override
+        public void onLayoutInflated() {
+            handler.postDelayed((Runnable) () -> {
+                shimmerFrameLayout.stopShimmer();
+                shimmerFrameLayout.setVisibility(View.GONE);
+                recyclerView.setVisibility(View.VISIBLE);
+            }, 800);
+        }
+    };
+
+    public interface endShimmerEffectCallback {
+        void onLayoutInflated();
+    }
 
 
     @Nullable
@@ -44,7 +62,26 @@ public class EventsFragment extends Fragment {
         View view = inflater.inflate(R.layout.events_fragment,container,false);
         puddleID = getArguments().getString("puddleID");
         this.recyclerView = view.findViewById(R.id.event_recycler_view);
+        shimmerFrameLayout = view.findViewById(R.id.events_shimmer_layout);
         recyclerView.hasFixedSize();
+        if (!Util.eventsPopulated) {
+            shimmerFrameLayout.startShimmer();
+            shimmerFrameLayout.setVisibility(View.VISIBLE);
+            recyclerView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+                @Override
+                public void onGlobalLayout() {
+                    if (callback != null) {
+                        callback.onLayoutInflated();
+                    }
+                    recyclerView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                }
+            });
+            Util.eventsPopulated = true;
+        } else{
+            shimmerFrameLayout.stopShimmer();
+            shimmerFrameLayout.setVisibility(View.GONE);
+            recyclerView.setVisibility(View.VISIBLE);
+        }
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
         layoutManager.setReverseLayout(true);
         layoutManager.setStackFromEnd(true);

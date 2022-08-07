@@ -19,8 +19,10 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewTreeObserver;
 import android.webkit.MimeTypeMap;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -33,6 +35,9 @@ import com.cs5520.assignments.numad22su_team24_puddle.Model.Puddles;
 import com.cs5520.assignments.numad22su_team24_puddle.Model.User;
 import com.cs5520.assignments.numad22su_team24_puddle.Utils.FirebaseDB;
 import com.cs5520.assignments.numad22su_team24_puddle.Utils.LocationPermissionActivity;
+import com.cs5520.assignments.numad22su_team24_puddle.Utils.Util;
+import com.cs5520.assignments.numad22su_team24_puddle.chatroom_fragments.EventsFragment;
+import com.facebook.shimmer.ShimmerFrameLayout;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.imageview.ShapeableImageView;
@@ -73,11 +78,31 @@ public class PuddleListActivity extends AppCompatActivity implements View.OnClic
     public static final int REQUEST_CODE_LOCATION_FOR_CREATE = 100;
     public static final int REQUEST_CODE_LOCATION_FOR_NEAR_ME = 101;
 
+    private Handler handler = new Handler();
     private HashMap<String, String> userDetails;
     private Uri imageUri;
     private HashMap<String, Puddles> allPuddlesData;
     private HashMap<String, Puddles> myPuddlesData;
     private HashMap<String, List<Puddles>> categoryPuddlesData;
+    private ShimmerFrameLayout shimmerFrameLayout;
+    private EventsFragment.endShimmerEffectCallback callback = new EventsFragment.endShimmerEffectCallback(){
+        @Override
+        public void onLayoutInflated() {
+            handler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    shimmerFrameLayout.stopShimmer();
+                    shimmerFrameLayout.setVisibility(View.GONE);
+                    puddleListRecyclerView.setVisibility(View.VISIBLE);
+                }
+            }, 1200);
+        }
+    };
+
+    public interface endShimmerEffectCallback {
+        void onLayoutInflated();
+    }
+
 
 
     @Override
@@ -87,7 +112,7 @@ public class PuddleListActivity extends AppCompatActivity implements View.OnClic
         userDetails = new HashMap<>();
         allPuddlesData = new HashMap<>();
         myPuddlesData = new HashMap<>();
-
+        shimmerFrameLayout = findViewById(R.id.events_shimmer_layout);
         profileIcon = findViewById(R.id.puddle_list_header_profile_icon);
         profileIcon.setOnClickListener(this);
         nearMeBtn = findViewById(R.id.header_near_me_btn);
@@ -110,6 +135,24 @@ public class PuddleListActivity extends AppCompatActivity implements View.OnClic
 
         // Initializing Widgets
         puddleListRecyclerView = findViewById(R.id.puddle_list_rv);
+        if (!Util.puddleListPopulated) {
+            shimmerFrameLayout.startShimmer();
+            shimmerFrameLayout.setVisibility(View.VISIBLE);
+            puddleListRecyclerView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+                @Override
+                public void onGlobalLayout() {
+                    if (callback != null) {
+                        callback.onLayoutInflated();
+                    }
+                    puddleListRecyclerView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                }
+            });
+            Util.puddleListPopulated = true;
+        } else{
+            shimmerFrameLayout.stopShimmer();
+            shimmerFrameLayout.setVisibility(View.GONE);
+            puddleListRecyclerView.setVisibility(View.VISIBLE);
+        }
 
 
         updateRecyclerView(myPuddlesBtn);

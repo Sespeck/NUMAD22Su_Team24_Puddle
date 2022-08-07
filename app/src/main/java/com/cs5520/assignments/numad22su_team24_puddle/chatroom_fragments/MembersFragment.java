@@ -1,14 +1,12 @@
 package com.cs5520.assignments.numad22su_team24_puddle.chatroom_fragments;
 
 import android.content.Context;
-import android.content.IntentFilter;
 import android.os.Bundle;
 import android.os.Handler;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
+import android.view.ViewTreeObserver;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -28,8 +26,6 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.List;
 
-import de.hdodenhof.circleimageview.CircleImageView;
-
 public class MembersFragment extends Fragment {
     private DatabaseReference membersRef;
     private String puddleID;
@@ -37,6 +33,7 @@ public class MembersFragment extends Fragment {
     private RecyclerView recyclerView;
     private MembersAdapter membersAdapter;
     private Context context;
+
 
 
     @Nullable
@@ -48,6 +45,7 @@ public class MembersFragment extends Fragment {
         recyclerView = view.findViewById(R.id.members_recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         recyclerView.hasFixedSize();
+
         context = getContext();
         initializeRecyclerView();
         return view;

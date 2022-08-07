@@ -18,6 +18,8 @@ import java.util.TimeZone;
 
 public class Util {
 
+    public static boolean eventsPopulated = false;
+    public static boolean puddleListPopulated = false;
     public static Map<Integer, Category> categoryMap = getCategoryMap();
 
     public static User user;
