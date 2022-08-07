@@ -19,6 +19,5 @@ public class PuddleDialog extends AlertDialog {
 
     public void setPuddle(Puddle puddle) {
         this.puddle = puddle;
-
     }
 }

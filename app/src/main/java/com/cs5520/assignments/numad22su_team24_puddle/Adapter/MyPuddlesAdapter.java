@@ -49,19 +49,17 @@ public class MyPuddlesAdapter extends RecyclerView.Adapter<MyPuddlesAdapter.MyPu
 
     @Override
     public void onBindViewHolder(@NonNull MyPudAdapter holder, int position) {
+        Puddles myPud = myPuddleList.get(position);
 
-        if(myPuddleList.size() > 0){
-            Puddles myPud = myPuddleList.get(position);
+        holder.puddleName.setText(myPud.getName());
+        holder.memberCount.setText(String.valueOf(myPud.getCount()) + " Members");
+        Glide.with(this.ct).load(myPud.getBannerUrl()).into(holder.puddleBg);
 
-            holder.puddleName.setText(myPud.getName());
-            holder.memberCount.setText(String.valueOf(myPud.getCount()) + " Members");
-            Glide.with(this.ct).load(myPud.getBannerUrl()).into(holder.puddleBg);
-
-            holder.itemView.setOnClickListener((v) -> {
-                Intent intent = new Intent(ct, PuddleChatroomActivity.class);
-                ct.startActivity(intent);
-            });
-        }
+        holder.itemView.setOnClickListener((v) -> {
+            Intent intent = new Intent(ct, PuddleChatroomActivity.class);
+            intent.putExtra("puddleID", myPuddleKeys.get(position));
+            ct.startActivity(intent);
+        });
     }
 
     @Override

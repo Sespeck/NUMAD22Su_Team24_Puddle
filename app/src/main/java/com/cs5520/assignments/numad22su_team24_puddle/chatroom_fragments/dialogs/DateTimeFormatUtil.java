@@ -6,7 +6,7 @@ import java.time.LocalDate;
 
 public class DateTimeFormatUtil {
 
-    public static String[] formatPresetTime(String datetime){
+    public static int[][] formatPresetTime(String datetime){
         String[] time = datetime.split(":");
         Integer hours = Integer.parseInt(time[0]);
         String amOrPm = hours < 12 ? "AM" : "PM";
@@ -20,16 +20,18 @@ public class DateTimeFormatUtil {
         }
         time[0] = Integer.parseInt(time[0]) % 12 != 0 ?
                 String.valueOf((Integer.parseInt(time[0]) % 12)) : "12";
-        String startingTime = time[0]+":"+time[1]+" "+amOrPm;
-        String endingTime = Integer.parseInt(time[0])+1 % 12 != 0 ?
-                String.valueOf((Integer.parseInt(time[0])+1 % 12)) : "12";
-        return new String[]{startingTime,endingTime+":"+time[1]+" "+amOrPm};
+        int endingHours = Integer.parseInt(time[0])+1 % 12 != 0 ?
+                Integer.parseInt(time[0])+1 % 12 : 12;
+        int[] startingTime = new int[]{Integer.parseInt(time[0]),Integer.parseInt(time[1])};
+        int[] endingTime = new int[]{endingHours,Integer.parseInt(time[1])};
+        return new int[][]{startingTime, endingTime};
     }
+
 
     public static String formatEventTime(int hours, int minutes){
         String amOrPm = hours < 12 ? "AM" : "PM";
         String hour = hours % 12 != 0 ? String.valueOf(hours % 12) : "12";
-        return hour+":"+minutes+" "+amOrPm;
+        return (minutes < 10) ? hour+":"+"0"+minutes+" " +amOrPm : hour+":"+minutes+" "+amOrPm;
     }
 
     public static String formatEventDate(String date) {

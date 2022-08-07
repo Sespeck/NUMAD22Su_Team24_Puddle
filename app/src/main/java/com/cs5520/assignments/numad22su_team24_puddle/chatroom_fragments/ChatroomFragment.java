@@ -1,6 +1,5 @@
 package com.cs5520.assignments.numad22su_team24_puddle.chatroom_fragments;
 
-import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
@@ -16,17 +15,18 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.cs5520.assignments.numad22su_team24_puddle.Model.User;
 import com.cs5520.assignments.numad22su_team24_puddle.R;
 import com.cs5520.assignments.numad22su_team24_puddle.Utils.FirebaseDB;
 import com.cs5520.assignments.numad22su_team24_puddle.Utils.Util;
 import com.cs5520.assignments.numad22su_team24_puddle.chatroom_fragments.adapters.ChatroomAdapter;
-import com.cs5520.assignments.numad22su_team24_puddle.chatroom_fragments.adapters.Event;
-import com.cs5520.assignments.numad22su_team24_puddle.chatroom_fragments.adapters.EventsAdapter;
 import com.cs5520.assignments.numad22su_team24_puddle.chatroom_fragments.adapters.Message;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.installations.Utils;
 
 import java.time.Instant;
 import java.util.ArrayList;
@@ -42,6 +42,7 @@ public class ChatroomFragment extends Fragment {
     private ChatroomAdapter adapter;
     private String puddleID;
     private DatabaseReference messageRef;
+    private User currentUser;
 
     @Nullable
     @Override
@@ -57,6 +58,7 @@ public class ChatroomFragment extends Fragment {
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(layoutManager);
         initializeRecyclerView();
+        currentUser = FirebaseDB.currentUser;
         createNewMessageListener();
         return view;
     }
@@ -70,13 +72,14 @@ public class ChatroomFragment extends Fragment {
                         String textResult = chatEditText.getText().toString();
                         HashMap<String, Object> newMessage = new HashMap<>();
                         newMessage.put("timestamp", Instant.now().toString());
-                        newMessage.put("username", "Chris");
+                        FirebaseDB.fetchCurrentUserData();
+                        newMessage.put("username", currentUser.getUsername());
                         newMessage.put("body",textResult);
                         newMessage.put("profile_url","https://firebasestorage.googleapis.com/v0/b/android-chat-85561.appspot.com/o/1659737464403.jpg?alt=media&token=65a5f276-7954-4e07-a236-1b50732b0e6e");
                         // Add a new message based off current time, the edittext body, the current user's
                         // Pfp and name
                         handler.post(()-> {
-                            adapter.addNewMessage(new Message("Chris",textResult,Instant.now().toString(),
+                            adapter.addNewMessage(new Message(currentUser.getUsername() ,textResult,Instant.now().toString(),
                                     "https://firebasestorage.googleapis.com/v0/b/android-chat-85561.appspot.com/o/1659737464403.jpg?alt=media&token=65a5f276-7954-4e07-a236-1b50732b0e6e"));
                             recyclerView.scrollToPosition(adapter.getItemCount()-1);
                             chatEditText.getText().clear();

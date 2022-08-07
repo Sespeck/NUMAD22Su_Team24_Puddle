@@ -9,22 +9,43 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
+import com.cs5520.assignments.numad22su_team24_puddle.R;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.location.LocationServices;
 
-public class LocationPermissionActivity {
+import org.w3c.dom.NodeList;
+import org.xml.sax.InputSource;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.text.DecimalFormat;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathExpressionException;
+import javax.xml.xpath.XPathFactory;
+
+public class LocationPermissionActivity{
     public static final int ERROR_DIALOG_REQUEST = 99;
     public static final int PERMISSIONS_REQUEST_ENABLE_GPS = 88;
     public static final int REQUEST_CODE_FINE_LOCATION = 77;
     public static boolean locationPermissionGranted = false;
+    public static DecimalFormat df = new DecimalFormat("###.####");
+
 
     public static boolean checkGoogleService(Activity activity){
         Log.d("LocationRequest", "checking google services version");
@@ -104,12 +125,55 @@ public class LocationPermissionActivity {
         return false;
     }
 
-//    public static void locationSetting(Activity activity) {
-//
-//        Intent intent = new Intent();
-//        intent.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
-//        Uri uri = Uri.fromParts("package", activity.getPackageName(), null);
-//        intent.setData(uri);
-//        activity.startActivity(intent);
-//    }
+    public static void getCurrentLocationList(double latitude, double longitude, String google_maps_api_key) throws IOException {
+        String googleMapsURL = "https://maps.googleapis.com/maps/api/geocode/xml?latlng=" +
+                df.format(latitude) + "," + df.format(longitude) +
+                "&key="+ google_maps_api_key;
+        XPathFactory factory = XPathFactory.newInstance();
+        XPath xpath = factory.newXPath();
+        final Handler handler = new Handler();
+        Runnable runnable = () -> {
+            URL url = null;
+            try {
+                url = new URL(googleMapsURL);
+                InputStream stream = url.openStream();
+                List<String> addresses = new ArrayList<>();
+                if (stream != null) {
+                    InputSource inputXml = new InputSource(stream);
+                    NodeList nodes = (NodeList) xpath.evaluate(
+                            "//formatted_address",
+                            inputXml,
+                            XPathConstants.NODESET);
+
+                    for (int i = 0, n = nodes.getLength(); i < n; i++) {
+                        String formattedAddress = nodes.item(i).getTextContent();
+                        addresses.add(formattedAddress);
+                        Log.d("getCurrentLocationList", formattedAddress);
+                    }
+
+//                    handler.post(() -> {
+//                        // send the addresses object
+//                    });
+
+                } else {
+                }
+
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (XPathExpressionException e) {
+                e.printStackTrace();
+            }
+
+        };
+        Thread thread = new Thread(runnable);
+        thread.start();
+
+    }
+
+    // For implementing getCurrentLocationList method, write below:
+    //    public void testlocationlist(View v) throws IOException {
+    //        LocationPermissionActivity.getCurrentLocationList(43.6687,-70.2848, getString(R.string.google_maps_api_key));
+    //    }
 }

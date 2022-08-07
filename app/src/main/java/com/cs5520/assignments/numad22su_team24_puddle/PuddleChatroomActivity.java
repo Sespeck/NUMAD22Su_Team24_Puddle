@@ -25,6 +25,7 @@ import com.cs5520.assignments.numad22su_team24_puddle.chatroom_fragments.EventsF
 import com.cs5520.assignments.numad22su_team24_puddle.chatroom_fragments.MembersFragment;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.tabs.TabLayout;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
@@ -34,7 +35,7 @@ public class PuddleChatroomActivity extends AppCompatActivity {
     private TabLayout.Tab currentTab;
     private FloatingActionButton fab;
     private Toolbar toolbar;
-    private String puddleID ="-N8lixPAncVn1ilKLArZ";
+    private String puddleID;
     private boolean modalOpen = false;
 
     ActivityResultLauncher<Intent> startActivityForResult = registerForActivityResult(
@@ -51,6 +52,7 @@ public class PuddleChatroomActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        puddleID = getIntent().getStringExtra("puddleID");
         setContentView(R.layout.puddle_chatroom_activity);
         tabLayout = findViewById(R.id.tabLayout);
         toolbar = findViewById(R.id.toolbar);

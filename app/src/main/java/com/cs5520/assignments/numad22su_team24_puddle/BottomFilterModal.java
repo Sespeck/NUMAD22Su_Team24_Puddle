@@ -16,26 +16,25 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.widget.AppCompatButton;
 import androidx.fragment.app.DialogFragment;
-import androidx.fragment.app.FragmentResultListener;
 
 import com.cs5520.assignments.numad22su_team24_puddle.chatroom_fragments.dialogs.DateTimeFormatUtil;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import com.google.android.material.slider.RangeSlider;
-import com.google.android.material.slider.Slider;
 
-import org.w3c.dom.Text;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class BottomFilterModal extends BottomSheetDialogFragment {
+    private static final DecimalFormat df = new DecimalFormat("0.00");
     private ArrayAdapter<String> fullAdapter;
     private RangeSlider slider;
     private String spinnerResults;
     private String selectedCategory;
-    private int distanceResults;
+    private double distanceResults;
     private TextView distanceIndicator;
     private TextView startDate;
     private TextView endDate;
@@ -74,13 +73,13 @@ public class BottomFilterModal extends BottomSheetDialogFragment {
         this.slider = view.findViewById(R.id.slider_filter);
         slider.setLabelFormatter(value -> {
             distanceIndicator.setText(value + "m");
-            distanceResults = Math.round(value);
+            distanceResults = Double.parseDouble(df.format(1609.34 * value));
             return value + "m";
         });
         view.findViewById(R.id.add_filter_save_button).setOnClickListener(v -> {
             Bundle bundle = new Bundle();
             if (selectedCategory != null) bundle.putString("category",selectedCategory);
-            if (distanceResults != 0) bundle.putInt("distance", distanceResults);
+            if (distanceResults != 0) bundle.putDouble("distance", distanceResults);
             if (startDateResults != null && endDateResults != null){
                 bundle.putString("start_date",startDateResults);
                 bundle.putString("end_date",startDateResults);
@@ -141,10 +140,10 @@ public class BottomFilterModal extends BottomSheetDialogFragment {
     public void initalizeSpinnerAdapter(Spinner spinner) {
         List<String> interests = new ArrayList<>();
         interests.add(0, "Filter by Category");
-        interests.add("Music");
-        interests.add("Travel");
-        interests.add("Business");
-        interests.add("Education");
+        interests.add(Category.MUSIC.toString());
+        interests.add(Category.TRAVEL.toString());
+        interests.add(Category.FINANCE.toString());
+        interests.add(Category.EDUCATION.toString());
         fullAdapter = new ArrayAdapter(getActivity(), R.layout.filter_spinner_item, interests);
         fullAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner.setAdapter(fullAdapter);
