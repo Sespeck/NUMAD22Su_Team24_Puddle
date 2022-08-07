@@ -321,10 +321,32 @@ public class PuddleListActivity extends AppCompatActivity implements View.OnClic
         MaterialButton button = layoutView.findViewById(R.id.puddle_modal_join_btn);
         button.setOnClickListener(v -> {
             dialog.dismiss();
+//            addPuddlesToList("", new Puddles());
             Intent intent = new Intent(context, PuddleChatroomActivity.class);
             context.startActivity(intent);
         });
         dialog.show();
+    }
+
+
+    public static void addPuddlesToList(String pud_id, Puddles pud){
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                // 1. Update the id in my_puddles for user
+                String uid = FirebaseDB.getCurrentUser().getUid();
+                DatabaseReference ref = FirebaseDB.getDataReference("Users").child(uid);
+                ref.push().setValue(pud_id);
+
+                // 2. Add Puddle count
+                DatabaseReference pudRef = FirebaseDB.getDataReference("Puddles").child(pud_id).child("count");
+                pudRef.setValue(pud.getCount() + 1);
+
+                // 3. Update the members child
+                DatabaseReference memRef = FirebaseDB.getDataReference("Members").child(pud_id);
+                memRef.push().setValue(uid);
+            }
+        });
     }
 
     // To capture all the puddles
