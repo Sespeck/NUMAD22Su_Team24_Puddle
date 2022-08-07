@@ -12,6 +12,7 @@ public class Puddles {
     private int count;
     private HashMap<String, String> Location = new HashMap<>();
 
+    // Constructors
     public Puddles(){}
 
     public Puddles(String bannerUrl, String bio, String category, String isPrivate, String name, String range, int count, HashMap<String, String> location) {
@@ -25,6 +26,7 @@ public class Puddles {
         Location = location;
     }
 
+    // Getters and Setters
     public String getBannerUrl() {
         return bannerUrl;
     }
