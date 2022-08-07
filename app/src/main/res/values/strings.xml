@@ -47,4 +47,6 @@
     <string name="phone_number">Phone Number</string>
     <string name="logout">Logout</string>
 
+    <string name="google_maps_api_key">AIzaSyDTbzxCT5jOJFnvWSRrQzlMJi97daSIDwg</string>
+
 </resources>

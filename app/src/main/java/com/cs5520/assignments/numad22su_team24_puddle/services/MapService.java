@@ -25,19 +25,5 @@ public class MapService {
         return puddleList;
     }
 
-    public static boolean withinRange(double startLatitude,
-                                      double startLongitude,
-                                      double endLatitude,
-                                      double endLongitude,
-                                      double range
-    ) {
-        float[] distanceArray = new float[1];
-        Location.distanceBetween(startLatitude, startLongitude,endLatitude, endLongitude, distanceArray);
-        double distance = distanceArray[0];
-        return distance <= range;
-    }
 
-    public static List<Puddle> withinRangePuddles(List<Puddle> puddleList, double range, double currentLat, double currentLong){
-        return puddleList.stream().filter(x->withinRange(x.getLatitude(),x.getLongitude(),currentLat,currentLong,range)).collect(Collectors.toList());
-    }
 }
