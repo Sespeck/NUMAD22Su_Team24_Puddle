@@ -75,8 +75,8 @@ public class PuddleListActivity extends AppCompatActivity implements View.OnClic
 
     private HashMap<String, String> userDetails;
     private Uri imageUri;
-    private HashMap<String, Puddles> allPuddlesData;
-    private HashMap<String, Puddles> myPuddlesData;
+    private HashMap<String, Puddles> allPuddlesData = null;
+    private HashMap<String, Puddles> myPuddlesData = null;
     private HashMap<String, List<Puddles>> categoryPuddlesData;
 
 
@@ -85,8 +85,14 @@ public class PuddleListActivity extends AppCompatActivity implements View.OnClic
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_puddle_list);
         userDetails = new HashMap<>();
-        allPuddlesData = new HashMap<>();
-        myPuddlesData = new HashMap<>();
+
+        if(allPuddlesData == null){
+            allPuddlesData = new HashMap<>();
+        }
+
+        if(myPuddlesData == null){
+            myPuddlesData = new HashMap<>();
+        }
 
         profileIcon = findViewById(R.id.puddle_list_header_profile_icon);
         profileIcon.setOnClickListener(this);
