@@ -3,7 +3,7 @@ package com.cs5520.assignments.numad22su_team24_puddle;
 import androidx.annotation.NonNull;
 
 public enum Category {
-    MUSIC(0), TRAVEL(1), FINANCE(2), EDUCATION(3), SELECT(4);
+    MUSIC(0), TRAVEL(1), FINANCE(2), EDUCATION(3), SELECT(4), SPORTS(5);
 
     int id;
 
@@ -19,6 +19,7 @@ public enum Category {
             case TRAVEL: return "Travel";
             case FINANCE: return "Finance";
             case EDUCATION: return "Education";
+            case SPORTS: return "Sports";
             case SELECT: return "Select";
             default: return "Null Category";
         }
