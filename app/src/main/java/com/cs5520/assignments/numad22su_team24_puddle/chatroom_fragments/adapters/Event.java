@@ -5,7 +5,6 @@ import android.location.Location;
 import android.util.Log;
 
 public class Event {
-    Boolean isOnline;
     String name;
     String startingDatetime;
     String endingDatetime;

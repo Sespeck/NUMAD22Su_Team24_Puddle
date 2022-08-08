@@ -148,7 +148,7 @@ public class EventsFragment extends Fragment {
                             eventList.add(new Event(title, startingTimestamp, endingTimestamp, null, description, imageUri, attendanceCounter));
                         }
                         handler.post(() -> {
-                            eventsAdapter = new EventsAdapter(eventList, getContext());
+                            eventsAdapter = new EventsAdapter(eventList, getContext(), eventsRef);
                             recyclerView.setAdapter(eventsAdapter);
                         });
                     }
