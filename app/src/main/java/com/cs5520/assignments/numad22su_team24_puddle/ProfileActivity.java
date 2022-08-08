@@ -112,6 +112,8 @@ public class ProfileActivity extends AppCompatActivity {
     public void uploadDataToFB(){
         DatabaseReference ref = FirebaseDB.getDataReference("Users").child(FirebaseDB.currentUser.getId());
         HashMap<String, Object> hashMap = new HashMap<>();
+        HashMap<String, Object> myPud = new HashMap<>();
+
         hashMap.put("id", FirebaseDB.currentUser.getId());
         hashMap.put("username", FirebaseDB.currentUser.getUsername());
         hashMap.put("password", FirebaseDB.currentUser.getPassword());
@@ -120,6 +122,7 @@ public class ProfileActivity extends AppCompatActivity {
         hashMap.put("bio", bioET.getText().toString());
         hashMap.put("phone_number", phoneNumberET.getText().toString());
         hashMap.put("profile_icon", dpUrl);
+        hashMap.put("my_puddles", FirebaseDB.currentUser.getMy_puddles());
 
         ref.setValue(hashMap).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
