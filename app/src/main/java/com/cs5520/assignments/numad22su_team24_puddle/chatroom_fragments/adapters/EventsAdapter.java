@@ -2,6 +2,7 @@ package com.cs5520.assignments.numad22su_team24_puddle.chatroom_fragments.adapte
 
 import android.content.Context;
 import android.net.Uri;
+import android.provider.ContactsContract;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -25,11 +26,13 @@ import java.util.List;
 public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.EventViewHolder> {
     private List<Event> eventList;
     private Context context;
+    private DatabaseReference attendanceRef;
 
 
     public EventsAdapter(List<Event> eventList, Context context, DatabaseReference attendanceRef){
         this.context = context;
         this.eventList = eventList;
+        this.attendanceRef = attendanceRef;
     }
 
     public static class EventViewHolder extends RecyclerView.ViewHolder {
@@ -59,12 +62,14 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.EventViewH
     public void onBindViewHolder(@NonNull EventsAdapter.EventViewHolder holder, int position) {
         Event event = eventList.get(position);
         holder.imageView.setOnClickListener(v -> {
-                Log.d("here",holder.attendanceCounter.getText().toString());
                 new MaterialAlertDialogBuilder(context,
-                        R.style.Body_ThemeOverlay_MaterialComponents_MaterialAlertDialog).setTitle(event.name).setMessage(event.description + "\n" + event.startingDatetime + "\n" + event.endingDatetime).setPositiveButton("RSVP", (dialog, which) -> {
-                holder.attendanceCounter.setText(String.valueOf(Integer.parseInt(holder.attendanceCounter.getText().toString())+1));
-                Log.d("here",holder.attendanceCounter.getText().toString());
+                        R.style.Body_ThemeOverlay_MaterialComponents_MaterialAlertDialog).setTitle(event.name).
+                        setMessage(event.description + "\n" + event.startingDatetime + "\n" + event.endingDatetime).setPositiveButton("RSVP", (dialog, which) -> {
+                            String newCounterValue = String.valueOf(Integer.parseInt(holder.attendanceCounter.getText().toString())+1);
+                holder.attendanceCounter.setText(newCounterValue);
                 notifyItemChanged(position);
+                attendanceRef.child(event.id).child("attendance_counter").setValue(newCounterValue);
+
                 ;}).show();
 
         });

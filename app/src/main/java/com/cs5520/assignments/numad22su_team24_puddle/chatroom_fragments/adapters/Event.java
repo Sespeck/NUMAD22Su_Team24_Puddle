@@ -5,6 +5,7 @@ import android.location.Location;
 import android.util.Log;
 
 public class Event {
+    String id;
     String name;
     String startingDatetime;
     String endingDatetime;
@@ -15,7 +16,7 @@ public class Event {
 
 
     public Event(String name, String startingDatetime, String endingDatetime, Location location,
-                 String description, String backgroundImgUri, int attendanceCount){
+                 String description, String backgroundImgUri, int attendanceCount, String id){
         this.name = name;
         this.startingDatetime = startingDatetime;
         this.endingDatetime = endingDatetime;
@@ -23,6 +24,7 @@ public class Event {
         this.description = description;
         this.backgroundImgUri = backgroundImgUri;
         this.attendanceCount = attendanceCount;
+        this.id = id;
     }
 
     public String getName() {

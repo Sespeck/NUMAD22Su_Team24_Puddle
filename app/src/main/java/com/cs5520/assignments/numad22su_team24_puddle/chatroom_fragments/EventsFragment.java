@@ -32,6 +32,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
+import java.util.UUID;
 
 public class EventsFragment extends Fragment {
     private RecyclerView recyclerView;
@@ -97,6 +98,7 @@ public class EventsFragment extends Fragment {
             class CreateNewEventRunnable implements Runnable{
                 @Override
                 public void run() {
+                    String uniqueID = UUID.randomUUID().toString();
                     String startingDate = result.getString("starting_date");
                     String endingDate = result.getString("ending_date");
                     String backgroundImgUri = result.getString("image_uri").equals("load_default_image") ?
@@ -116,10 +118,11 @@ public class EventsFragment extends Fragment {
                     newEvent.put("ending_timestamp", endingTimestamp);
                     newEvent.put("image_uri",backgroundImgUri);
                     newEvent.put("attendance_counter","0");
+                    newEvent.put("id",uniqueID);
                     handler.post(()->{
-                        eventsAdapter.addNewEvent(new Event(title,startingTimestamp,endingTimestamp,null,description,result.getString("image_uri"),0));
+                        eventsAdapter.addNewEvent(new Event(title,startingTimestamp,endingTimestamp,null,description,result.getString("image_uri"),0, uniqueID));
                     });
-                    eventsRef.child(puddleID).push().setValue(newEvent);
+                    eventsRef.child(puddleID).child(uniqueID).setValue(newEvent);
                 }
             }
             Thread worker = new Thread(new CreateNewEventRunnable());
@@ -144,11 +147,12 @@ public class EventsFragment extends Fragment {
                             String startingTimestamp = snap.child("starting_timestamp").getValue(String.class);
                             String endingTimestamp = snap.child("ending_timestamp").getValue(String.class);
                             String imageUri = snap.child("image_uri").getValue(String.class);
+                            String id = snap.child("id").getValue(String.class);
                             int attendanceCounter = Integer.parseInt(Objects.requireNonNull(snap.child("attendance_counter").getValue(String.class)));
-                            eventList.add(new Event(title, startingTimestamp, endingTimestamp, null, description, imageUri, attendanceCounter));
+                            eventList.add(new Event(title, startingTimestamp, endingTimestamp, null, description, imageUri, attendanceCounter,id));
                         }
                         handler.post(() -> {
-                            eventsAdapter = new EventsAdapter(eventList, getContext(), eventsRef);
+                            eventsAdapter = new EventsAdapter(eventList, getContext(), eventsRef.child(puddleID));
                             recyclerView.setAdapter(eventsAdapter);
                         });
                     }
