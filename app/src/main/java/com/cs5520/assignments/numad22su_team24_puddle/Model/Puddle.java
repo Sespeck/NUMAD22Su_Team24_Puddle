@@ -1,8 +1,12 @@
 package com.cs5520.assignments.numad22su_team24_puddle.Model;
 
+import android.util.Log;
+
+import com.cs5520.assignments.numad22su_team24_puddle.Category;
+
 import java.util.HashMap;
 
-public class Puddles {
+public class Puddle {
     private String bannerUrl;
     private String bio;
     private String category;
@@ -12,9 +16,10 @@ public class Puddles {
     private int count;
     private HashMap<String, String> Location = new HashMap<>();
 
-    public Puddles(){}
+    public Puddle() {
+    }
 
-    public Puddles(String bannerUrl, String bio, String category, String isPrivate, String name, String range, int count, HashMap<String, String> location) {
+    public Puddle(String name, String bannerUrl, String bio, String category, String isPrivate, String range, int count, HashMap<String, String> location) {
         this.bannerUrl = bannerUrl;
         this.bio = bio;
         this.category = category;

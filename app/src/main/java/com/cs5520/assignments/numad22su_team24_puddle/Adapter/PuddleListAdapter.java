@@ -11,7 +11,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.cs5520.assignments.numad22su_team24_puddle.Category;
-import com.cs5520.assignments.numad22su_team24_puddle.Puddle;
+import com.cs5520.assignments.numad22su_team24_puddle.Model.Puddle;
 import com.cs5520.assignments.numad22su_team24_puddle.R;
 import com.cs5520.assignments.numad22su_team24_puddle.Utils.Util;
 

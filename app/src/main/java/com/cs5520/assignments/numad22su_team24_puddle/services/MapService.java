@@ -3,12 +3,10 @@ package com.cs5520.assignments.numad22su_team24_puddle.services;
 import android.location.Location;
 
 import com.cs5520.assignments.numad22su_team24_puddle.Model.PuddleMarker;
-import com.cs5520.assignments.numad22su_team24_puddle.Puddle;
 import com.google.android.gms.maps.model.LatLng;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class MapService {
 

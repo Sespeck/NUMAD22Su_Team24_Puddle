@@ -2,7 +2,7 @@ package com.cs5520.assignments.numad22su_team24_puddle.services;
 
 import android.location.Location;
 
-import com.cs5520.assignments.numad22su_team24_puddle.Model.Puddles;
+import com.cs5520.assignments.numad22su_team24_puddle.Model.Puddle;
 
 import java.util.HashMap;
 import java.util.List;
@@ -13,7 +13,7 @@ import java.util.stream.Stream;
 public class FilterService {
 
 
-    public static boolean withinRange(Puddles puddle,
+    public static boolean withinRange(Puddle puddle,
                                       double endLatitude,
                                       double endLongitude,
                                       double range
@@ -27,20 +27,20 @@ public class FilterService {
         return distance <= range;
     }
 
-    public static Stream<Puddles> withinRangePuddles(Stream<Puddles> puddleList, double range, double currentLat, double currentLong) {
+    public static Stream<Puddle> withinRangePuddles(Stream<Puddle> puddleList, double range, double currentLat, double currentLong) {
         return puddleList.filter(x -> withinRange(x, currentLat, currentLong, range));
     }
 
-    public static Stream<Puddles> withinDatePuddles(Stream<Puddles> puddleList, String startDate, String endDate) {
+    public static Stream<Puddle> withinDatePuddles(Stream<Puddle> puddleList, String startDate, String endDate) {
         // need event date information in Puddles objects
         return puddleList;
     }
 
-    public static Stream<Puddles> selectedCategoryPuddles(Stream<Puddles> puddleList, List<String> categories) {
+    public static Stream<Puddle> selectedCategoryPuddles(Stream<Puddle> puddleList, List<String> categories) {
         return puddleList.filter(x -> categories.contains(x.getCategory()));
     }
 
-    public static List<Puddles> filteredPuddles(List<Puddles> puddleList, double range, double currentLat, double currentLong, List<String> categories, String startDate, String endDate) {
+    public static List<Puddle> filteredPuddles(List<Puddle> puddleList, double range, double currentLat, double currentLong, List<String> categories, String startDate, String endDate) {
         return withinDatePuddles(
                 withinRangePuddles(
                         selectedCategoryPuddles(

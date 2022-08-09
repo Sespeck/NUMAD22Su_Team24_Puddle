@@ -102,7 +102,6 @@ public class CreatePuddle extends AppCompatActivity {
 
         // Options for the menu in the dropdown
         String[] options = {
-                Category.SELECT.toString(),
                 Category.MUSIC.toString(),
                 Category.TRAVEL.toString(),
                 Category.FINANCE.toString(),

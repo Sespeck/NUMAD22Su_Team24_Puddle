@@ -31,7 +31,7 @@ public class LoginActivity extends AppCompatActivity {
         firebaseUser = auth.getCurrentUser();
 
         // checking for users existence: Saving the current user
-        if(firebaseUser != null){
+        if (firebaseUser != null) {
             startActivity(new Intent(LoginActivity.this, PuddleListActivity.class));
             finish();
         }
@@ -53,9 +53,9 @@ public class LoginActivity extends AppCompatActivity {
                 return;
             }
             FirebaseDB.getInstanceFirebaseAuth().signInWithEmailAndPassword(
-                    usernameEditText.getText().toString().trim()+"@puddle.com",
+                    usernameEditText.getText().toString().trim() + "@puddle.com",
                     passwordEditText.getText().toString()).addOnCompleteListener(task -> {
-                if(task.isSuccessful()){
+                if (task.isSuccessful()) {
                     // Successfully Logged in
                     Intent intent = new Intent(LoginActivity.this, PuddleListActivity.class);
                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
