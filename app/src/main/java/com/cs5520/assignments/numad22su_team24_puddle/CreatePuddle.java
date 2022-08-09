@@ -226,6 +226,7 @@ public class CreatePuddle extends AppCompatActivity {
         apiHandler.post(() -> {
             apiBar.dismissBar();
             Intent intent = new Intent(CreatePuddle.this, PuddleChatroomActivity.class);
+            intent.putExtra("puddleID",pud_key);
             CreatePuddle.this.startActivity(intent);
         });
 
@@ -276,11 +277,11 @@ public class CreatePuddle extends AppCompatActivity {
 
     public boolean checkValues(){
         boolean allValues = false;
-
+        Log.d("menu_val", menu.getText().toString().toLowerCase());
         if(
            puddleName.getText().toString() != "" &&
            puddleBio.getText().toString() != "" && imgUri != null &&
-           selectedRange > 0.0 && menu.getText().toString().toLowerCase() != "select"
+           selectedRange > 0.0 && !menu.getText().toString().toLowerCase().equals("select")
         ) {
             allValues = true;
         }

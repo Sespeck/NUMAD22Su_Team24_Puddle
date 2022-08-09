@@ -235,22 +235,17 @@ public class PuddleListActivity extends AppCompatActivity implements View.OnClic
                 LocationPermissionActivity.requestPermission(this, REQUEST_CODE_LOCATION_FOR_NEAR_ME);
             }
         } else {
-            if (myPuddlesData.isEmpty()) {
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        fetchMyPuddles();
-                    }
-                });
-                setSelectedButton(myPuddlesBtn);
-                setUnselectedButton(nearMeBtn);
-            } else {
-                puddleListRecyclerView.setLayoutManager(new GridLayoutManager(PuddleListActivity.this, 2));
-                puddleListRecyclerView.setAdapter(new MyPuddlesAdapter(PuddleListActivity.this, myPuddlesData));
-                setSelectedButton(myPuddlesBtn);
-                setUnselectedButton(nearMeBtn);
-            }
+            puddleListRecyclerView.setLayoutManager(new GridLayoutManager(PuddleListActivity.this, 2));
+            puddleListRecyclerView.setAdapter(new MyPuddlesAdapter(PuddleListActivity.this, myPuddlesData));
+            setSelectedButton(myPuddlesBtn);
+            setUnselectedButton(nearMeBtn);
 
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    fetchMyPuddles();
+                }
+            });
         }
 
     }
@@ -333,6 +328,7 @@ public class PuddleListActivity extends AppCompatActivity implements View.OnClic
         MaterialButton button = layoutView.findViewById(R.id.puddle_modal_join_btn);
         button.setOnClickListener(v -> {
             dialog.dismiss();
+//            addPuddlesToList("", new Puddles());
             Intent intent = new Intent(context, PuddleChatroomActivity.class);
             context.startActivity(intent);
         });
