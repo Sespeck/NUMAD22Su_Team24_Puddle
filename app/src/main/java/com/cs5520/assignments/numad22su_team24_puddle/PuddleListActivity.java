@@ -95,7 +95,7 @@ public class PuddleListActivity extends AppCompatActivity implements View.OnClic
         // Register for the filter results
         handleFilterResults();
         // Api Calls
-        FirebaseDB.fetchCurrentUserData();
+        fetchCurrentUserData();
         uploadImageToFb();
 //        uploadImageToFb();
         fetchAllPuddles();
@@ -148,17 +148,18 @@ public class PuddleListActivity extends AppCompatActivity implements View.OnClic
     }
 
     public void fetchCurrentUserData() {
-        current_user = FirebaseDB.getCurrentUser();
+        FirebaseUser current_user = FirebaseDB.getCurrentUser();
 
-        userRef = FirebaseDB.getDataReference(getString(R.string.users)).child(current_user.getUid());
+        DatabaseReference userRef = FirebaseDB.getDataReference("Users").child(current_user.getUid());
         userRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
 //                for (DataSnapshot snap : snapshot) {
 //                    userDetails.put(snap.getKey(), snap.getValue(String.class));
 //                }
-                User currentUser = snapshot.getValue(User.class);
-                Log.d("currentUser", currentUser.toString());
+                FirebaseDB.currentUser = snapshot.getValue(User.class);
+                Log.d("currentUser", FirebaseDB.currentUser.toString());
+                Glide.with(PuddleListActivity.this).load(FirebaseDB.currentUser.getProfile_icon()).into(profileIcon);
             }
 
             @Override
