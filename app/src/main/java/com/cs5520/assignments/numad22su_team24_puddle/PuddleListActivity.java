@@ -321,7 +321,7 @@ public class PuddleListActivity extends AppCompatActivity implements View.OnClic
         }
     }
 
-    public static void showJoinPuddleDialogue(Context context, Puddle puddle) {
+    public void showJoinPuddleDialogue(Context context, Puddle puddle) {
         View layoutView = View.inflate(context, R.layout.puddle_modal, null);
         AlertDialog dialog = new MaterialAlertDialogBuilder(context).setTitle(puddle.getName()).setView(layoutView).create();
         TextView tv = layoutView.findViewById(R.id.puddle_modal_name_tv);
@@ -332,7 +332,14 @@ public class PuddleListActivity extends AppCompatActivity implements View.OnClic
         button.setOnClickListener(v -> {
             dialog.dismiss();
 //            addPuddlesToList("", new Puddles());
+
             Intent intent = new Intent(context, PuddleChatroomActivity.class);
+            for (String puddleId: allPuddlesData.keySet()) {
+                if (allPuddlesData.get(puddleId) == puddle) {
+                    intent.putExtra("puddleID", puddleId);
+                    break;
+                }
+            }
             context.startActivity(intent);
         });
         dialog.show();

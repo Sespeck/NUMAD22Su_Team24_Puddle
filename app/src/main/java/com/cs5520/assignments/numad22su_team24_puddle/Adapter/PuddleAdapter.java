@@ -52,7 +52,7 @@ public class PuddleAdapter extends RecyclerView.Adapter<PuddleAdapter.PuddleView
         holder.puddleImage.setShapeAppearanceModel(holder.puddleImage.getShapeAppearanceModel().withCornerSize(25));
         holder.puddleImage.setColorFilter(R.color.black);
         holder.itemView.setOnClickListener(view -> {
-            PuddleListActivity.showJoinPuddleDialogue(context, puddle);
+            ((PuddleListActivity) context).showJoinPuddleDialogue(context, puddle);
         });
     }
 
