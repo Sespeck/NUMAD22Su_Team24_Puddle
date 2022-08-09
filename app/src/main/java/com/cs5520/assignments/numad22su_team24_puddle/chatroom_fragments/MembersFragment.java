@@ -45,7 +45,6 @@ public class MembersFragment extends Fragment {
         recyclerView = view.findViewById(R.id.members_recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         recyclerView.hasFixedSize();
-
         context = getContext();
         initializeRecyclerView();
         return view;
@@ -64,7 +63,6 @@ public class MembersFragment extends Fragment {
                             String profile_url = snap.child("profile_url").getValue(String.class);
                             memberList.add(new Member(username,profile_url));
                         }
-
                         handler.post(() -> {
                             membersAdapter = new MembersAdapter(memberList,context);
                             recyclerView.setAdapter(membersAdapter);
@@ -72,7 +70,6 @@ public class MembersFragment extends Fragment {
                     }
                     @Override
                     public void onCancelled(@NonNull DatabaseError error) {
-
                     }
                 });
             }
