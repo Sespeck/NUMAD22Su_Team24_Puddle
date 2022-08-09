@@ -75,12 +75,12 @@ public class ChatroomFragment extends Fragment {
                         FirebaseDB.fetchCurrentUserData();
                         newMessage.put("username", currentUser.getUsername());
                         newMessage.put("body",textResult);
-                        newMessage.put("profile_url","https://firebasestorage.googleapis.com/v0/b/android-chat-85561.appspot.com/o/1659737464403.jpg?alt=media&token=65a5f276-7954-4e07-a236-1b50732b0e6e");
+                        newMessage.put("profile_url",currentUser.getProfile_icon());
                         // Add a new message based off current time, the edittext body, the current user's
                         // Pfp and name
                         handler.post(()-> {
                             adapter.addNewMessage(new Message(currentUser.getUsername() ,textResult,Instant.now().toString(),
-                                    "https://firebasestorage.googleapis.com/v0/b/android-chat-85561.appspot.com/o/1659737464403.jpg?alt=media&token=65a5f276-7954-4e07-a236-1b50732b0e6e"));
+                                    currentUser.getProfile_icon()));
                             recyclerView.scrollToPosition(adapter.getItemCount()-1);
                             chatEditText.getText().clear();
                         });

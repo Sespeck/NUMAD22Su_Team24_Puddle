@@ -23,9 +23,12 @@ import com.cs5520.assignments.numad22su_team24_puddle.MapActivity;
 import com.cs5520.assignments.numad22su_team24_puddle.PuddleListActivity;
 import com.cs5520.assignments.numad22su_team24_puddle.R;
 import com.cs5520.assignments.numad22su_team24_puddle.SettingsActivity;
+import com.cs5520.assignments.numad22su_team24_puddle.Utils.FirebaseDB;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -58,6 +61,7 @@ public class AddNewEventDialog extends AppCompatActivity {
                     Intent data = result.getData();
                     imageUri = data.getData();
                     Glide.with(this).load(imageUri).into(banner);
+                    uploadToFirebase(imageUri);
                 }
             }
     );
@@ -78,6 +82,7 @@ public class AddNewEventDialog extends AppCompatActivity {
         toolbar = findViewById(R.id.add_event_toolbar);
         setSupportActionBar(toolbar);
         initializeToolbar();
+        uploadImageToFb();
         initializeAllTextViewOnClicks(savedInstanceState);
         findViewById(R.id.add_banner).setOnClickListener(v -> {
             Intent gallery = new Intent();
@@ -124,18 +129,35 @@ public class AddNewEventDialog extends AppCompatActivity {
         });
     }
 
+    public void uploadImageToFb() {
+        imgRef = FirebaseDB.getDataReference("images");
+        imgRef.setValue("url");
+
+        storeRef = FirebaseDB.storageRef;
+    }
+
     public void uploadToFirebase(Uri uri) {
         StorageReference ref = storeRef.child(System.currentTimeMillis() + "." +
                 getFileExtension(uri));
-        ref.putFile(uri).addOnSuccessListener(taskSnapshot
-                -> ref.getDownloadUrl().addOnSuccessListener(uri1 -> {
-            String imgUrl = uri1.toString();
-            imgRef.setValue(imgUrl);
-        })).addOnProgressListener(snapshot -> {
+        ref.putFile(uri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+            @Override
+            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
 
-        }).addOnFailureListener(e -> {
+                ref.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                    @Override
+                    public void onSuccess(Uri uri) {
+                        new Thread(new Runnable() {
+                            @Override
+                            public void run() {
+                                Log.d("here",uri.toString());
+                                imageUri = uri;
+                            }
+                        }).start();
+                    }
 
         });
+    }
+    });
     }
 
     public String getFileExtension(Uri muri) {

@@ -64,8 +64,10 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.EventViewH
         holder.imageView.setOnClickListener(v -> {
                 new MaterialAlertDialogBuilder(context,
                         R.style.Body_ThemeOverlay_MaterialComponents_MaterialAlertDialog).setTitle(event.name).
-                        setMessage(event.description + "\n" + event.startingDatetime + "\n" + event.endingDatetime).setPositiveButton("RSVP", (dialog, which) -> {
-                            String newCounterValue = String.valueOf(Integer.parseInt(holder.attendanceCounter.getText().toString())+1);
+                        setMessage(event.description + "\n" + event.startingDatetime + "\n" +
+                                event.endingDatetime).setPositiveButton("RSVP", (dialog, which) -> {
+                            String newCounterValue =
+                                    String.valueOf(Integer.parseInt(holder.attendanceCounter.getText().toString())+1);
                 holder.attendanceCounter.setText(newCounterValue);
                 notifyItemChanged(position);
                 attendanceRef.child(event.id).child("attendance_counter").setValue(newCounterValue);
@@ -82,8 +84,9 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.EventViewH
     }
 
     public void addNewEvent(Event event){
+        Log.d("here",String.valueOf(getItemCount()));
         eventList.add(event);
-        notifyItemChanged(getItemCount());
+        notifyItemInserted(getItemCount());
     }
 
     @Override

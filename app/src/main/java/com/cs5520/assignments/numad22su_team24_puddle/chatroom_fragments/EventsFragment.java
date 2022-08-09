@@ -85,7 +85,7 @@ public class EventsFragment extends Fragment {
         }
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
         layoutManager.setReverseLayout(true);
-        layoutManager.setStackFromEnd(true);
+//        layoutManager.setStackFromEnd(true);
         recyclerView.setLayoutManager(layoutManager);
         eventsRef = FirebaseDB.getDataReference("Events");
         initializeRecyclerView();
