@@ -63,6 +63,7 @@ public class FirebaseDB {
                     hashMap.put("bio", "");
                     hashMap.put("profile_icon", "");
                     hashMap.put("phone_number", "");
+                    hashMap.put("my_puddles", new HashMap<String, String>());
 
                     ref.setValue(hashMap).addOnCompleteListener(new OnCompleteListener<Void>() {
                         @Override
