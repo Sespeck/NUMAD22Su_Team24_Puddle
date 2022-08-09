@@ -5,12 +5,18 @@ public class Message {
     String timestamp;
     String username;
     String profilePicture;
+    String dbKey;
 
-    public Message(String username, String text, String datetime, String profilePicture){
+    public Message(String username, String text, String datetime, String profilePicture, String dbKey){
         this.body = text;
         this.timestamp = datetime;
         this.username = username;
         this.profilePicture = profilePicture;
+        this.dbKey = dbKey;
+    }
+
+    public String getDbKey() {
+        return dbKey;
     }
 
     public String getTimestamp() {

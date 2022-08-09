@@ -98,7 +98,7 @@ public class EventsFragment extends Fragment {
             class CreateNewEventRunnable implements Runnable{
                 @Override
                 public void run() {
-                    String uniqueID = UUID.randomUUID().toString();
+                    String uniqueID = eventsRef.child(puddleID).push().getKey();
                     String startingDate = result.getString("starting_date");
                     String endingDate = result.getString("ending_date");
                     String backgroundImgUri = result.getString("image_uri").equals("load_default_image") ?

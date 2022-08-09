@@ -48,5 +48,7 @@
     <string name="logout">Logout</string>
 
     <string name="google_maps_api_key">AIzaSyDTbzxCT5jOJFnvWSRrQzlMJi97daSIDwg</string>
+    <string name="delete">Delete</string>
+    <string name="edit">Edit</string>
 
 </resources>

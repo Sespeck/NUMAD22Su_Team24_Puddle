@@ -1,0 +1,13 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+   >
+
+    <item
+        android:title="@string/delete"
+        android:id="@+id/chatroom_delete_message"
+        />
+
+<!--    <item-->
+<!--        android:title="@string/edit"-->
+<!--        android:id="@+id/chatroom_edit_message"-->
+<!--        />-->
+</menu>

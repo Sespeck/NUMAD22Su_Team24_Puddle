@@ -32,6 +32,7 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.UUID;
 
 public class ChatroomFragment extends Fragment {
     private RecyclerView recyclerView;
@@ -78,9 +79,11 @@ public class ChatroomFragment extends Fragment {
                         newMessage.put("profile_url",currentUser.getProfile_icon());
                         // Add a new message based off current time, the edittext body, the current user's
                         // Pfp and name
+
+                        String id = messageRef.child(puddleID).push().getKey();
                         handler.post(()-> {
                             adapter.addNewMessage(new Message(currentUser.getUsername() ,textResult,Instant.now().toString(),
-                                    currentUser.getProfile_icon()));
+                                    currentUser.getProfile_icon(), id));
                             recyclerView.scrollToPosition(adapter.getItemCount()-1);
                             chatEditText.getText().clear();
                         });
@@ -106,10 +109,10 @@ public class ChatroomFragment extends Fragment {
                             String body = snap.child("body").getValue(String.class);
                             String profile_url = snap.child("profile_url").getValue(String.class);
                             String timestamp = Util.convertTocurrentDateTime(snap.child("timestamp").getValue(String.class));
-                            chatroomList.add(new Message(username, body, timestamp, profile_url));
+                            chatroomList.add(new Message(username, body, timestamp, profile_url,snap.getKey()));
                         }
                         handler.post(()->{
-                            adapter = new ChatroomAdapter(chatroomList,getContext());
+                            adapter = new ChatroomAdapter(chatroomList,getContext(), messageRef.child(puddleID));
                             recyclerView.setAdapter(adapter);
                             recyclerView.scrollToPosition(adapter.getItemCount()-1);
                         });
