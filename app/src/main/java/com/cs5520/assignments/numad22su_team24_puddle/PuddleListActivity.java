@@ -352,21 +352,31 @@ public class PuddleListActivity extends AppCompatActivity implements View.OnClic
     }
 
     public void showJoinPuddleDialogue(Context context, Puddle puddle) {
-        View layoutView = View.inflate(context, R.layout.puddle_modal, null);
-        AlertDialog dialog = new MaterialAlertDialogBuilder(context).setTitle(puddle.getName()).setView(layoutView).create();
-        TextView tv = layoutView.findViewById(R.id.puddle_modal_name_tv);
-        tv.setText(puddle.getBio());
-        ShapeableImageView image = layoutView.findViewById(R.id.puddle_modal_item_image);
-        Glide.with(context).load(puddle.getBannerUrl()).into(image);
-        MaterialButton button = layoutView.findViewById(R.id.puddle_modal_join_btn);
-        button.setOnClickListener(v -> {
-            dialog.dismiss();
+
+        if(myPuddlesData.containsKey(puddle.getId())){
             Intent intent = new Intent(context, PuddleChatroomActivity.class);
             intent.putExtra("puddleID", puddle.getId());
             addPuddlesToList(puddle.getId(), puddle);
             context.startActivity(intent);
-        });
-        dialog.show();
+        } else {
+            View layoutView = View.inflate(context, R.layout.puddle_modal, null);
+            AlertDialog dialog = new MaterialAlertDialogBuilder(context).setTitle(puddle.getName()).setView(layoutView).create();
+            TextView tv = layoutView.findViewById(R.id.puddle_modal_name_tv);
+            tv.setText(puddle.getBio());
+            ShapeableImageView image = layoutView.findViewById(R.id.puddle_modal_item_image);
+            Glide.with(context).load(puddle.getBannerUrl()).into(image);
+            MaterialButton button = layoutView.findViewById(R.id.puddle_modal_join_btn);
+            button.setOnClickListener(v -> {
+                dialog.dismiss();
+                Intent intent = new Intent(context, PuddleChatroomActivity.class);
+                intent.putExtra("puddleID", puddle.getId());
+                addPuddlesToList(puddle.getId(), puddle);
+                context.startActivity(intent);
+            });
+            dialog.show();
+        }
+
+
     }
 
     public static void addPuddlesToList(String pud_id,  Puddle pud){
