@@ -8,6 +8,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -17,9 +18,11 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.cs5520.assignments.numad22su_team24_puddle.R;
 import com.cs5520.assignments.numad22su_team24_puddle.Utils.FirebaseDB;
+import com.cs5520.assignments.numad22su_team24_puddle.Utils.Util;
 import com.cs5520.assignments.numad22su_team24_puddle.chatroom_fragments.adapters.Event;
 import com.cs5520.assignments.numad22su_team24_puddle.chatroom_fragments.adapters.EventsAdapter;
 import com.cs5520.assignments.numad22su_team24_puddle.chatroom_fragments.dialogs.DateTimeFormatUtil;
+import com.facebook.shimmer.ShimmerFrameLayout;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -29,6 +32,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
+import java.util.UUID;
 
 public class EventsFragment extends Fragment {
     private RecyclerView recyclerView;
@@ -36,6 +40,21 @@ public class EventsFragment extends Fragment {
     private Handler handler = new Handler();
     private String puddleID;
     private DatabaseReference eventsRef;
+    private ShimmerFrameLayout shimmerFrameLayout;
+    private endShimmerEffectCallback callback = new endShimmerEffectCallback(){
+        @Override
+        public void onLayoutInflated() {
+            handler.postDelayed((Runnable) () -> {
+                shimmerFrameLayout.stopShimmer();
+                shimmerFrameLayout.setVisibility(View.GONE);
+                recyclerView.setVisibility(View.VISIBLE);
+            }, 800);
+        }
+    };
+
+    public interface endShimmerEffectCallback {
+        void onLayoutInflated();
+    }
 
 
     @Nullable
@@ -44,7 +63,26 @@ public class EventsFragment extends Fragment {
         View view = inflater.inflate(R.layout.events_fragment,container,false);
         puddleID = getArguments().getString("puddleID");
         this.recyclerView = view.findViewById(R.id.event_recycler_view);
+        shimmerFrameLayout = view.findViewById(R.id.events_shimmer_layout);
         recyclerView.hasFixedSize();
+        if (!Util.eventsPopulated) {
+            shimmerFrameLayout.startShimmer();
+            shimmerFrameLayout.setVisibility(View.VISIBLE);
+            recyclerView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+                @Override
+                public void onGlobalLayout() {
+                    if (callback != null) {
+                        callback.onLayoutInflated();
+                    }
+                    recyclerView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                }
+            });
+            Util.eventsPopulated = true;
+        } else{
+            shimmerFrameLayout.stopShimmer();
+            shimmerFrameLayout.setVisibility(View.GONE);
+            recyclerView.setVisibility(View.VISIBLE);
+        }
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
         layoutManager.setReverseLayout(true);
         layoutManager.setStackFromEnd(true);
@@ -60,6 +98,7 @@ public class EventsFragment extends Fragment {
             class CreateNewEventRunnable implements Runnable{
                 @Override
                 public void run() {
+                    String uniqueID = UUID.randomUUID().toString();
                     String startingDate = result.getString("starting_date");
                     String endingDate = result.getString("ending_date");
                     String backgroundImgUri = result.getString("image_uri").equals("load_default_image") ?
@@ -79,10 +118,11 @@ public class EventsFragment extends Fragment {
                     newEvent.put("ending_timestamp", endingTimestamp);
                     newEvent.put("image_uri",backgroundImgUri);
                     newEvent.put("attendance_counter","0");
+                    newEvent.put("id",uniqueID);
                     handler.post(()->{
-                        eventsAdapter.addNewEvent(new Event(title,startingTimestamp,endingTimestamp,null,description,result.getString("image_uri"),0));
+                        eventsAdapter.addNewEvent(new Event(title,startingTimestamp,endingTimestamp,null,description,result.getString("image_uri"),0, uniqueID));
                     });
-                    eventsRef.child(puddleID).push().setValue(newEvent);
+                    eventsRef.child(puddleID).child(uniqueID).setValue(newEvent);
                 }
             }
             Thread worker = new Thread(new CreateNewEventRunnable());
@@ -107,11 +147,12 @@ public class EventsFragment extends Fragment {
                             String startingTimestamp = snap.child("starting_timestamp").getValue(String.class);
                             String endingTimestamp = snap.child("ending_timestamp").getValue(String.class);
                             String imageUri = snap.child("image_uri").getValue(String.class);
+                            String id = snap.child("id").getValue(String.class);
                             int attendanceCounter = Integer.parseInt(Objects.requireNonNull(snap.child("attendance_counter").getValue(String.class)));
-                            eventList.add(new Event(title, startingTimestamp, endingTimestamp, null, description, imageUri, attendanceCounter));
+                            eventList.add(new Event(title, startingTimestamp, endingTimestamp, null, description, imageUri, attendanceCounter,id));
                         }
                         handler.post(() -> {
-                            eventsAdapter = new EventsAdapter(eventList, getContext());
+                            eventsAdapter = new EventsAdapter(eventList, getContext(), eventsRef.child(puddleID));
                             recyclerView.setAdapter(eventsAdapter);
                         });
                     }

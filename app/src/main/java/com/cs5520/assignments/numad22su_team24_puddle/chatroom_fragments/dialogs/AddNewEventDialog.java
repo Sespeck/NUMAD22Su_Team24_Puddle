@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MenuItem;
 import android.webkit.MimeTypeMap;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -18,7 +19,10 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
 import com.bumptech.glide.Glide;
+import com.cs5520.assignments.numad22su_team24_puddle.MapActivity;
+import com.cs5520.assignments.numad22su_team24_puddle.PuddleListActivity;
 import com.cs5520.assignments.numad22su_team24_puddle.R;
+import com.cs5520.assignments.numad22su_team24_puddle.SettingsActivity;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.storage.StorageReference;
@@ -303,4 +307,22 @@ public class AddNewEventDialog extends AppCompatActivity {
         }
         super.onSaveInstanceState(outState);
     }
+
+    public void navigateHome(MenuItem item) {
+        Intent intent = new Intent(this, PuddleListActivity.class);
+        startActivity(intent);
+    }
+
+
+    public void navigateToMap(MenuItem item) {
+        Intent intent = new Intent(this, MapActivity.class);
+        startActivity(intent);
+    }
+
+
+    public void navigateToSettings(MenuItem item) {
+        Intent intent = new Intent(this, SettingsActivity.class);
+        startActivity(intent);
+    }
+
 }
