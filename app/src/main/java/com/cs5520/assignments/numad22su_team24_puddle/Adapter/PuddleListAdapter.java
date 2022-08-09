@@ -15,12 +15,13 @@ import com.cs5520.assignments.numad22su_team24_puddle.Model.Puddle;
 import com.cs5520.assignments.numad22su_team24_puddle.R;
 import com.cs5520.assignments.numad22su_team24_puddle.Utils.Util;
 
+import java.util.HashMap;
 import java.util.List;
 
 public class PuddleListAdapter extends RecyclerView.Adapter<PuddleListAdapter.PuddleListViewHolder> {
 
     Context context;
-    List<List<Puddle>> puddlesList;
+    HashMap<Category, List<Puddle>> puddlesList;
 
     public class PuddleListViewHolder extends RecyclerView.ViewHolder {
         TextView puddleCategoryName;
@@ -33,7 +34,7 @@ public class PuddleListAdapter extends RecyclerView.Adapter<PuddleListAdapter.Pu
         }
     }
 
-    public PuddleListAdapter(Context context, List<List<Puddle>> puddlesList) {
+    public PuddleListAdapter(Context context, HashMap<Category, List<Puddle>> puddlesList) {
         this.context = context;
         this.puddlesList = puddlesList;
     }
@@ -51,7 +52,7 @@ public class PuddleListAdapter extends RecyclerView.Adapter<PuddleListAdapter.Pu
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(context);
         linearLayoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
         holder.puddleItemRecyclerView.setLayoutManager(linearLayoutManager);
-        holder.puddleAdapter = new PuddleAdapter(context, puddlesList.get(position));
+        holder.puddleAdapter = new PuddleAdapter(context, puddlesList.get(category));
         holder.puddleItemRecyclerView.setAdapter(holder.puddleAdapter);
     }
 
