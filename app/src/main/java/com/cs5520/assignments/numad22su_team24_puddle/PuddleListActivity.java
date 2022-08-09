@@ -378,7 +378,9 @@ public class PuddleListActivity extends AppCompatActivity implements View.OnClic
 
     }
 
-    public static void addPuddlesToList(String pud_id,  Puddle pud){
+    public void addPuddlesToList(String pud_id, Puddle pud){
+        boolean alreadyJoined = this.myPuddlesData.containsKey(pud_id);
+
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -389,7 +391,7 @@ public class PuddleListActivity extends AppCompatActivity implements View.OnClic
 
                 // 2. Add Puddle count
                 DatabaseReference pudRef = FirebaseDB.getDataReference("Puddles").child(pud_id).child("count");
-                pudRef.setValue(pud.getCount() + 1);
+                pudRef.setValue(alreadyJoined ? pud.getCount() : pud.getCount() + 1);
 
                 // 3. Update the members child
                 DatabaseReference memRef = FirebaseDB.getDataReference("Members").child(pud_id);
