@@ -354,9 +354,8 @@ public class PuddleListActivity extends AppCompatActivity implements View.OnClic
     public void showJoinPuddleDialogue(Context context, Puddle puddle) {
 
         if(myPuddlesData.containsKey(puddle.getId())){
-            Intent intent = new Intent(context, PuddleChatroomActivity.class);
+            Intent intent = new Intent(PuddleListActivity.this, PuddleChatroomActivity.class);
             intent.putExtra("puddleID", puddle.getId());
-            addPuddlesToList(puddle.getId(), puddle);
             context.startActivity(intent);
         } else {
             View layoutView = View.inflate(context, R.layout.puddle_modal, null);
