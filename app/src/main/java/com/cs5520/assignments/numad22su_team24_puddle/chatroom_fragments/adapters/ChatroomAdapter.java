@@ -2,11 +2,13 @@ package com.cs5520.assignments.numad22su_team24_puddle.chatroom_fragments.adapte
 
 import android.content.Context;
 import android.graphics.BitmapFactory;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.PopupMenu;
 import android.widget.TextView;
 
@@ -29,6 +31,8 @@ public class ChatroomAdapter extends RecyclerView.Adapter<ChatroomAdapter.Chatro
     private List<Message> messageList;
     private Context context;
     private DatabaseReference messageRef;
+    private final int IMAGE = 1;
+    private final int MESSAGE = 2;
 
 
     public ChatroomAdapter(List<Message> messageList, Context context, DatabaseReference messageRef){
@@ -41,6 +45,7 @@ public class ChatroomAdapter extends RecyclerView.Adapter<ChatroomAdapter.Chatro
         CircleImageView profilePicture;
         TextView timestamp;
         TextView messageBody;
+        ImageView imageBody;
         TextView username;
         ConstraintLayout layout;
         public ChatroomViewHolder(@NonNull View itemView) {
@@ -51,23 +56,48 @@ public class ChatroomAdapter extends RecyclerView.Adapter<ChatroomAdapter.Chatro
             username = itemView.findViewById(R.id.chatroom_message_item_username);
             layout = itemView.findViewById(R.id.chatroom_full_message);
         }
+
+        public ChatroomViewHolder(@NonNull View itemView, int alternateConstructor) {
+            super(itemView);
+            profilePicture = itemView.findViewById(R.id.chatroom_message_profile_pic);
+            timestamp = itemView.findViewById(R.id.chatroom_message_datetime);
+            imageBody = itemView.findViewById(R.id.chatroom_message_body);
+            username = itemView.findViewById(R.id.chatroom_message_item_username);
+            layout = itemView.findViewById(R.id.chatroom_full_image_message);
+        }
     }
 
     @NonNull
     @Override
     public ChatroomAdapter.ChatroomViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        ChatroomAdapter.ChatroomViewHolder holder = new ChatroomAdapter.ChatroomViewHolder(LayoutInflater.from(parent.getContext()).
-                inflate(R.layout.chatroom_recycler_view_message, parent, false));
+        if (viewType == IMAGE) {
+            return new ChatroomAdapter.ChatroomViewHolder(LayoutInflater.from(parent.getContext()).
+                    inflate(R.layout.chatroom_recycler_view_item_image_message, parent, false),1);
+        } else{
+            return new ChatroomAdapter.ChatroomViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.chatroom_recycler_view_message,parent,false));
+        }
+    }
 
-
-        return holder;
+    @Override
+    public int getItemViewType(int position) {
+        Message currentMessage = messageList.get(position);
+        if (currentMessage.isImage){
+            return IMAGE;
+        } else{
+            return MESSAGE;
+        }
     }
 
     @Override
     public void onBindViewHolder(@NonNull ChatroomAdapter.ChatroomViewHolder holder, int position) {
         Message message = messageList.get(position);
+        Log.d("imageId",message.body);
         Glide.with(context).load(messageList.get(position).profilePicture).into(holder.profilePicture);
-        holder.messageBody.setText(messageList.get(position).body);
+        if (message.isImage){
+            Glide.with(context).load(messageList.get(position).body).into(holder.imageBody);
+        }else {
+            holder.messageBody.setText(messageList.get(position).body);
+        }
         holder.username.setText(messageList.get(position).username);
         holder.timestamp.setText(messageList.get(position).timestamp);
         holder.layout.setOnLongClickListener(new View.OnLongClickListener() {

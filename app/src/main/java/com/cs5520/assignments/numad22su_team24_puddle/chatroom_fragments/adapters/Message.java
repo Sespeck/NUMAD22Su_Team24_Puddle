@@ -6,13 +6,15 @@ public class Message {
     String username;
     String profilePicture;
     String dbKey;
+    Boolean isImage;
 
-    public Message(String username, String text, String datetime, String profilePicture, String dbKey){
+    public Message(String username, String text, String datetime, String profilePicture, String dbKey, Boolean isImage){
         this.body = text;
         this.timestamp = datetime;
         this.username = username;
         this.profilePicture = profilePicture;
         this.dbKey = dbKey;
+        this.isImage = isImage;
     }
 
     public String getDbKey() {

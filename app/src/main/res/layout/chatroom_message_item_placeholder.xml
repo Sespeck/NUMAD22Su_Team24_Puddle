@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    app:cardCornerRadius="16sp"
+    android:layout_margin="10sp"
+    app:cardBackgroundColor="#a9a9a9"
+    android:layout_height="wrap_content"
+    android:layout_width="wrap_content">
+<TextView
+    android:visibility="invisible"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:text="Nulla at sapien ipsum. Nam gravida nibh a
+    dui fringilla,ibusulla at sapien ulla at sapien ipsum. Nam gravida nibh
+     a dui fringilla,ibus ulla at sapien ipsum. Nam gravida nibh a dui
+    fringilla,ibus ipsum. Nam gravida nibh a dui fringilla,ibus  tellus at molestie bibendum."
+    />
+
+</androidx.cardview.widget.CardView>
