@@ -10,7 +10,7 @@
         android:layout_height="@dimen/profile_icon_small"
         android:layout_marginStart="@dimen/margin_large"
         android:layout_marginTop="@dimen/margin_mid"
-        android:src="@drawable/man"
+        android:src="@drawable/blank_image"
         android:padding="5dp"
         app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.App.RoundedCorners"
         app:strokeColor="@color/black"
