@@ -10,6 +10,8 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.telephony.PhoneNumberFormattingTextWatcher;
+import android.telephony.PhoneNumberUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -37,7 +39,7 @@ import java.util.HashMap;
 public class ProfileActivity extends AppCompatActivity {
 
     ShapeableImageView profileIcon;
-    TextInputEditText displayET, usernameET, bioET, phoneNumberET;
+    TextInputEditText displayET, bioET, phoneNumberET;
     Button saveBtn;
     Uri imageUri = null;
     String dpUrl = "";
@@ -53,7 +55,7 @@ public class ProfileActivity extends AppCompatActivity {
                 if (result.getResultCode() == AppCompatActivity.RESULT_OK) {
                     Intent data = result.getData();
                     imageUri = data.getData();
-                    Log.d("here",imageUri.toString());
+                    Log.d("here", imageUri.toString());
                     profileIcon.setImageURI(imageUri);
                 }
             }
@@ -69,9 +71,9 @@ public class ProfileActivity extends AppCompatActivity {
 
         profileIcon = findViewById(R.id.profile_user_icon);
         displayET = findViewById(R.id.profile_display_name_et);
-        usernameET = findViewById(R.id.profile_username_et);
         bioET = findViewById(R.id.profile_description_et);
         phoneNumberET = findViewById(R.id.profile_phone_number_et);
+        phoneNumberET.addTextChangedListener(new PhoneNumberFormattingTextWatcher());
         saveBtn = findViewById(R.id.profile_save_btn);
 
         saveBtn.setOnClickListener(v -> saveBtnClick());
@@ -82,19 +84,18 @@ public class ProfileActivity extends AppCompatActivity {
     }
 
     private void setProfileImage() {
-            Intent gallery = new Intent();
-            gallery.setAction(Intent.ACTION_GET_CONTENT);
-            gallery.setType("image/*");
-            startActivityForResult.launch(gallery);
+        Intent gallery = new Intent();
+        gallery.setAction(Intent.ACTION_GET_CONTENT);
+        gallery.setType("image/*");
+        startActivityForResult.launch(gallery);
     }
 
     private void fillDetails() {
         displayET.setText(FirebaseDB.currentUser.getDisplay_name());
-        usernameET.setText(FirebaseDB.currentUser.getUsername());
         bioET.setText(FirebaseDB.currentUser.getBio());
         phoneNumberET.setText(FirebaseDB.currentUser.getPhone_number());
 
-        if(!FirebaseDB.currentUser.getProfile_icon().equals("")){
+        if (!FirebaseDB.currentUser.getProfile_icon().equals("")) {
             dpUrl = FirebaseDB.currentUser.getProfile_icon();
             Glide.with(ProfileActivity.this).load(dpUrl).into(profileIcon);
         }
@@ -102,32 +103,26 @@ public class ProfileActivity extends AppCompatActivity {
 
     private void saveBtnClick() {
         apiBar.showDialog();
-        if(imageUri != null){
+        if (imageUri != null) {
             uploadImageToStore(imageUri);
         } else {
             uploadDataToFB();
         }
     }
 
-    public void uploadDataToFB(){
+    public void uploadDataToFB() {
         DatabaseReference ref = FirebaseDB.getDataReference("Users").child(FirebaseDB.currentUser.getId());
-        HashMap<String, Object> hashMap = new HashMap<>();
-        HashMap<String, Object> myPud = new HashMap<>();
+        HashMap<String, Object> hashMap = FirebaseDB.currentUser.getUserMap();
 
-        hashMap.put("id", FirebaseDB.currentUser.getId());
-        hashMap.put("username", FirebaseDB.currentUser.getUsername());
-        hashMap.put("password", FirebaseDB.currentUser.getPassword());
-        hashMap.put("email", FirebaseDB.currentUser.getEmail());
         hashMap.put("display_name", displayET.getText().toString());
         hashMap.put("bio", bioET.getText().toString());
         hashMap.put("phone_number", phoneNumberET.getText().toString());
         hashMap.put("profile_icon", dpUrl);
-        hashMap.put("my_puddles", FirebaseDB.currentUser.getMy_puddles());
 
         ref.setValue(hashMap).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
-                apiHandler.post(()->{
+                apiHandler.post(() -> {
                     apiBar.dismissBar();
                 });
 
@@ -165,7 +160,7 @@ public class ProfileActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    public void uploadImageToStore(Uri uri){
+    public void uploadImageToStore(Uri uri) {
         StorageReference ref = FirebaseDB.storageRef.child(System.currentTimeMillis() + "." + getFileExtension(uri));
         ref.putFile(uri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
             @Override
@@ -179,10 +174,10 @@ public class ProfileActivity extends AppCompatActivity {
                             public void run() {
                                 dpUrl = uri.toString();
 
-                                if(dpUrl != null || dpUrl != ""){
+                                if (dpUrl != null || dpUrl != "") {
                                     uploadDataToFB();
                                 } else {
-                                    apiHandler.post(()->{
+                                    apiHandler.post(() -> {
                                         apiBar.dismissBar();
                                     });
                                     Toast.makeText(ProfileActivity.this, "Error sending image to Store", Toast.LENGTH_SHORT).show();

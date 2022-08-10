@@ -7,16 +7,12 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 
-import com.cs5520.assignments.numad22su_team24_puddle.MainActivity;
 import com.cs5520.assignments.numad22su_team24_puddle.Model.User;
 import com.cs5520.assignments.numad22su_team24_puddle.ProfileActivity;
-import com.cs5520.assignments.numad22su_team24_puddle.PuddleListActivity;
-import com.cs5520.assignments.numad22su_team24_puddle.R;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseAuthWeakPasswordException;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -54,23 +50,14 @@ public class FirebaseDB {
                     String userid = firebaseUser.getUid();
                     DatabaseReference ref = getDataReference("Users").child(userid);
 
-                    HashMap<String, Object> hashMap = new HashMap<>();
-                    hashMap.put("id", userid);
-                    hashMap.put("username", username);
-                    hashMap.put("display_name", username);
-                    hashMap.put("password", password);
-                    hashMap.put("email", email);
-                    hashMap.put("bio", "");
-                    hashMap.put("profile_icon", "");
-                    hashMap.put("phone_number", "");
-                    hashMap.put("my_puddles", new HashMap<String, String>());
+                    User user = new User(userid, username, password, email);
+                    HashMap<String, Object> hashMap = user.getUserMap();
 
                     ref.setValue(hashMap).addOnCompleteListener(new OnCompleteListener<Void>() {
                         @Override
                         public void onComplete(@NonNull Task<Void> task) {
                             if (task.isSuccessful()) {
-                                FirebaseDB.currentUser = new User(userid, username, password, email,
-                                        username, "", "", "", new HashMap<>());
+                                FirebaseDB.currentUser = user;
                                 Intent intent = new Intent(ct, ProfileActivity.class);
                                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
                                 ct.startActivity(intent);

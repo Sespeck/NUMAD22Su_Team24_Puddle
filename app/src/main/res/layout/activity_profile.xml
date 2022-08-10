@@ -48,40 +48,6 @@
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/profile_username_layout"
-        android:layout_width="@dimen/fit_constraint"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/margin_xl"
-        android:layout_marginTop="@dimen/margin_large"
-        android:layout_marginEnd="@dimen/margin_xl"
-        android:hint="@string/username"
-        android:textColorHint="@color/login_signup_text_color"
-        app:boxStrokeWidth="3dp"
-        app:counterEnabled="true"
-        app:counterMaxLength="15"
-        app:counterOverflowTextColor="@android:color/holo_red_light"
-        app:counterTextAppearance="@style/HelperTextAppearance"
-        app:helperText="@string/helper_text_login"
-        app:helperTextEnabled="true"
-        app:helperTextTextAppearance="@style/HelperTextAppearance"
-        app:hintAnimationEnabled="true"
-        app:hintEnabled="true"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/profile_display_name_layout"
-        app:startIconDrawable="@drawable/account_circle"
-        app:startIconTint="@color/login_signup_text_color">
-
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/profile_username_et"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textSize="@dimen/font_size_mid"
-            android:textStyle="bold" />
-
-    </com.google.android.material.textfield.TextInputLayout>
-
-    <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/profile_description_layout"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -96,7 +62,7 @@
         app:hintEnabled="true"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/profile_username_layout"
+        app:layout_constraintTop_toBottomOf="@+id/profile_display_name_layout"
         app:startIconDrawable="@drawable/bio"
         app:startIconTint="@color/login_signup_text_color">
 
@@ -135,6 +101,7 @@
             android:layout_height="wrap_content"
             android:gravity="top|left"
             android:inputType="phone"
+            android:maxLength="14"
             android:textSize="@dimen/font_size_mid"
             android:textStyle="bold" />
 

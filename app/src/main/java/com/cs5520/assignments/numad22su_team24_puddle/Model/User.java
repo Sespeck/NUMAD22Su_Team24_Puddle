@@ -32,6 +32,18 @@ public class User {
         this.my_puddles = my_puddles;
     }
 
+    public User(String id, String username, String password, String email) {
+        this.id = id;
+        this.username = username;
+        this.password = password;
+        this.display_name = username;
+        this.email = email;
+        this.bio = "";
+        this.profile_icon = "";
+        this.phone_number = "";
+        this.my_puddles = new HashMap<String, String>();
+    }
+
     public String getId() {
         return id;
     }
@@ -119,5 +131,19 @@ public class User {
                 ", profile_icon='" + profile_icon + '\'' +
                 ", my_puddles=" + my_puddles +
                 '}';
+    }
+
+    public HashMap<String, Object> getUserMap() {
+        HashMap<String, Object> hashMap = new HashMap<>();
+        hashMap.put("id", this.id);
+        hashMap.put("username", this.username);
+        hashMap.put("display_name", this.username);
+        hashMap.put("password", this.password);
+        hashMap.put("email", this.email);
+        hashMap.put("bio", this.bio);
+        hashMap.put("profile_icon", this.profile_icon);
+        hashMap.put("phone_number", this.phone_number);
+        hashMap.put("my_puddles", this.my_puddles);
+        return hashMap;
     }
 }
