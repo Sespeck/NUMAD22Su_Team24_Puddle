@@ -33,7 +33,7 @@ public class MyPuddlesAdapter extends RecyclerView.Adapter<MyPuddlesAdapter.MyPu
         this.ct = ct;
         this.myPuddlesData = myPuddlesData;
 
-        for(Map.Entry<String, Puddle> map: myPuddlesData.entrySet()){
+        for(Map.Entry<String, Puddle> map: myPuddlesData.entrySet()) {
             myPuddleKeys.add(map.getKey());
             myPuddleList.add(map.getValue());
         }

@@ -62,6 +62,7 @@ public class PuddleListActivity extends AppCompatActivity implements View.OnClic
     ImageView filterIcon;
     Button nearMeBtn, myPuddlesBtn;
     SearchView puddleSearch;
+    TextView noResultFound;
 
     // Firebase
     FirebaseUser current_user;
@@ -114,6 +115,9 @@ public class PuddleListActivity extends AppCompatActivity implements View.OnClic
         myPuddlesDataStored = new HashMap<>();
         allPuddleList = new ArrayList<>();
 
+        noResultFound = findViewById(R.id.no_result_found);
+        noResultFound.setVisibility(View.GONE);
+
         shimmerFrameLayout = findViewById(R.id.events_shimmer_layout);
         profileIcon = findViewById(R.id.puddle_list_header_profile_icon);
         profileIcon.setOnClickListener(this);
@@ -141,6 +145,12 @@ public class PuddleListActivity extends AppCompatActivity implements View.OnClic
                     myPuddlesData = myPuddlesDataStored;
                     puddleListRecyclerView.setLayoutManager(new GridLayoutManager(PuddleListActivity.this, 2));
                     puddleListRecyclerView.setAdapter(new MyPuddlesAdapter(PuddleListActivity.this, myPuddlesData));
+
+                    if(myPuddlesData.size() == 0){
+                        noResultFound.setVisibility(TextView.VISIBLE);
+                    } else {
+                        noResultFound.setVisibility(TextView.GONE);
+                    }
                 } else {
                     filterPuddles(s);
                 }
@@ -196,6 +206,12 @@ public class PuddleListActivity extends AppCompatActivity implements View.OnClic
 
         puddleListRecyclerView.setLayoutManager(new GridLayoutManager(PuddleListActivity.this, 2));
         puddleListRecyclerView.setAdapter(new MyPuddlesAdapter(PuddleListActivity.this, modifiedData));
+
+        if(modifiedData.size() == 0){
+            noResultFound.setVisibility(TextView.VISIBLE);
+        } else {
+            noResultFound.setVisibility(TextView.GONE);
+        }
 
     }
 
@@ -487,6 +503,12 @@ public class PuddleListActivity extends AppCompatActivity implements View.OnClic
                     puddleListRecyclerView.setAdapter(new MyPuddlesAdapter(PuddleListActivity.this, myPuddlesData));
                     setSelectedButton(myPuddlesBtn);
                     setUnselectedButton(nearMeBtn);
+                }
+
+                if(myPuddlesData.size() == 0){
+                    noResultFound.setVisibility(TextView.VISIBLE);
+                } else {
+                    noResultFound.setVisibility(TextView.GONE);
                 }
             }
 
