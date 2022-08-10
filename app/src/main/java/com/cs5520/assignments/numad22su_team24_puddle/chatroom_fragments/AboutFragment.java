@@ -61,7 +61,10 @@ public class AboutFragment extends Fragment {
                         String bio = (String) snapshot.child("bio").getValue(String.class);
                         String name = (String) snapshot.child("name").getValue(String.class);
                         String profilePic = (String) snapshot.child("bannerUrl").getValue(String.class);
+                        String tags = (String) snapshot.child("category").getValue(String.class);
+
                         handler.post(() -> {
+                            if (tags != null) tagsTextView.setText(tags);
                             if (bio != null) bioTextView.setText(bio);
                             if (name != null) puddleName.setText(name);
                                 Glide.with(getContext()).load(profilePic).into(bannerIcon);

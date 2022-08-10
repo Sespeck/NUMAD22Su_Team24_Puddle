@@ -22,6 +22,7 @@ import com.squareup.picasso.RequestCreator;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.logging.Handler;
 
 public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.EventViewHolder> {
     private List<Event> eventList;
@@ -66,14 +67,12 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.EventViewH
                         R.style.Body_ThemeOverlay_MaterialComponents_MaterialAlertDialog).setTitle(event.name).
                         setMessage(event.description + "\n" + event.startingDatetime + "\n" +
                                 event.endingDatetime).setPositiveButton("RSVP", (dialog, which) -> {
-                            String newCounterValue =
-                                    String.valueOf(Integer.parseInt(holder.attendanceCounter.getText().toString())+1);
-                holder.attendanceCounter.setText(newCounterValue);
-                notifyItemChanged(position);
-                attendanceRef.child(event.id).child("attendance_counter").setValue(newCounterValue);
-
-                ;}).show();
-
+                        String newCounterValue =
+                                String.valueOf(Integer.parseInt(holder.attendanceCounter.getText().toString())+1);
+                        holder.attendanceCounter.setText(newCounterValue);
+                        notifyItemChanged(position);
+                        attendanceRef.child(event.id).child("attendance_counter").setValue(newCounterValue);
+                }).show();
         });
         Glide.with(context).load(event.backgroundImgUri).into(holder.imageView);
         holder.imageView.setColorFilter(R.color.black);
@@ -84,9 +83,8 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.EventViewH
     }
 
     public void addNewEvent(Event event){
-        Log.d("here",String.valueOf(getItemCount()));
         eventList.add(event);
-        notifyItemInserted(getItemCount());
+        notifyItemChanged(getItemCount());
     }
 
     @Override
