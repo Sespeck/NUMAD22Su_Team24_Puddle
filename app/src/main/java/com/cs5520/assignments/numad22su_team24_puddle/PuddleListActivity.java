@@ -22,6 +22,7 @@ import android.view.ViewTreeObserver;
 import android.webkit.MimeTypeMap;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -60,6 +61,7 @@ public class PuddleListActivity extends AppCompatActivity implements View.OnClic
     ImageView navigationIcon;
     ImageView filterIcon;
     Button nearMeBtn, myPuddlesBtn;
+    SearchView puddleSearch;
 
     // Firebase
     FirebaseUser current_user;
@@ -75,6 +77,7 @@ public class PuddleListActivity extends AppCompatActivity implements View.OnClic
     private Uri imageUri;
     private HashMap<String, Puddle> allPuddlesData;
     private HashMap<String, Puddle> myPuddlesData;
+    private HashMap<String, Puddle> myPuddlesDataStored;
 
     private ArrayList<Puddle> allPuddleList;
 
@@ -108,6 +111,7 @@ public class PuddleListActivity extends AppCompatActivity implements View.OnClic
         allPuddlesData = new HashMap<>();
         categoryPuddlesData = new HashMap<>();
         myPuddlesData = new HashMap<>();
+        myPuddlesDataStored = new HashMap<>();
         allPuddleList = new ArrayList<>();
 
         shimmerFrameLayout = findViewById(R.id.events_shimmer_layout);
@@ -123,6 +127,27 @@ public class PuddleListActivity extends AppCompatActivity implements View.OnClic
         filterIcon.setOnClickListener(this);
         navigationIcon = findViewById(R.id.header_navigation_icon);
         navigationIcon.setOnClickListener(this);
+        puddleSearch = findViewById(R.id.search);
+        puddleSearch.clearFocus();
+        puddleSearch.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String s) {
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String s) {
+                if(s.equals("")) {
+                    myPuddlesData = myPuddlesDataStored;
+                    puddleListRecyclerView.setLayoutManager(new GridLayoutManager(PuddleListActivity.this, 2));
+                    puddleListRecyclerView.setAdapter(new MyPuddlesAdapter(PuddleListActivity.this, myPuddlesData));
+                } else {
+                    filterPuddles(s);
+                }
+                return false;
+            }
+        });
+
         // Register for the filter results
         handleFilterResults();
         // Api Calls
@@ -157,6 +182,21 @@ public class PuddleListActivity extends AppCompatActivity implements View.OnClic
         LocationPermissionActivity.checkLocationPermission(this);
 
         handleAppLink(getIntent());
+    }
+
+    public void filterPuddles(String txt){
+        HashMap<String, Puddle> modifiedData = new HashMap<>();
+
+        for(Map.Entry<String, Puddle> map: myPuddlesData.entrySet()){
+            Puddle pud = map.getValue();
+            if(pud.getName().contains(txt)){
+                modifiedData.put(map.getKey(), map.getValue());
+            }
+        }
+
+        puddleListRecyclerView.setLayoutManager(new GridLayoutManager(PuddleListActivity.this, 2));
+        puddleListRecyclerView.setAdapter(new MyPuddlesAdapter(PuddleListActivity.this, modifiedData));
+
     }
 
     @Override
@@ -258,6 +298,7 @@ public class PuddleListActivity extends AppCompatActivity implements View.OnClic
     private void updateRecyclerView(View view) {
         // Initializing RecyclerView
         if (view.equals(nearMeBtn)) {
+            puddleSearch.setVisibility(SearchView.GONE);
             if (LocationPermissionActivity.checkLocationPermission(this)) {
                 categorizePuddles();
                 puddleListRecyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -268,6 +309,7 @@ public class PuddleListActivity extends AppCompatActivity implements View.OnClic
                 LocationPermissionActivity.requestPermission(this, REQUEST_CODE_LOCATION_FOR_NEAR_ME);
             }
         } else {
+            puddleSearch.setVisibility(SearchView.VISIBLE);
             puddleListRecyclerView.setLayoutManager(new GridLayoutManager(PuddleListActivity.this, 2));
             puddleListRecyclerView.setAdapter(new MyPuddlesAdapter(PuddleListActivity.this, myPuddlesData));
             setSelectedButton(myPuddlesBtn);
@@ -440,6 +482,7 @@ public class PuddleListActivity extends AppCompatActivity implements View.OnClic
                     if (key != null) {
                         myPuddlesData.put(key, allPuddlesData.get(key));
                     }
+                    myPuddlesDataStored = myPuddlesData;
                     puddleListRecyclerView.setLayoutManager(new GridLayoutManager(PuddleListActivity.this, 2));
                     puddleListRecyclerView.setAdapter(new MyPuddlesAdapter(PuddleListActivity.this, myPuddlesData));
                     setSelectedButton(myPuddlesBtn);
