@@ -17,7 +17,7 @@ import com.google.android.gms.tasks.Task;
 
 import java.util.Locale;
 
-public class CurrentLocation extends AppCompatActivity {
+public class SelectLocation extends AppCompatActivity {
 
     private double lat =0.0 , lng = 0.0;
 
