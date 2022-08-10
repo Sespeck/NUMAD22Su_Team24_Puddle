@@ -175,6 +175,7 @@ public class PuddleChatroomActivity extends AppCompatActivity {
 
     public void navigateToSettings(MenuItem item) {
         Intent intent = new Intent(this, SettingsActivity.class);
+        intent.putExtra("PuddleId", puddleID);
         startActivity(intent);
     }
 }

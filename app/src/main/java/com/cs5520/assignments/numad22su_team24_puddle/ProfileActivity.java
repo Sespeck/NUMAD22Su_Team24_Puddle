@@ -4,12 +4,20 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
+import androidx.core.content.FileProvider;
 
+import android.Manifest;
 import android.content.ContentResolver;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
+import android.provider.MediaStore;
 import android.telephony.PhoneNumberFormattingTextWatcher;
 import android.telephony.PhoneNumberUtils;
 import android.util.Log;
@@ -34,15 +42,18 @@ import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
+import java.io.File;
+import java.net.URI;
 import java.util.HashMap;
 
 public class ProfileActivity extends AppCompatActivity {
 
-    ShapeableImageView profileIcon;
+    ShapeableImageView profileIcon, cameraBtn;
     TextInputEditText displayET, bioET, phoneNumberET;
     Button saveBtn;
     Uri imageUri = null;
     String dpUrl = "";
+    File photoFile;
 
     DatabaseReference imgRef;
     StorageReference storeRef;
@@ -56,6 +67,19 @@ public class ProfileActivity extends AppCompatActivity {
                     Intent data = result.getData();
                     imageUri = data.getData();
                     Log.d("here", imageUri.toString());
+                    profileIcon.setImageURI(imageUri);
+                }
+            }
+    );
+
+    ActivityResultLauncher<Intent> startActivityForResultCamera = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            result -> {
+                if (result.getResultCode() == AppCompatActivity.RESULT_OK) {
+                    Uri uri = Uri.fromFile(photoFile);
+                    // RESIZE BITMAP, see section below
+                    // Load the taken image into a preview
+                    imageUri = uri;
                     profileIcon.setImageURI(imageUri);
                 }
             }
@@ -75,12 +99,45 @@ public class ProfileActivity extends AppCompatActivity {
         phoneNumberET = findViewById(R.id.profile_phone_number_et);
         phoneNumberET.addTextChangedListener(new PhoneNumberFormattingTextWatcher());
         saveBtn = findViewById(R.id.profile_save_btn);
+        cameraBtn = findViewById(R.id.profile_camera_icn);
 
         saveBtn.setOnClickListener(v -> saveBtnClick());
         profileIcon.setOnClickListener(v -> setProfileImage());
+        cameraBtn.setOnClickListener(v -> clickCameraBtn());
 
         fillDetails();
 
+    }
+
+    private void clickCameraBtn() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
+                == PackageManager.PERMISSION_GRANTED) {
+            Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+            String photoFileName = "photo.jpg";
+            photoFile = getPhotoFileUri(photoFileName);
+            Uri fileProvider = FileProvider.getUriForFile(ProfileActivity.this, "com.cs5520.assignments.numad22su_team24_puddle", photoFile);
+            intent.putExtra(MediaStore.EXTRA_OUTPUT, fileProvider);
+            startActivityForResultCamera.launch(intent);
+        } else {
+            Toast.makeText(this, "Add Camera Permission", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    public File getPhotoFileUri(String fileName) {
+        // Get safe storage directory for photos
+        // Use `getExternalFilesDir` on Context to access package-specific directories.
+        // This way, we don't need to request external read/write runtime permissions.
+        File mediaStorageDir = new File(getExternalFilesDir(Environment.DIRECTORY_PICTURES), "Puddle");
+
+        // Create the storage directory if it does not exist
+        if (!mediaStorageDir.exists() && !mediaStorageDir.mkdirs()){
+            Log.d("Puddle", "failed to create directory");
+        }
+
+        // Return the file target for the photo based on filename
+        File file = new File(mediaStorageDir.getPath() + File.separator + fileName);
+
+        return file;
     }
 
     private void setProfileImage() {

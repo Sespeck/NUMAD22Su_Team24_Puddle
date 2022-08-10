@@ -21,6 +21,16 @@
         app:strokeColor="@color/black"
         app:strokeWidth="5dp" />
 
+    <com.google.android.material.imageview.ShapeableImageView
+        android:id="@+id/profile_camera_icn"
+        android:layout_width="@dimen/icon_size_small"
+        android:layout_height="@dimen/icon_size_small"
+        android:layout_marginLeft="@dimen/margin_xl"
+        android:src="@drawable/camera"
+        app:layout_constraintTop_toTopOf="@id/profile_user_icon"
+        app:layout_constraintBottom_toBottomOf="@id/profile_user_icon"
+        app:layout_constraintStart_toEndOf="@id/profile_user_icon" />
+
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/profile_display_name_layout"
         android:layout_width="0dp"

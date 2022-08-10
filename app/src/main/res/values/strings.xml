@@ -48,5 +48,6 @@
     <string name="logout">Logout</string>
 
     <string name="google_maps_api_key">AIzaSyDTbzxCT5jOJFnvWSRrQzlMJi97daSIDwg</string>
+    <string name="share_puddle">Share Puddle</string>
 
 </resources>
