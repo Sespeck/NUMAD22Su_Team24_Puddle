@@ -2,6 +2,7 @@ package com.cs5520.assignments.numad22su_team24_puddle.Adapter;
 
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -36,6 +37,7 @@ public class MyPuddlesAdapter extends RecyclerView.Adapter<MyPuddlesAdapter.MyPu
             myPuddleKeys.add(map.getKey());
             myPuddleList.add(map.getValue());
         }
+
     }
 
     @NonNull
@@ -53,6 +55,7 @@ public class MyPuddlesAdapter extends RecyclerView.Adapter<MyPuddlesAdapter.MyPu
         holder.puddleName.setText(myPud.getName());
         holder.memberCount.setText(String.valueOf(myPud.getCount()) + " Members");
         Glide.with(this.ct).load(myPud.getBannerUrl()).into(holder.puddleBg);
+        holder.privateLock.setVisibility(myPud.getIsPrivate().equals("true") ? ImageView.VISIBLE : ImageView.GONE);
 
         holder.itemView.setOnClickListener((v) -> {
             Intent intent = new Intent(ct, PuddleChatroomActivity.class);
@@ -71,6 +74,7 @@ public class MyPuddlesAdapter extends RecyclerView.Adapter<MyPuddlesAdapter.MyPu
         ImageView puddleBg;
         TextView puddleName;
         TextView memberCount;
+        ImageView privateLock;
 
         public MyPudAdapter(@NonNull View itemView) {
             super(itemView);
@@ -78,6 +82,7 @@ public class MyPuddlesAdapter extends RecyclerView.Adapter<MyPuddlesAdapter.MyPu
             puddleBg.setColorFilter(R.color.black);
             puddleName = itemView.findViewById(R.id.puddle_name);
             memberCount = itemView.findViewById(R.id.members_count);
+            privateLock = itemView.findViewById(R.id.private_icon);
         }
     }
 }
