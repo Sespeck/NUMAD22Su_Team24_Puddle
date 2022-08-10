@@ -41,6 +41,7 @@ public class EventsFragment extends Fragment {
     private String puddleID;
     private DatabaseReference eventsRef;
     private ShimmerFrameLayout shimmerFrameLayout;
+    private final String FRAGMENT_ID = "4";
     private endShimmerEffectCallback callback = new endShimmerEffectCallback(){
         @Override
         public void onLayoutInflated() {
@@ -65,7 +66,7 @@ public class EventsFragment extends Fragment {
         this.recyclerView = view.findViewById(R.id.event_recycler_view);
         shimmerFrameLayout = view.findViewById(R.id.events_shimmer_layout);
         recyclerView.hasFixedSize();
-        if (!Util.eventsPopulated) {
+        if (!Util.renderShimmerEffect.containsKey(Util.generateShimmerEffectID(FirebaseDB.currentUser.getUsername(),puddleID,FRAGMENT_ID))) {
             shimmerFrameLayout.startShimmer();
             shimmerFrameLayout.setVisibility(View.VISIBLE);
             recyclerView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
@@ -77,7 +78,7 @@ public class EventsFragment extends Fragment {
                     recyclerView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
                 }
             });
-            Util.eventsPopulated = true;
+            Util.renderShimmerEffect.put(Util.generateShimmerEffectID(FirebaseDB.currentUser.getUsername(),puddleID,FRAGMENT_ID), true);
         } else{
             shimmerFrameLayout.stopShimmer();
             shimmerFrameLayout.setVisibility(View.GONE);

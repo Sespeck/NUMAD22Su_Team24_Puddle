@@ -17,12 +17,16 @@ import java.util.Map;
 import java.util.TimeZone;
 
 public class Util {
-
+    public static Map<String,Boolean> renderShimmerEffect = new HashMap<>();
     public static boolean eventsPopulated = false;
     public static boolean puddleListPopulated = false;
     public static Map<Integer, Category> categoryMap = getCategoryMap();
 
     public static User user;
+
+    public static String generateShimmerEffectID(String username, String puddleID, String fragmentID){
+        return username+puddleID+fragmentID;
+    }
 
     private static Map<Integer, Category> getCategoryMap() {
         Map<Integer, Category> map = new HashMap<>();

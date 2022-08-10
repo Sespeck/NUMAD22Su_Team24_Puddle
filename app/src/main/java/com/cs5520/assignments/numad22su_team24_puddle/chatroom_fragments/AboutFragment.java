@@ -15,11 +15,14 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
 
 import com.bumptech.glide.Glide;
 import com.cs5520.assignments.numad22su_team24_puddle.R;
 import com.cs5520.assignments.numad22su_team24_puddle.Utils.FirebaseDB;
+import com.cs5520.assignments.numad22su_team24_puddle.Utils.Util;
+import com.facebook.shimmer.ShimmerFrameLayout;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.imageview.ShapeableImageView;
 import com.google.firebase.database.DataSnapshot;
@@ -42,6 +45,19 @@ public class AboutFragment extends Fragment {
     private TextView tagsTextView;
     private TextView puddleName;
     private Handler handler = new Handler();
+    private ShimmerFrameLayout shimmerFrameLayout;
+    private final String FRAGMENT_ID = "2";
+    private CardView cardView;
+    private EventsFragment.endShimmerEffectCallback callback = new EventsFragment.endShimmerEffectCallback(){
+        @Override
+        public void onLayoutInflated() {
+            handler.postDelayed((Runnable) () -> {
+                shimmerFrameLayout.stopShimmer();
+                shimmerFrameLayout.setVisibility(View.GONE);
+                cardView.setVisibility(View.VISIBLE);
+            }, 800);
+        }
+    };
 
     @Nullable
     @Override
@@ -52,6 +68,16 @@ public class AboutFragment extends Fragment {
         this.bannerIcon = view.findViewById(R.id.about_tab_banner_pic);
         this.tagsTextView = view.findViewById(R.id.about_tab_tags_text_view);
         this.puddleName = view.findViewById(R.id.about_puddle_name);
+        this.shimmerFrameLayout = view.findViewById(R.id.about_shimmer_frame_layout);
+        this.cardView = view.findViewById(R.id.about_card_view);
+        if (!Util.renderShimmerEffect.containsKey(Util.generateShimmerEffectID(FirebaseDB.currentUser.getUsername(),puddleID,FRAGMENT_ID))){
+            callback.onLayoutInflated();
+            Util.renderShimmerEffect.put(Util.generateShimmerEffectID(FirebaseDB.currentUser.getUsername(),puddleID,FRAGMENT_ID),true);
+        } else{
+            shimmerFrameLayout.stopShimmer();
+            shimmerFrameLayout.setVisibility(View.GONE);
+            cardView.setVisibility(View.VISIBLE);
+        }
         FirebaseDB.getDataReference("Puddles").child(puddleID).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {

@@ -77,6 +77,7 @@ public class PuddleListActivity extends AppCompatActivity implements View.OnClic
     private HashMap<String, Puddle> myPuddlesData;
     private HashMap<Category, List<Puddle>> categoryPuddlesData;
     private ShimmerFrameLayout shimmerFrameLayout;
+    private final String FRAGMENT_ID = "5";
     private EventsFragment.endShimmerEffectCallback callback = new EventsFragment.endShimmerEffectCallback(){
         @Override
         public void onLayoutInflated() {
@@ -126,9 +127,17 @@ public class PuddleListActivity extends AppCompatActivity implements View.OnClic
 //        uploadImageToFb();
         fetchAllPuddles();
 
+            callback.onLayoutInflated();
         // Initializing Widgets
         puddleListRecyclerView = findViewById(R.id.puddle_list_rv);
-        if (!Util.puddleListPopulated) {
+
+
+
+        updateRecyclerView(myPuddlesBtn);
+        LocationPermissionActivity.checkLocationPermission(this);
+
+        handleAppLink(getIntent());
+        if (!Util.renderShimmerEffect.containsKey(Util.generateShimmerEffectID("username","puddle_list",FRAGMENT_ID))){
             shimmerFrameLayout.startShimmer();
             shimmerFrameLayout.setVisibility(View.VISIBLE);
             puddleListRecyclerView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
@@ -140,18 +149,12 @@ public class PuddleListActivity extends AppCompatActivity implements View.OnClic
                     puddleListRecyclerView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
                 }
             });
-            Util.puddleListPopulated = true;
+            Util.renderShimmerEffect.put(Util.generateShimmerEffectID("username","puddle_list",FRAGMENT_ID),true);
         } else{
             shimmerFrameLayout.stopShimmer();
             shimmerFrameLayout.setVisibility(View.GONE);
             puddleListRecyclerView.setVisibility(View.VISIBLE);
         }
-
-
-        updateRecyclerView(myPuddlesBtn);
-        LocationPermissionActivity.checkLocationPermission(this);
-
-        handleAppLink(getIntent());
     }
 
     @Override
