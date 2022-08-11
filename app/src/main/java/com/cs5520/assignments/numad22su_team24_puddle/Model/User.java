@@ -39,7 +39,7 @@ public class User {
         this.display_name = username;
         this.email = email;
         this.bio = "";
-        this.profile_icon = "https://firebasestorage.googleapis.com/v0/b/android-chat-85561.appspot.com/o/blank_image.png?alt=media&token=5602e03a-0031-4287-bc77-b2fcb34029eb";
+        this.profile_icon = "https://firebasestorage.googleapis.com/v0/b/android-chat-85561.appspot.com/o/blank_image.png?alt=media&token=7e35341b-f668-410f-bda4-50f4858657d2";
         this.phone_number = "";
         this.my_puddles = new HashMap<String, String>();
     }

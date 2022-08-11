@@ -330,7 +330,7 @@ public class PuddleListActivity extends AppCompatActivity implements View.OnClic
     private void updateRecyclerView(View view) {
         // Initializing RecyclerView
         if (view.equals(nearMeBtn)) {
-            puddleSearch.setVisibility(SearchView.GONE);
+            puddleSearch.setVisibility(SearchView.INVISIBLE);
             noResultFound.setVisibility(View.GONE);
             if (LocationPermissionActivity.checkLocationPermission(this)) {
                 categorizePuddles();
@@ -453,7 +453,8 @@ public class PuddleListActivity extends AppCompatActivity implements View.OnClic
     public void showJoinPuddle(Context context, Puddle puddle){
 
 
-        if (FirebaseDB.currentUser.getMy_puddles() != null  && FirebaseDB.currentUser.getMy_puddles().containsValue(puddle.getId())) {
+        if (FirebaseDB.currentUser.getMy_puddles() != null  &&
+                FirebaseDB.currentUser.getMy_puddles().containsValue(puddle.getId())) {
             Intent intent = new Intent(PuddleListActivity.this, PuddleChatroomActivity.class);
             intent.putExtra("puddleID", puddle.getId());
             context.startActivity(intent);
