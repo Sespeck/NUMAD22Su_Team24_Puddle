@@ -44,7 +44,7 @@ public class MembersFragment extends Fragment {
         membersRef = FirebaseDB.getDataReference("Members").child(puddleID);
         recyclerView = view.findViewById(R.id.members_recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        recyclerView.hasFixedSize();
+//        recyclerView.hasFixedSize();
         context = getContext();
         initializeRecyclerView();
         return view;
