@@ -49,7 +49,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="2dp"
                 android:background="@color/light_gray"
-                app:layout_constraintTop_toBottomOf="@+id/radio_button_group" />
+                app:layout_constraintTop_toBottomOf="@+id/add_title_edit_text" />
 
             <com.google.android.material.textfield.TextInputLayout
                 app:counterEnabled="true"
@@ -139,36 +139,36 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
-            <RadioGroup
-                android:id="@+id/radio_button_group"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/add_title_edit_text">
+<!--            <RadioGroup-->
+<!--                android:id="@+id/radio_button_group"-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:orientation="horizontal"-->
+<!--                app:layout_constraintEnd_toEndOf="parent"-->
+<!--                app:layout_constraintStart_toStartOf="parent"-->
+<!--                app:layout_constraintTop_toBottomOf="@+id/add_title_edit_text">-->
 
-                <RadioButton
-                    android:id="@+id/radioButton"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:paddingEnd="25sp"
-                    android:text="@string/online"
-                    app:layout_constraintEnd_toStartOf="@+id/offline_radio_button"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/editText2" />
+<!--                <RadioButton-->
+<!--                    android:id="@+id/radioButton"-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:paddingEnd="25sp"-->
+<!--                    android:text="@string/online"-->
+<!--                    app:layout_constraintEnd_toStartOf="@+id/offline_radio_button"-->
+<!--                    app:layout_constraintStart_toStartOf="parent"-->
+<!--                    app:layout_constraintTop_toBottomOf="@+id/editText2" />-->
 
-                <RadioButton
-                    android:id="@+id/offline_radio_button"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:paddingEnd="25sp"
-                    android:text="@string/offline"
-                    app:layout_constraintBottom_toBottomOf="@+id/radioButton"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toEndOf="@+id/radioButton"
-                    app:layout_constraintTop_toBottomOf="@+id/editText2" />
-            </RadioGroup>
+<!--                <RadioButton-->
+<!--                    android:id="@+id/offline_radio_button"-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:paddingEnd="25sp"-->
+<!--                    android:text="@string/offline"-->
+<!--                    app:layout_constraintBottom_toBottomOf="@+id/radioButton"-->
+<!--                    app:layout_constraintEnd_toEndOf="parent"-->
+<!--                    app:layout_constraintStart_toEndOf="@+id/radioButton"-->
+<!--                    app:layout_constraintTop_toBottomOf="@+id/editText2" />-->
+<!--            </RadioGroup>-->
 
 
             <View

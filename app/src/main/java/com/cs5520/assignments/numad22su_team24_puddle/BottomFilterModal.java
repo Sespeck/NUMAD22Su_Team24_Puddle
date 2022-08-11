@@ -8,7 +8,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.DatePicker;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -18,6 +17,7 @@ import androidx.appcompat.app.AlertDialog;
 
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import com.google.android.material.slider.RangeSlider;
+import com.google.android.material.switchmaterial.SwitchMaterial;
 
 
 import java.text.DecimalFormat;
@@ -33,8 +33,10 @@ public class BottomFilterModal extends BottomSheetDialogFragment {
     private double distanceResults;
     private TextView distanceIndicator;
     private TextView filterByCategory;
+    private Spinner membershipSpinner;
     private String[] categories;
-    private ArrayList<String> selectedCategoriesOutput = new ArrayList<>();
+    private String membershipFilterResults;
+    private SwitchMaterial globalSwitch;
 
 
     @Nullable
@@ -43,18 +45,68 @@ public class BottomFilterModal extends BottomSheetDialogFragment {
         View view = inflater.inflate(R.layout.bottom_sheet_modal, container, false);
         distanceIndicator = view.findViewById(R.id.location_bottom_modal_text_view);
         filterByCategory = view.findViewById(R.id.filter_by_category_view);
-        AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
-        // initialize variables
+        membershipSpinner = view.findViewById(R.id.membership_spinner);
+        globalSwitch = view.findViewById(R.id.global_switch);
         ArrayList<Integer> selectedCategoryIndexes = new ArrayList<>();
         categories = new String[]{"Music", "Sports", "Finance", "Travel", "Education"};
-        // initialize selected language array
         boolean[] selectedCategory = new boolean[categories.length];
+        initalizeSpinnerAdapter(membershipSpinner);
+
 
         filterByCategory.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
                 AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
                 builder.setTitle("Select Category");
+                builder.setCancelable(false);
+                builder.setMultiChoiceItems(categories, selectedCategory, (dialogInterface, i, b) -> {
+                    if (b) {
+                        selectedCategoryIndexes.add(i);
+                        Collections.sort(selectedCategoryIndexes);
+                    } else {
+                        selectedCategoryIndexes.remove(Integer.valueOf(i));
+                    }
+                });
+
+                builder.setPositiveButton("OK", (dialogInterface, i) -> {
+                    StringBuilder stringBuilder = new StringBuilder();
+                    for (int j = 0; j < selectedCategoryIndexes.size(); j++) {
+                        stringBuilder.append(categories[selectedCategoryIndexes.get(j)]);
+                        if (j != selectedCategoryIndexes.size() - 1) {
+                            stringBuilder.append(", ");
+                        }
+                    }
+                    filterByCategory.setText(stringBuilder.toString());
+                });
+
+                builder.setNegativeButton("Cancel", (dialogInterface, i) -> {
+                    dialogInterface.dismiss();
+                });
+                builder.setNeutralButton("Clear All", (dialogInterface, i) -> {
+                    for (int j = 0; j < selectedCategory.length; j++) {
+                        // remove all selection
+                        selectedCategory[j] = false;
+                        // clear language list
+                        selectedCategoryIndexes.clear();
+                        // clear text view value
+                        filterByCategory.setText("Filter By Category");
+                    }
+                });
+                // show dialog
+                builder.show();
+            }
+        });
+
+        filterByCategory.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ArrayList<Integer> selectedCategoryIndexes = new ArrayList<>();
+                categories = new String[]{"Music", "Sports", "Finance", "Travel", "Education"};
+                // initialize selected language array
+                boolean[] selectedCategory = new boolean[categories.length];
+                AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
+                builder.setTitle("Select Member Count");
                 builder.setCancelable(false);
                 builder.setMultiChoiceItems(categories, selectedCategory, (dialogInterface, i, b) -> {
                     if (b) {
@@ -109,11 +161,43 @@ public class BottomFilterModal extends BottomSheetDialogFragment {
                 }
                 bundle.putStringArrayList("selected_categories",selectedCategories);
             }
+            if (globalSwitch.isChecked()){
+                bundle.putBoolean("is_checked", globalSwitch.isChecked());
+            }
             if (distanceResults != 0) bundle.putDouble("distance", distanceResults);
+            if (membershipFilterResults != null) bundle.putString("membership_filter", membershipFilterResults);
             getParentFragmentManager().setFragmentResult("filter_result", bundle);
             dismiss();
         });
         return view;
+    }
+
+
+    public void initalizeSpinnerAdapter(Spinner spinner) {
+        List<String> interests = new ArrayList<>();
+        interests.add(0, "Filter by Membership");
+        interests.add("<10");
+        interests.add("10");
+        interests.add("50");
+        interests.add("100");
+        interests.add("500");
+        interests.add("1000");
+        interests.add(">1000");
+        fullAdapter = new ArrayAdapter(getActivity(), R.layout.filter_spinner_item, interests);
+        fullAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner.setAdapter(fullAdapter);
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                if (position != 0){
+                    membershipFilterResults = interests.get(position);
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+            }
+        });
     }
 }
 

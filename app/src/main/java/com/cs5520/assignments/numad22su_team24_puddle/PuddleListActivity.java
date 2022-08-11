@@ -280,9 +280,12 @@ public class PuddleListActivity extends AppCompatActivity implements View.OnClic
                     // result extras can be null if user didn't select them
                     if (result.getStringArrayList("selected_categories") != null){
                         ArrayList<String> selectedCategories = result.getStringArrayList("selected_categories");
-                        Log.d("here", selectedCategories.toString());
+                    }
+                    if (result.getString("membership_filter") != null){
+                        String membershipFilter = result.getString("membership_filter");
                     }
                     double distance = result.getDouble("distance");
+                    Log.d("here", String.valueOf(result.getBoolean("is_checked")));
                 }));
     }
 
