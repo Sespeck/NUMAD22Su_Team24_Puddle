@@ -61,6 +61,7 @@ public class ChatroomFragment extends Fragment {
     private DatabaseReference messageRef;
     private User currentUser;
     private Uri imageUri;
+    private String dbID;
     private ShimmerFrameLayout shimmerFrameLayout;
     private String FRAGMENT_ID = "1";
     private EventsFragment.endShimmerEffectCallback callback = new EventsFragment.endShimmerEffectCallback(){
@@ -82,25 +83,13 @@ public class ChatroomFragment extends Fragment {
                     class PushNewMsgToDB implements Runnable {
                         @Override
                         public void run() {
-                            uploadToFirebase(imageUri);
-                            HashMap<String, Object> newMessage = new HashMap<>();
-                            newMessage.put("timestamp", Instant.now().toString());
-                            FirebaseDB.fetchCurrentUserData();
-                            newMessage.put("username", currentUser.getUsername());
-                            Log.d("here", imageUri.toString());
-                            newMessage.put("body", imageUri.toString());
-                            newMessage.put("profile_url", currentUser.getProfile_icon());
-                            newMessage.put("isMessage", true);
-                            // Add a new message based off current time, the edittext body, the current user's
-                            // Pfp and name
-
                             String id = messageRef.child(puddleID).push().getKey();
                             handler.post(() -> {
                                 adapter.addNewMessage(new Message(currentUser.getUsername(), imageUri.toString(), Instant.now().toString(),
                                         currentUser.getProfile_icon(), id, true));
                                 recyclerView.scrollToPosition(adapter.getItemCount() - 1);
                             });
-                            messageRef.child(puddleID).push().setValue(newMessage);
+                            uploadToFirebase(imageUri);
                         }
                     }
                     if (imageUri != null) {
@@ -245,8 +234,18 @@ public class ChatroomFragment extends Fragment {
                         new Thread(new Runnable() {
                             @Override
                             public void run() {
-                                Log.d("here",uri.toString());
-                                imageUri = uri;
+//                                imageUri = uri;
+                                HashMap<String, Object> newMessage = new HashMap<>();
+                                newMessage.put("timestamp", Instant.now().toString());
+                                FirebaseDB.fetchCurrentUserData();
+                                newMessage.put("username", currentUser.getUsername());
+                                Log.d("here", imageUri.toString());
+                                newMessage.put("body", uri.toString());
+                                newMessage.put("profile_url", currentUser.getProfile_icon());
+                                newMessage.put("isMessage", true);
+                                // Add a new message based off current time, the edittext body, the current user's
+                                // Pfp and name
+                                messageRef.child(puddleID).push().setValue(newMessage);
                             }
                         }).start();
                     }
