@@ -19,7 +19,9 @@ import androidx.core.app.ActivityCompat;
 import androidx.viewpager.widget.ViewPager;
 
 
+import com.cs5520.assignments.numad22su_team24_puddle.Model.Puddle;
 import com.cs5520.assignments.numad22su_team24_puddle.Model.PuddleMarker;
+import com.cs5520.assignments.numad22su_team24_puddle.Utils.FirebaseDB;
 import com.cs5520.assignments.numad22su_team24_puddle.Utils.LocationPermissionActivity;
 import com.cs5520.assignments.numad22su_team24_puddle.services.MapService;
 import com.cs5520.assignments.numad22su_team24_puddle.services.MarkerService;
@@ -37,11 +39,17 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.ValueEventListener;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 
@@ -49,33 +57,32 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     private static final String TAG = "MapActivity";
     private boolean mapInitiated = true;
     private GoogleMap mMap;
+    private HashMap<String, Puddle> allPuddlesData;
     FusedLocationProviderClient fusedLocationProviderClient;
     LocationRequest locationRequest;
     LocationCallback locationCallback;
-    MapService mapService;
     ViewPager viewPager;
     MapViewPagerAdapter mapViewPagerAdapter;
     List<PuddleMarker> puddleList;
     List<PuddleMarker> filteredPuddleList;
     HashSet<String> categories;
     ChipGroup chipGroup;
+    SupportMapFragment mapFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_map);
+        mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
 
-        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
-                .findFragmentById(R.id.map);
-        mapFragment.getMapAsync(this);
+        allPuddlesData = new HashMap<>();
+        categories = new HashSet<String>();
+        fetchAllPuddles();
+
 
         viewPager = findViewById(R.id.viewPager);
         viewPager.setPageMargin(15);
 
-        mapService = new MapService();
-        puddleList = mapService.getPuddleList();
-        filteredPuddleList = puddleList;
-        categories = new HashSet<String>();
 
         HorizontalScrollView map_filter_chips = findViewById(R.id.map_filter_chips);
         chipGroup = map_filter_chips.findViewById(R.id.map_chip_group);
@@ -107,6 +114,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
+
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED) {
@@ -132,7 +140,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
                 for (Integer id: checkedIds){
                     Chip chip = chipGroup.findViewById(id);
-                    String cat = chip.getText().toString().toUpperCase();
+                    String cat = chip.getText().toString();
                     Log.d(TAG, "chip cat: " + cat);
                     categories.add(cat);
                 }
@@ -231,9 +239,44 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         finish();
     }
 
+
+
    public void testSelectLocation(View v){
         startActivity(new Intent(this,SelectLocation.class));
    }
+
+    public void fetchAllPuddles() {DatabaseReference pudRef = FirebaseDB.getDataReference("Puddles");
+
+        pudRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for (DataSnapshot snap : snapshot.getChildren()) {
+                    Puddle puddle = snap.getValue(Puddle.class);
+                    if (puddle != null) {
+                        Log.d("MapActivity", "fetchAllPuddles: " + snap.getKey());
+                        allPuddlesData.put(snap.getKey(), puddle);
+                    }
+                }
+                Log.d("MapActivity", "fetchAllPuddles: "+allPuddlesData.size());
+                puddleList = MapService.getPuddleList(allPuddlesData);
+                filteredPuddleList = puddleList;
+                for (PuddleMarker e: filteredPuddleList){
+                    Log.d("MapActivity", "fetchAllPuddles: filteredpuddlelist categories "+e.getCategory());
+                }
+
+                fetchAllPuddlesCallBack();
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+    }
+
+    private void fetchAllPuddlesCallBack(){
+        mapFragment.getMapAsync(this);
+    }
 }
 
 

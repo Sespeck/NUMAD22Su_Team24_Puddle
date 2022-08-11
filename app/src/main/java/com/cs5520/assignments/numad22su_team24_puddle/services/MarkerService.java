@@ -28,19 +28,22 @@ public class MarkerService {
         markerOptions.position(puddleMarker.getLatLng());
         String category = puddleMarker.getCategory();
         switch (category) {
-            case "SPORTS":
+            case "Sports":
                 markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.sports_marker));
                 break;
-            case "MUSIC":
+            case "Music":
                 markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.music_marker));
                 break;
-            case "FINANCE":
+            case "Finance":
                 markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.finance_marker));
                 break;
-            case "BOOK":
+            case "Education":
                 markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.book_marker));
                 break;
-            case "TRAVEL":
+            case "Travel":
+                markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.travel_marker));
+                break;
+            default:
                 markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.travel_marker));
                 break;
         }

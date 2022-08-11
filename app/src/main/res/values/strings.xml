@@ -48,5 +48,10 @@
     <string name="logout">Logout</string>
 
     <string name="google_maps_api_key">AIzaSyDTbzxCT5jOJFnvWSRrQzlMJi97daSIDwg</string>
+    <string name="education">Education</string>
+    <string name="travel">Travel</string>
+    <string name="finance">Finance</string>
+    <string name="sports">Sports</string>
+    <string name="music">Music</string>
 
 </resources>

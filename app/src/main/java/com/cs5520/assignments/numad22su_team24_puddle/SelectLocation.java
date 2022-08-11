@@ -203,19 +203,18 @@ public class SelectLocation extends AppCompatActivity implements OnMapReadyCallb
 
     @Override
     public void onCameraMove() {
-
     }
 
     @Override
     public void onCameraMoveStarted(int i) {
-
     }
-
 
     public void sendSelectedLocation(View v){
         Intent intent = new Intent();
         intent.putExtra("selectedLocation", selectedLocation);
-        Log.d("select location", "sendSelectedLocation: " + selectedLocation);
+        intent.putExtra("selectedLocationLatitude", pin_lat);
+        intent.putExtra("selectedLocationLongitude", pin_lng);
+        Log.d("select location", "sendSelectedLocation: " + selectedLocation + ' ' + pin_lat+ ' '+ pin_lng);
         setResult(999, intent);
 
         SelectLocation.super.onBackPressed();

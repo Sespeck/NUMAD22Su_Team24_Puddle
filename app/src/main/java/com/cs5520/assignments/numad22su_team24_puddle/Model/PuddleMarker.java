@@ -4,11 +4,11 @@ import com.google.android.gms.maps.model.LatLng;
 
 public class PuddleMarker {
 
-    private String name, puddleId, category;
+    private String name, puddleId, category, background;
     private LatLng latLng;
-    private int memberCount, position, background;
+    private int memberCount, position ;
 
-    public PuddleMarker(String name, String puddleId, String category, LatLng latLng, int memberCount, int background) {
+    public PuddleMarker(String name, String puddleId, String category, LatLng latLng, int memberCount, String background) {
         this.name = name;
         this.puddleId = puddleId;
         this.category = category;
@@ -41,7 +41,7 @@ public class PuddleMarker {
         return position;
     }
 
-    public int getBackground() {
+    public String getBackground() {
         return background;
     }
 
