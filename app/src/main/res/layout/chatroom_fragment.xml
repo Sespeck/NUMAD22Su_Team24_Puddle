@@ -89,10 +89,10 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="4dp"
         android:src="@drawable/ic_baseline_image_24"
-        app:layout_constraintBottom_toTopOf="@+id/view1"
+        app:layout_constraintBottom_toBottomOf="@+id/chat_room_edit_text"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/chatroom_recycler_view"
-        app:layout_constraintVertical_bias="0.409" />
+        app:layout_constraintTop_toTopOf="@+id/chat_room_edit_text"
+  />
 
     <EditText
         android:id="@+id/chat_room_edit_text"
@@ -112,7 +112,7 @@
         android:layout_height="wrap_content"
         android:layout_marginEnd="10sp"
         android:src="@drawable/send_icon"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/view1"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@+id/chat_room_edit_text" />
 
