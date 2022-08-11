@@ -366,7 +366,33 @@ public class PuddleListActivity extends AppCompatActivity implements View.OnClic
 
     public void showJoinPuddleDialogue(Context context, Puddle puddle) {
 
-        if (FirebaseDB.currentUser.getMy_puddles().containsValue(puddle.getId())) {
+        if(FirebaseDB.currentUser == null){
+            FirebaseUser current_user = FirebaseDB.getCurrentUser();
+            DatabaseReference userRef = FirebaseDB.getDataReference("Users").child(current_user.getUid());
+            userRef.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    FirebaseDB.currentUser = snapshot.getValue(User.class);
+                    if(FirebaseDB.currentUser != null){
+                        showJoinPuddle(context, puddle);
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+
+                }
+            });
+        } else {
+            showJoinPuddle(context, puddle);
+        }
+
+    }
+
+    public void showJoinPuddle(Context context, Puddle puddle){
+
+
+        if (FirebaseDB.currentUser.getMy_puddles() != null  && FirebaseDB.currentUser.getMy_puddles().containsValue(puddle.getId())) {
             Intent intent = new Intent(PuddleListActivity.this, PuddleChatroomActivity.class);
             intent.putExtra("puddleID", puddle.getId());
             context.startActivity(intent);
@@ -387,8 +413,6 @@ public class PuddleListActivity extends AppCompatActivity implements View.OnClic
             });
             dialog.show();
         }
-
-
     }
 
     public void addPuddlesToList(String pud_id, Puddle pud) {
