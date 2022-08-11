@@ -159,11 +159,12 @@ public class PuddleListActivity extends AppCompatActivity implements View.OnClic
 
         // Register for the filter results
         handleFilterResults();
+
         // Api Calls
         fetchCurrentUserData();
         uploadImageToFb();
-//        uploadImageToFb();
         fetchAllPuddles();
+        FirebaseDB.fetchAllUsers();
 
         // Initializing Widgets
         puddleListRecyclerView = findViewById(R.id.puddle_list_rv);

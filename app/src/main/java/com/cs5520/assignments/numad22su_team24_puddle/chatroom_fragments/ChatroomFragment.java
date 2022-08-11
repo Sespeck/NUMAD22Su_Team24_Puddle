@@ -80,7 +80,7 @@ public class ChatroomFragment extends Fragment {
                         // Pfp and name
                         handler.post(()-> {
                             adapter.addNewMessage(new Message(currentUser.getUsername() ,textResult,Instant.now().toString(),
-                                    "https://firebasestorage.googleapis.com/v0/b/android-chat-85561.appspot.com/o/1659737464403.jpg?alt=media&token=65a5f276-7954-4e07-a236-1b50732b0e6e"));
+                                    FirebaseDB.currentUser.getProfile_icon()));
                             recyclerView.scrollToPosition(adapter.getItemCount()-1);
                             chatEditText.getText().clear();
                         });
@@ -103,8 +103,9 @@ public class ChatroomFragment extends Fragment {
                         List<Message> chatroomList = new ArrayList<>();
                         for (DataSnapshot snap: snapshot.getChildren()){
                             String username = snap.child("username").getValue(String.class);
+                            String profile_url = FirebaseDB.allUserData.get(username).getProfile_icon();
                             String body = snap.child("body").getValue(String.class);
-                            String profile_url = snap.child("profile_url").getValue(String.class);
+//                            String profile_url = snap.child("profile_url").getValue(String.class);
                             String timestamp = Util.convertTocurrentDateTime(snap.child("timestamp").getValue(String.class));
                             chatroomList.add(new Message(username, body, timestamp, profile_url));
                         }

@@ -28,6 +28,8 @@ public class FirebaseDB {
 
     public static StorageReference storageRef = FirebaseStorage.getInstance().getReference();
     public static User currentUser;
+    public static HashMap<String, User> allUserData;
+
 
     public static FirebaseAuth getInstanceFirebaseAuth() {
         return FirebaseAuth.getInstance();
@@ -39,6 +41,32 @@ public class FirebaseDB {
 
     public static DatabaseReference getDataReference(String path) {
         return FirebaseDatabase.getInstance().getReference(path);
+    }
+
+    public static void fetchAllUsers(){
+        allUserData = new HashMap<>();
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                DatabaseReference ref = FirebaseDB.getDataReference("Users");
+                ref.addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        for(DataSnapshot snap: snapshot.getChildren()){
+                            User user = snap.getValue(User.class);
+                            if(user != null){
+                                allUserData.put(user.getUsername(), user);
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+
+                    }
+                });
+            }
+        }).start();
     }
 
     public static void registerUser(String email, String password, String username, Context ct) {
