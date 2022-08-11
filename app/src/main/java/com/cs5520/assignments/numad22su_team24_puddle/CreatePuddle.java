@@ -224,6 +224,7 @@ public class CreatePuddle extends AppCompatActivity {
             Intent intent = new Intent(CreatePuddle.this, PuddleChatroomActivity.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             intent.putExtra("puddleID",pud_key);
+            intent.putExtra("new_chatroom","do_not_animate_shimmer");
             CreatePuddle.this.startActivity(intent);
             this.finish();
         });

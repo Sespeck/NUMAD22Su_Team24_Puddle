@@ -37,16 +37,16 @@
         app:layout_constraintStart_toEndOf="@id/chatroom_message_item_username"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <ImageView
-        android:id="@+id/chatroom_message_body"
-        android:layout_width="200sp"
-        android:layout_height="200sp"
-        android:layout_margin="5sp"
-        android:layout_marginStart="10sp"
-        android:singleLine="false"
-        android:textSize="14sp"
-        app:layout_constraintStart_toEndOf="@+id/chatroom_message_profile_pic"
-        app:layout_constraintTop_toBottomOf="@+id/chatroom_message_item_username" />
 
+        <ImageView
+            app:layout_constraintStart_toEndOf="@+id/chatroom_message_profile_pic"
+            app:layout_constraintTop_toBottomOf="@+id/chatroom_message_item_username"
+            android:id="@+id/chatroom_message_body"
+            android:layout_width="200sp"
+            android:layout_height="200sp"
+            android:layout_margin="5sp"
+            android:layout_marginStart="10sp"
+            android:textSize="14sp"
+             />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

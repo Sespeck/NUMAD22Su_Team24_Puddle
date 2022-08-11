@@ -33,6 +33,18 @@
                 layout="@layout/chatroom_message_item_placeholder"
                 />
 
+            <include
+                layout="@layout/chatroom_message_item_placeholder"
+                />
+
+
+            <include
+                layout="@layout/chatroom_message_item_placeholder"
+                />
+
+            <include
+                layout="@layout/chatroom_message_item_placeholder"
+                />
 
             <include
                 layout="@layout/chatroom_message_item_placeholder"
@@ -40,6 +52,8 @@
             <include
                 layout="@layout/chatroom_message_item_placeholder"
                 />
+
+
         </LinearLayout>
     </com.facebook.shimmer.ShimmerFrameLayout>
 

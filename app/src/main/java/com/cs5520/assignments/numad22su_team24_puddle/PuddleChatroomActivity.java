@@ -65,7 +65,7 @@ public class PuddleChatroomActivity extends AppCompatActivity {
             puddleID = savedInstanceState.getString("puddleID");
             currentTab = tabLayout.getTabAt(savedInstanceState.getInt("current_tab"));
             tabLayout.selectTab(currentTab);
-            completeFragmentNavigation(currentTab);
+            completeFragmentNavigation(currentTab,0);
         }
         FirebaseDB.getDataReference("Puddles").child(puddleID).addValueEventListener(new ValueEventListener() {
             @Override
@@ -87,9 +87,10 @@ public class PuddleChatroomActivity extends AppCompatActivity {
         });
     }
 
-    private void completeFragmentNavigation(TabLayout.Tab tab) {
+    private void completeFragmentNavigation(TabLayout.Tab tab, int flag) {
         Bundle bundle = new Bundle();
         bundle.putString("puddleID",puddleID);
+        if (flag == 1) bundle.putString("new_chatroom","dont_animate_shimmer");
         if (tab.getPosition() == 0) {
             fab.setVisibility(View.INVISIBLE);
             ChatroomFragment chatroomFragment = new ChatroomFragment();
@@ -119,7 +120,7 @@ public class PuddleChatroomActivity extends AppCompatActivity {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
                 currentTab = tab;
-                completeFragmentNavigation(tab);
+                completeFragmentNavigation(tab,0);
             }
 
             @Override
@@ -152,7 +153,11 @@ public class PuddleChatroomActivity extends AppCompatActivity {
         if (currentTab == null){
             currentTab = tabLayout.getTabAt(0);
         }
-        completeFragmentNavigation(currentTab);
+        if (getIntent().getStringExtra("new_chatroom") != null) {
+            completeFragmentNavigation(currentTab, 1);
+        } else{
+            completeFragmentNavigation(currentTab, 0);
+        }
     }
 
     @Override

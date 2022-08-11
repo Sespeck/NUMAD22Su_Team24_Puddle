@@ -137,7 +137,7 @@ public class PuddleListActivity extends AppCompatActivity implements View.OnClic
         LocationPermissionActivity.checkLocationPermission(this);
 
         handleAppLink(getIntent());
-        if (!Util.renderShimmerEffect.containsKey(Util.generateShimmerEffectID("username","puddle_list",FRAGMENT_ID))){
+        if (!Util.renderShimmerEffect.containsKey(Util.generateShimmerEffectID("username","puddle_list",FRAGMENT_ID) ) && getIntent().getStringExtra("new_user") == null){
             shimmerFrameLayout.startShimmer();
             shimmerFrameLayout.setVisibility(View.VISIBLE);
             puddleListRecyclerView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {

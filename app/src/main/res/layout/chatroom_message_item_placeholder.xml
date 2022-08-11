@@ -12,8 +12,7 @@
     android:layout_height="wrap_content"
     android:text="Nulla at sapien ipsum. Nam gravida nibh a
     dui fringilla,ibusulla at sapien ulla at sapien ipsum. Nam gravida nibh
-     a dui fringilla,ibus ulla at sapien ipsum. Nam gravida nibh a dui
-    fringilla,ibus ipsum. Nam gravida nibh a dui fringilla,ibus  tellus at molestie bibendum."
+     a dui fringilla"
     />
 
 </androidx.cardview.widget.CardView>

@@ -72,6 +72,7 @@ public class FirebaseDB {
                                         username, "", "", "", new HashMap<>());
                                 Intent intent = new Intent(ct, ProfileActivity.class);
                                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                                intent.putExtra("new_user","dont_animate_shimmer");
                                 ct.startActivity(intent);
                             } else {
                                 Toast.makeText(ct, "Error registering user!", Toast.LENGTH_SHORT).show();

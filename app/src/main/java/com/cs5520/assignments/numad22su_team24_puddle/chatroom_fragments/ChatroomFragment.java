@@ -74,6 +74,7 @@ public class ChatroomFragment extends Fragment {
             }, 800);
         }
     };
+
     ActivityResultLauncher<Intent> startActivityForResult = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
             result -> {
@@ -83,9 +84,10 @@ public class ChatroomFragment extends Fragment {
                     class PushNewMsgToDB implements Runnable {
                         @Override
                         public void run() {
+
                             String id = messageRef.child(puddleID).push().getKey();
                             handler.post(() -> {
-                                adapter.addNewMessage(new Message(currentUser.getUsername(), imageUri.toString(), Instant.now().toString(),
+                                Message newmsg = adapter.addNewImg(new Message(currentUser.getUsername(), imageUri.toString(), Instant.now().toString(),
                                         currentUser.getProfile_icon(), id, true));
                                 recyclerView.scrollToPosition(adapter.getItemCount() - 1);
                             });
@@ -117,7 +119,7 @@ public class ChatroomFragment extends Fragment {
         initializeRecyclerView();
         currentUser = FirebaseDB.currentUser;
         createNewMessageListener();
-        if (!Util.renderShimmerEffect.containsKey(Util.generateShimmerEffectID(FirebaseDB.currentUser.getUsername(),puddleID,FRAGMENT_ID))) {
+        if (!Util.renderShimmerEffect.containsKey(Util.generateShimmerEffectID(FirebaseDB.currentUser.getUsername(),puddleID,FRAGMENT_ID)) && getArguments().getString("new_chatroom") == null) {
             shimmerFrameLayout.startShimmer();
             shimmerFrameLayout.setVisibility(View.VISIBLE);
             recyclerView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
