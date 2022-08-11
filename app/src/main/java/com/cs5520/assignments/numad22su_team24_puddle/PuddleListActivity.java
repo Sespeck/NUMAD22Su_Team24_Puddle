@@ -466,7 +466,7 @@ public class PuddleListActivity extends AppCompatActivity implements View.OnClic
                 dialog.dismiss();
                 Intent intent = new Intent(context, PuddleChatroomActivity.class);
                 intent.putExtra("puddleID", puddle.getId());
-                addPuddlesToList(puddle.getId(), puddle);
+                addPuddlesToList(puddle.getId(), puddle); // api call
                 context.startActivity(intent);
             });
             dialog.show();
@@ -489,8 +489,11 @@ public class PuddleListActivity extends AppCompatActivity implements View.OnClic
                 pudRef.setValue(alreadyJoined ? pud.getCount() : pud.getCount() + 1);
 
                 // 3. Update the members child
+                HashMap<String, String> userData = new HashMap<>();
+                userData.put("username", FirebaseDB.currentUser.getUsername());
+                userData.put("profile_url", FirebaseDB.currentUser.getProfile_icon());
                 DatabaseReference memRef = FirebaseDB.getDataReference("Members").child(pud_id);
-                memRef.push().setValue(uid);
+                memRef.push().setValue(userData);
             }
         }).start();
     }
