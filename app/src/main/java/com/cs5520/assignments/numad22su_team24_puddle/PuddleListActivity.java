@@ -162,7 +162,6 @@ public class PuddleListActivity extends AppCompatActivity implements View.OnClic
 
         // Api Calls
         fetchCurrentUserData();
-        uploadImageToFb();
         fetchAllPuddles();
         FirebaseDB.fetchAllUsers();
 
@@ -329,6 +328,7 @@ public class PuddleListActivity extends AppCompatActivity implements View.OnClic
         // Initializing RecyclerView
         if (view.equals(nearMeBtn)) {
             puddleSearch.setVisibility(SearchView.GONE);
+            noResultFound.setVisibility(View.GONE);
             if (LocationPermissionActivity.checkLocationPermission(this)) {
                 categorizePuddles();
                 puddleListRecyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -339,11 +339,18 @@ public class PuddleListActivity extends AppCompatActivity implements View.OnClic
                 LocationPermissionActivity.requestPermission(this, REQUEST_CODE_LOCATION_FOR_NEAR_ME);
             }
         } else {
-            puddleSearch.setVisibility(SearchView.VISIBLE);
             puddleListRecyclerView.setLayoutManager(new GridLayoutManager(PuddleListActivity.this, 2));
             puddleListRecyclerView.setAdapter(new MyPuddlesAdapter(PuddleListActivity.this, myPuddlesData));
             setSelectedButton(myPuddlesBtn);
             setUnselectedButton(nearMeBtn);
+
+            if(myPuddlesData.size() == 0){
+                puddleSearch.setVisibility(SearchView.GONE);
+                noResultFound.setVisibility(SearchView.VISIBLE);
+            } else {
+                puddleSearch.setVisibility(SearchView.VISIBLE);
+                noResultFound.setVisibility(SearchView.GONE);
+            }
 
             new Thread(new Runnable() {
                 @Override
@@ -363,14 +370,6 @@ public class PuddleListActivity extends AppCompatActivity implements View.OnClic
     private void setUnselectedButton(Button btn) {
         btn.setBackgroundColor(ContextCompat.getColor(this, com.google.android.libraries.places.R.color.quantum_grey200));
         btn.setTextColor(ContextCompat.getColor(this, R.color.black));
-    }
-
-    // Testing Firestore + Firebase DB
-    public void uploadImageToFb() {
-        imgRef = FirebaseDB.getDataReference("images");
-        imgRef.setValue("url");
-
-        storeRef = FirebaseDB.storageRef;
     }
 
     @Override
@@ -544,8 +543,10 @@ public class PuddleListActivity extends AppCompatActivity implements View.OnClic
                 }
 
                 if(myPuddlesData.size() == 0){
+                    puddleSearch.setVisibility(SearchView.GONE);
                     noResultFound.setVisibility(TextView.VISIBLE);
                 } else {
+                    puddleSearch.setVisibility(SearchView.VISIBLE);
                     noResultFound.setVisibility(TextView.GONE);
                 }
             }
