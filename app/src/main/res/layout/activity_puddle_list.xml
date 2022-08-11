@@ -8,7 +8,37 @@
 
     <include
         android:id="@+id/puddle_list_header"
-        layout="@layout/puddles_list_header"/>
+        layout="@layout/puddles_list_header" />
+
+    <SearchView
+        android:id="@+id/search"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="24dp"
+        android:layout_marginEnd="24dp"
+        android:background="@drawable/search_bg"
+        android:queryHint="Search"
+        app:layout_constraintBottom_toTopOf="@+id/puddle_list_rv"
+        app:layout_constraintEnd_toEndOf="@+id/puddle_list_header"
+        app:layout_constraintStart_toStartOf="@+id/puddle_list_header"
+        app:layout_constraintTop_toBottomOf="@id/puddle_list_header" />
+
+    <TextView
+        android:id="@+id/no_result_found"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="No Puddles Found!!"
+        android:textColor="#000000"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        android:visibility="visible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:visibility="invisible"
@@ -20,7 +50,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/puddle_list_header" />
+        app:layout_constraintTop_toBottomOf="@+id/search" />
 
     <com.facebook.shimmer.ShimmerFrameLayout
         android:id="@+id/events_shimmer_layout"
@@ -28,27 +58,24 @@
         android:layout_height="0sp"
         android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/puddle_list_header"
+        app:layout_constraintTop_toBottomOf="@id/search"
         app:shimmer_auto_start="true">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
 
-            <include
-                layout="@layout/my_puddle_placeholder"
-                />
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
 
-            <include
-                layout="@layout/my_puddle_placeholder"
-                />
+                <include layout="@layout/my_puddle_placeholder" />
 
-        </LinearLayout>
+                <include layout="@layout/my_puddle_placeholder" />
+
+            </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -60,15 +87,15 @@
                 <include layout="@layout/my_puddle_placeholder" />
             </LinearLayout>
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            >
-            <include layout="@layout/my_puddle_placeholder" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
 
-            <include layout="@layout/my_puddle_placeholder" />
-        </LinearLayout>
+                <include layout="@layout/my_puddle_placeholder" />
+
+                <include layout="@layout/my_puddle_placeholder" />
+            </LinearLayout>
         </LinearLayout>
 
     </com.facebook.shimmer.ShimmerFrameLayout>

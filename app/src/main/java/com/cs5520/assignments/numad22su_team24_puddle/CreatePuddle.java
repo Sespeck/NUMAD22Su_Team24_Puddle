@@ -196,6 +196,7 @@ public class CreatePuddle extends AppCompatActivity {
 
         String pud_key = ref.push().getKey();
         HashMap<String, Object> puddleMap = new HashMap<>();
+        puddleMap.put("id", pud_key);
         puddleMap.put("name", puddleName.getText().toString());
         puddleMap.put("bio", puddleBio.getText().toString());
         puddleMap.put("isPrivate", String.valueOf(isPrivate.isChecked()));
@@ -211,8 +212,8 @@ public class CreatePuddle extends AppCompatActivity {
         puddleMap.put("Location", location);
 
         HashMap<String, String> members = new HashMap<>();
-        members.put("profile_url", "https://firebasestorage.googleapis.com/v0/b/android-chat-85561.appspot.com/o/1659461577945.jpg?alt=media&token=a6433924-64d3-4b1e-9e3f-b52140976eb3");
-        members.put("username", "HarshitG24");
+        members.put("profile_url", FirebaseDB.currentUser.getProfile_icon());
+        members.put("username", FirebaseDB.currentUser.getUsername());
 
         ref.child(pud_key).setValue(puddleMap);
         ref2.child(pud_key).push().setValue(members);

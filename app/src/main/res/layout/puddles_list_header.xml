@@ -10,13 +10,14 @@
         android:layout_height="@dimen/profile_icon_small"
         android:layout_marginStart="@dimen/margin_large"
         android:layout_marginTop="@dimen/margin_mid"
-        android:src="@drawable/man"
         android:padding="5dp"
+        android:scaleType="fitXY"
+        android:src="@drawable/blank_image"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
         app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.App.RoundedCorners"
         app:strokeColor="@color/black"
-        app:strokeWidth="2dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:strokeWidth="2dp" />
 
     <TextView
         android:id="@+id/puddle_list_header_app_name"

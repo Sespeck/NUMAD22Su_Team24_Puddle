@@ -45,7 +45,7 @@ public class MembersFragment extends Fragment {
         membersRef = FirebaseDB.getDataReference("Members").child(puddleID);
         recyclerView = view.findViewById(R.id.members_recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        recyclerView.hasFixedSize();
+//        recyclerView.hasFixedSize();
         context = getContext();
         initializeRecyclerView();
         return view;
@@ -61,7 +61,7 @@ public class MembersFragment extends Fragment {
                         List<Member> memberList = new ArrayList<>();
                         for (DataSnapshot snap: snapshot.getChildren()) {
                             String username = snap.child("username").getValue(String.class);
-                            String profile_url = snap.child("profile_url").getValue(String.class);
+                            String profile_url = FirebaseDB.allUserData.get(username).getProfile_icon(); //snap.child("profile_url").getValue(String.class);
                             memberList.add(new Member(username,profile_url));
                         }
                         handler.post(() -> {

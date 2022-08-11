@@ -18,6 +18,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
+import com.cs5520.assignments.numad22su_team24_puddle.Model.User;
 import com.cs5520.assignments.numad22su_team24_puddle.Utils.FirebaseDB;
 import com.cs5520.assignments.numad22su_team24_puddle.chatroom_fragments.AboutFragment;
 import com.cs5520.assignments.numad22su_team24_puddle.chatroom_fragments.ChatroomFragment;
@@ -29,7 +30,10 @@ import com.google.android.material.tabs.TabLayout;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
+
+import java.util.HashMap;
 
 public class PuddleChatroomActivity extends AppCompatActivity {
     private TabLayout tabLayout;
@@ -61,6 +65,7 @@ public class PuddleChatroomActivity extends AppCompatActivity {
         toolbar.setNavigationOnClickListener(v -> onBackPressed());
         initializeOnTabSelectedListener();
         this.fab = findViewById(R.id.fab);
+
         if (savedInstanceState != null){
             puddleID = savedInstanceState.getString("puddleID");
             currentTab = tabLayout.getTabAt(savedInstanceState.getInt("current_tab"));
@@ -180,6 +185,7 @@ public class PuddleChatroomActivity extends AppCompatActivity {
 
     public void navigateToSettings(MenuItem item) {
         Intent intent = new Intent(this, SettingsActivity.class);
+        intent.putExtra("PuddleId", puddleID);
         startActivity(intent);
     }
 }

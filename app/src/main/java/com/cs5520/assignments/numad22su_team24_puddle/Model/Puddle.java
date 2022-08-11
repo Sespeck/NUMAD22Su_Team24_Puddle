@@ -1,12 +1,20 @@
 package com.cs5520.assignments.numad22su_team24_puddle.Model;
 
-import android.util.Log;
-
-import com.cs5520.assignments.numad22su_team24_puddle.Category;
+import android.os.Parcelable;
 
 import java.util.HashMap;
 
 public class Puddle {
+    private String id;
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
     private String bannerUrl;
     private String bio;
     private String category;
@@ -19,7 +27,8 @@ public class Puddle {
     public Puddle() {
     }
 
-    public Puddle(String name, String bannerUrl, String bio, String category, String isPrivate, String range, int count, HashMap<String, String> location) {
+    public Puddle(String id, String bannerUrl, String bio, String category, String isPrivate, String name, String range, int count, HashMap<String, String> location) {
+        this.id = id;
         this.bannerUrl = bannerUrl;
         this.bio = bio;
         this.category = category;
@@ -92,5 +101,9 @@ public class Puddle {
 
     public void setRange(String range) {
         this.range = range;
+    }
+
+    public String generatePuddleAppLink() {
+        return "http://puddle-team24-app.com/join/" + this.id;
     }
 }

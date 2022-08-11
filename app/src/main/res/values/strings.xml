@@ -50,5 +50,6 @@
     <string name="google_maps_api_key">AIzaSyDTbzxCT5jOJFnvWSRrQzlMJi97daSIDwg</string>
     <string name="delete">Delete</string>
     <string name="edit">Edit</string>
+    <string name="share_puddle">Share Puddle</string>
 
 </resources>

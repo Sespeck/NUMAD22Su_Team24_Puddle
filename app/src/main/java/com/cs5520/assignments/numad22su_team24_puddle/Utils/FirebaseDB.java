@@ -7,16 +7,12 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 
-import com.cs5520.assignments.numad22su_team24_puddle.MainActivity;
 import com.cs5520.assignments.numad22su_team24_puddle.Model.User;
 import com.cs5520.assignments.numad22su_team24_puddle.ProfileActivity;
-import com.cs5520.assignments.numad22su_team24_puddle.PuddleListActivity;
-import com.cs5520.assignments.numad22su_team24_puddle.R;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseAuthWeakPasswordException;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -32,6 +28,8 @@ public class FirebaseDB {
 
     public static StorageReference storageRef = FirebaseStorage.getInstance().getReference();
     public static User currentUser;
+    public static HashMap<String, User> allUserData;
+
 
     public static FirebaseAuth getInstanceFirebaseAuth() {
         return FirebaseAuth.getInstance();
@@ -45,6 +43,32 @@ public class FirebaseDB {
         return FirebaseDatabase.getInstance().getReference(path);
     }
 
+    public static void fetchAllUsers(){
+        allUserData = new HashMap<>();
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                DatabaseReference ref = FirebaseDB.getDataReference("Users");
+                ref.addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        for(DataSnapshot snap: snapshot.getChildren()){
+                            User user = snap.getValue(User.class);
+                            if(user != null){
+                                allUserData.put(user.getUsername(), user);
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+
+                    }
+                });
+            }
+        }).start();
+    }
+
     public static void registerUser(String email, String password, String username, Context ct) {
         getInstanceFirebaseAuth().createUserWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
             @Override
@@ -54,22 +78,14 @@ public class FirebaseDB {
                     String userid = firebaseUser.getUid();
                     DatabaseReference ref = getDataReference("Users").child(userid);
 
-                    HashMap<String, Object> hashMap = new HashMap<>();
-                    hashMap.put("id", userid);
-                    hashMap.put("username", username);
-                    hashMap.put("display_name", username);
-                    hashMap.put("password", password);
-                    hashMap.put("email", email);
-                    hashMap.put("bio", "");
-                    hashMap.put("profile_icon", "");
-                    hashMap.put("phone_number", "");
+                    User user = new User(userid, username, password, email);
+                    HashMap<String, Object> hashMap = user.getUserMap();
 
                     ref.setValue(hashMap).addOnCompleteListener(new OnCompleteListener<Void>() {
                         @Override
                         public void onComplete(@NonNull Task<Void> task) {
                             if (task.isSuccessful()) {
-                                FirebaseDB.currentUser = new User(userid, username, password, email,
-                                        username, "", "", "", new HashMap<>());
+                                FirebaseDB.currentUser = user;
                                 Intent intent = new Intent(ct, ProfileActivity.class);
                                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
                                 intent.putExtra("new_user","dont_animate_shimmer");

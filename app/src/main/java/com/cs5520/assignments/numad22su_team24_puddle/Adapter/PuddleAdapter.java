@@ -14,6 +14,7 @@ import com.cs5520.assignments.numad22su_team24_puddle.R;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.cs5520.assignments.numad22su_team24_puddle.Utils.FirebaseDB;
 import com.google.android.material.imageview.ShapeableImageView;
 
 import java.util.List;

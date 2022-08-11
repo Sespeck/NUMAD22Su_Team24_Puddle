@@ -62,7 +62,7 @@ public class AboutFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.about_fragment,container,false);
+        View view = inflater.inflate(R.layout.about_fragment, container, false);
         puddleID = getArguments().getString("puddleID");
         this.bioTextView = view.findViewById(R.id.about_tab_bio_text_view);
         this.bannerIcon = view.findViewById(R.id.about_tab_banner_pic);
@@ -93,13 +93,16 @@ public class AboutFragment extends Fragment {
                             if (tags != null) tagsTextView.setText(tags);
                             if (bio != null) bioTextView.setText(bio);
                             if (name != null) puddleName.setText(name);
+                            if (bannerIcon.getBackground() == null) {
                                 Glide.with(getContext()).load(profilePic).into(bannerIcon);
+                            }
                         });
                     }
                 }
                 Thread getUriThread = new Thread(new getUri());
                 getUriThread.start();
             }
+
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
 

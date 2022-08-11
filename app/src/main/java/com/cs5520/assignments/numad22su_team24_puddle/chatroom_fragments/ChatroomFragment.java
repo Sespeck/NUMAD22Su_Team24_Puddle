@@ -169,7 +169,7 @@ public class ChatroomFragment extends Fragment {
                         String id = messageRef.child(puddleID).push().getKey();
                         handler.post(()-> {
                             adapter.addNewMessage(new Message(currentUser.getUsername() ,textResult,Instant.now().toString(),
-                                    currentUser.getProfile_icon(), id, false));
+                                    FirebaseDB.currentUser.getProfile_icon(), id, false));
                             recyclerView.scrollToPosition(adapter.getItemCount()-1);
                             chatEditText.getText().clear();
                         });
@@ -192,8 +192,9 @@ public class ChatroomFragment extends Fragment {
                         List<Message> chatroomList = new ArrayList<>();
                         for (DataSnapshot snap: snapshot.getChildren()){
                             String username = snap.child("username").getValue(String.class);
+                            String profile_url = FirebaseDB.allUserData.get(username).getProfile_icon();
                             String body = snap.child("body").getValue(String.class);
-                            String profile_url = snap.child("profile_url").getValue(String.class);
+//                            String profile_url = snap.child("profile_url").getValue(String.class);
                             String timestamp = Util.convertTocurrentDateTime(snap.child("timestamp").getValue(String.class));
                             Boolean isMessage = snap.child("isMessage").getValue(Boolean.class);
                             chatroomList.add(new Message(username, body, timestamp, profile_url,snap.getKey(),isMessage));
