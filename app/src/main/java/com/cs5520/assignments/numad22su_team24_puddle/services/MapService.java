@@ -3,16 +3,9 @@ package com.cs5520.assignments.numad22su_team24_puddle.services;
 
 import android.util.Log;
 
-import androidx.annotation.NonNull;
-
 import com.cs5520.assignments.numad22su_team24_puddle.Model.Puddle;
 import com.cs5520.assignments.numad22su_team24_puddle.Model.PuddleMarker;
-import com.cs5520.assignments.numad22su_team24_puddle.Utils.FirebaseDB;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -46,7 +39,8 @@ public class MapService {
                     set.getValue().getCategory(),
                     new LatLng(lat, lng),
                     set.getValue().getCount(),
-                    set.getValue().getBannerUrl()));
+                    set.getValue().getBannerUrl(),
+                    set.getValue().getBio()));
         }
         Log.d("MapService", "getPuddleList: "+allPuddlesData.size());
         Log.d("MapService", "getPuddleList: "+puddleList.size());

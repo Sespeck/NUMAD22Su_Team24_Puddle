@@ -22,6 +22,7 @@ import android.view.ViewTreeObserver;
 import android.webkit.MimeTypeMap;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -60,6 +61,8 @@ public class PuddleListActivity extends AppCompatActivity implements View.OnClic
     ImageView navigationIcon;
     ImageView filterIcon;
     Button nearMeBtn, myPuddlesBtn;
+    SearchView puddleSearch;
+    TextView noResultFound;
 
     // Firebase
     FirebaseUser current_user;
@@ -75,9 +78,13 @@ public class PuddleListActivity extends AppCompatActivity implements View.OnClic
     private Uri imageUri;
     private HashMap<String, Puddle> allPuddlesData;
     private HashMap<String, Puddle> myPuddlesData;
+    private HashMap<String, Puddle> myPuddlesDataStored;
+
+    private ArrayList<Puddle> allPuddleList;
+
     private HashMap<Category, List<Puddle>> categoryPuddlesData;
     private ShimmerFrameLayout shimmerFrameLayout;
-    private EventsFragment.endShimmerEffectCallback callback = new EventsFragment.endShimmerEffectCallback(){
+    private EventsFragment.endShimmerEffectCallback callback = new EventsFragment.endShimmerEffectCallback() {
         @Override
         public void onLayoutInflated() {
             handler.postDelayed(new Runnable() {
@@ -96,7 +103,6 @@ public class PuddleListActivity extends AppCompatActivity implements View.OnClic
     }
 
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -105,6 +111,12 @@ public class PuddleListActivity extends AppCompatActivity implements View.OnClic
         allPuddlesData = new HashMap<>();
         categoryPuddlesData = new HashMap<>();
         myPuddlesData = new HashMap<>();
+        myPuddlesDataStored = new HashMap<>();
+        allPuddleList = new ArrayList<>();
+
+        noResultFound = findViewById(R.id.no_result_found);
+        noResultFound.setVisibility(View.GONE);
+
         shimmerFrameLayout = findViewById(R.id.events_shimmer_layout);
         profileIcon = findViewById(R.id.puddle_list_header_profile_icon);
         profileIcon.setOnClickListener(this);
@@ -118,6 +130,33 @@ public class PuddleListActivity extends AppCompatActivity implements View.OnClic
         filterIcon.setOnClickListener(this);
         navigationIcon = findViewById(R.id.header_navigation_icon);
         navigationIcon.setOnClickListener(this);
+        puddleSearch = findViewById(R.id.search);
+        puddleSearch.clearFocus();
+        puddleSearch.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String s) {
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String s) {
+                if(s.equals("")) {
+                    myPuddlesData = myPuddlesDataStored;
+                    puddleListRecyclerView.setLayoutManager(new GridLayoutManager(PuddleListActivity.this, 2));
+                    puddleListRecyclerView.setAdapter(new MyPuddlesAdapter(PuddleListActivity.this, myPuddlesData));
+
+                    if(myPuddlesData.size() == 0){
+                        noResultFound.setVisibility(TextView.VISIBLE);
+                    } else {
+                        noResultFound.setVisibility(TextView.GONE);
+                    }
+                } else {
+                    filterPuddles(s);
+                }
+                return false;
+            }
+        });
+
         // Register for the filter results
         handleFilterResults();
         // Api Calls
@@ -141,7 +180,7 @@ public class PuddleListActivity extends AppCompatActivity implements View.OnClic
                 }
             });
             Util.puddleListPopulated = true;
-        } else{
+        } else {
             shimmerFrameLayout.stopShimmer();
             shimmerFrameLayout.setVisibility(View.GONE);
             puddleListRecyclerView.setVisibility(View.VISIBLE);
@@ -154,6 +193,27 @@ public class PuddleListActivity extends AppCompatActivity implements View.OnClic
         handleAppLink(getIntent());
     }
 
+    public void filterPuddles(String txt){
+        HashMap<String, Puddle> modifiedData = new HashMap<>();
+
+        for(Map.Entry<String, Puddle> map: myPuddlesData.entrySet()){
+            Puddle pud = map.getValue();
+            if(pud.getName().contains(txt)){
+                modifiedData.put(map.getKey(), map.getValue());
+            }
+        }
+
+        puddleListRecyclerView.setLayoutManager(new GridLayoutManager(PuddleListActivity.this, 2));
+        puddleListRecyclerView.setAdapter(new MyPuddlesAdapter(PuddleListActivity.this, modifiedData));
+
+        if(modifiedData.size() == 0){
+            noResultFound.setVisibility(TextView.VISIBLE);
+        } else {
+            noResultFound.setVisibility(TextView.GONE);
+        }
+
+    }
+
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
@@ -164,32 +224,25 @@ public class PuddleListActivity extends AppCompatActivity implements View.OnClic
         String appLinkAction = intent.getAction();
         Uri appLinkData = intent.getData();
         if (Intent.ACTION_VIEW.equals(appLinkAction) && appLinkData != null) {
-//            updateRecyclerView(nearMeBtn);
+//
             String puddleId = appLinkData.getLastPathSegment();
-            Puddle puddle = new Puddle("Puddle 1", "https://firebasestorage.googleapis.com/v0/b/android-chat-85561.appspot.com/o/1659765502514.jpg?alt=media&token=a1b9ff75-682e-499f-99a6-df4148b05358", "Bio 1", Category.EDUCATION.toString(), "false", "10", 5, new HashMap<>());
-            showJoinPuddleDialogue(this, puddle);
+            DatabaseReference puddleRef = FirebaseDB.getDataReference("Puddles").child(puddleId);
+            puddleRef.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    Puddle puddle = snapshot.getValue(Puddle.class);
+                    showJoinPuddleDialogue(PuddleListActivity.this, puddle);
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+
+                }
+            });
+
         }
     }
 
-    private List<List<Puddle>> getPuddleList() {
-        List<List<Puddle>> puddlesList = new ArrayList<>();
-        Bitmap bitmap = BitmapFactory.decodeResource(this.getResources(), R.drawable.puddle);
-        for (Category category : Category.values()) {
-            List<Puddle> puddleArray = new ArrayList<>();
-            puddleArray.add(new Puddle("Puddle 1", "https://firebasestorage.googleapis.com/v0/b/android-chat-85561.appspot.com/o/1659765502514.jpg?alt=media&token=a1b9ff75-682e-499f-99a6-df4148b05358", "Bio 1", Category.EDUCATION.toString(), "false", "10", 5, new HashMap<>()));
-            puddleArray.add(new Puddle("Puddle 1", "https://firebasestorage.googleapis.com/v0/b/android-chat-85561.appspot.com/o/1659765502514.jpg?alt=media&token=a1b9ff75-682e-499f-99a6-df4148b05358", "Bio 1", Category.EDUCATION.toString(), "false", "10", 5, new HashMap<>()));
-            puddleArray.add(new Puddle("Puddle 1", "https://firebasestorage.googleapis.com/v0/b/android-chat-85561.appspot.com/o/1659765502514.jpg?alt=media&token=a1b9ff75-682e-499f-99a6-df4148b05358", "Bio 1", Category.EDUCATION.toString(), "false", "10", 5, new HashMap<>()));
-            puddleArray.add(new Puddle("Puddle 1", "https://firebasestorage.googleapis.com/v0/b/android-chat-85561.appspot.com/o/1659765502514.jpg?alt=media&token=a1b9ff75-682e-499f-99a6-df4148b05358", "Bio 1", Category.EDUCATION.toString(), "false", "10", 5, new HashMap<>()));
-            puddleArray.add(new Puddle("Puddle 1", "https://firebasestorage.googleapis.com/v0/b/android-chat-85561.appspot.com/o/1659765502514.jpg?alt=media&token=a1b9ff75-682e-499f-99a6-df4148b05358", "Bio 1", Category.EDUCATION.toString(), "false", "10", 5, new HashMap<>()));
-            puddleArray.add(new Puddle("Puddle 1", "https://firebasestorage.googleapis.com/v0/b/android-chat-85561.appspot.com/o/1659765502514.jpg?alt=media&token=a1b9ff75-682e-499f-99a6-df4148b05358", "Bio 1", Category.EDUCATION.toString(), "false", "10", 5, new HashMap<>()));
-            puddleArray.add(new Puddle("Puddle 1", "https://firebasestorage.googleapis.com/v0/b/android-chat-85561.appspot.com/o/1659765502514.jpg?alt=media&token=a1b9ff75-682e-499f-99a6-df4148b05358", "Bio 1", Category.EDUCATION.toString(), "false", "10", 5, new HashMap<>()));
-            puddleArray.add(new Puddle("Puddle 1", "https://firebasestorage.googleapis.com/v0/b/android-chat-85561.appspot.com/o/1659765502514.jpg?alt=media&token=a1b9ff75-682e-499f-99a6-df4148b05358", "Bio 1", Category.EDUCATION.toString(), "false", "10", 5, new HashMap<>()));
-            puddleArray.add(new Puddle("Puddle 1", "https://firebasestorage.googleapis.com/v0/b/android-chat-85561.appspot.com/o/1659765502514.jpg?alt=media&token=a1b9ff75-682e-499f-99a6-df4148b05358", "Bio 1", Category.EDUCATION.toString(), "false", "10", 5, new HashMap<>()));
-            puddleArray.add(new Puddle("Puddle 1", "https://firebasestorage.googleapis.com/v0/b/android-chat-85561.appspot.com/o/1659765502514.jpg?alt=media&token=a1b9ff75-682e-499f-99a6-df4148b05358", "Bio 1", Category.EDUCATION.toString(), "false", "10", 5, new HashMap<>()));
-            puddlesList.add(puddleArray);
-        }
-        return puddlesList;
-    }
 
     public void fetchCurrentUserData() {
         FirebaseUser current_user = FirebaseDB.getCurrentUser();
@@ -203,7 +256,9 @@ public class PuddleListActivity extends AppCompatActivity implements View.OnClic
 //                }
                 FirebaseDB.currentUser = snapshot.getValue(User.class);
                 Log.d("currentUser", FirebaseDB.currentUser.toString());
-                Glide.with(PuddleListActivity.this).load(FirebaseDB.currentUser.getProfile_icon()).into(profileIcon);
+                if (!FirebaseDB.currentUser.getProfile_icon().equals("")) {
+                    Glide.with(PuddleListActivity.this).load(FirebaseDB.currentUser.getProfile_icon()).into(profileIcon);
+                }
             }
 
             @Override
@@ -272,6 +327,7 @@ public class PuddleListActivity extends AppCompatActivity implements View.OnClic
     private void updateRecyclerView(View view) {
         // Initializing RecyclerView
         if (view.equals(nearMeBtn)) {
+            puddleSearch.setVisibility(SearchView.GONE);
             if (LocationPermissionActivity.checkLocationPermission(this)) {
                 categorizePuddles();
                 puddleListRecyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -282,6 +338,7 @@ public class PuddleListActivity extends AppCompatActivity implements View.OnClic
                 LocationPermissionActivity.requestPermission(this, REQUEST_CODE_LOCATION_FOR_NEAR_ME);
             }
         } else {
+            puddleSearch.setVisibility(SearchView.VISIBLE);
             puddleListRecyclerView.setLayoutManager(new GridLayoutManager(PuddleListActivity.this, 2));
             puddleListRecyclerView.setAdapter(new MyPuddlesAdapter(PuddleListActivity.this, myPuddlesData));
             setSelectedButton(myPuddlesBtn);
@@ -366,27 +423,76 @@ public class PuddleListActivity extends AppCompatActivity implements View.OnClic
     }
 
     public void showJoinPuddleDialogue(Context context, Puddle puddle) {
-        View layoutView = View.inflate(context, R.layout.puddle_modal, null);
-        AlertDialog dialog = new MaterialAlertDialogBuilder(context).setTitle(puddle.getName()).setView(layoutView).create();
-        TextView tv = layoutView.findViewById(R.id.puddle_modal_name_tv);
-        tv.setText(puddle.getBio());
-        ShapeableImageView image = layoutView.findViewById(R.id.puddle_modal_item_image);
-        Glide.with(context).load(puddle.getBannerUrl()).into(image);
-        MaterialButton button = layoutView.findViewById(R.id.puddle_modal_join_btn);
-        button.setOnClickListener(v -> {
-            dialog.dismiss();
-//            addPuddlesToList("", new Puddles());
 
-            Intent intent = new Intent(context, PuddleChatroomActivity.class);
-            for (String puddleId: allPuddlesData.keySet()) {
-                if (allPuddlesData.get(puddleId) == puddle) {
-                    intent.putExtra("puddleID", puddleId);
-                    break;
+        if(FirebaseDB.currentUser == null){
+            FirebaseUser current_user = FirebaseDB.getCurrentUser();
+            DatabaseReference userRef = FirebaseDB.getDataReference("Users").child(current_user.getUid());
+            userRef.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    FirebaseDB.currentUser = snapshot.getValue(User.class);
+                    if(FirebaseDB.currentUser != null){
+                        showJoinPuddle(context, puddle);
+                    }
                 }
-            }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+
+                }
+            });
+        } else {
+            showJoinPuddle(context, puddle);
+        }
+
+    }
+
+    public void showJoinPuddle(Context context, Puddle puddle){
+
+
+        if (FirebaseDB.currentUser.getMy_puddles() != null  && FirebaseDB.currentUser.getMy_puddles().containsValue(puddle.getId())) {
+            Intent intent = new Intent(PuddleListActivity.this, PuddleChatroomActivity.class);
+            intent.putExtra("puddleID", puddle.getId());
             context.startActivity(intent);
-        });
-        dialog.show();
+        } else {
+            View layoutView = View.inflate(context, R.layout.puddle_modal, null);
+            AlertDialog dialog = new MaterialAlertDialogBuilder(context).setTitle(puddle.getName()).setView(layoutView).create();
+            TextView tv = layoutView.findViewById(R.id.puddle_modal_name_tv);
+            tv.setText(puddle.getBio());
+            ShapeableImageView image = layoutView.findViewById(R.id.puddle_modal_item_image);
+            Glide.with(context).load(puddle.getBannerUrl()).into(image);
+            MaterialButton button = layoutView.findViewById(R.id.puddle_modal_join_btn);
+            button.setOnClickListener(v -> {
+                dialog.dismiss();
+                Intent intent = new Intent(context, PuddleChatroomActivity.class);
+                intent.putExtra("puddleID", puddle.getId());
+                addPuddlesToList(puddle.getId(), puddle);
+                context.startActivity(intent);
+            });
+            dialog.show();
+        }
+    }
+
+    public void addPuddlesToList(String pud_id, Puddle pud) {
+        boolean alreadyJoined = this.myPuddlesData.containsKey(pud_id);
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                // 1. Update the id in my_puddles for user
+                String uid = FirebaseDB.getCurrentUser().getUid();
+                DatabaseReference ref = FirebaseDB.getDataReference("Users").child(uid).child("my_puddles");
+                ref.push().setValue(pud_id);
+
+                // 2. Add Puddle count
+                DatabaseReference pudRef = FirebaseDB.getDataReference("Puddles").child(pud_id).child("count");
+                pudRef.setValue(alreadyJoined ? pud.getCount() : pud.getCount() + 1);
+
+                // 3. Update the members child
+                DatabaseReference memRef = FirebaseDB.getDataReference("Members").child(pud_id);
+                memRef.push().setValue(uid);
+            }
+        }).start();
     }
 
     // To capture all the puddles
@@ -399,6 +505,7 @@ public class PuddleListActivity extends AppCompatActivity implements View.OnClic
                     Puddle puddle = snap.getValue(Puddle.class);
                     if (puddle != null) {
                         allPuddlesData.put(snap.getKey(), puddle);
+                        allPuddleList.add(puddle);
                     }
                 }
                 fetchMyPuddles();
@@ -428,10 +535,17 @@ public class PuddleListActivity extends AppCompatActivity implements View.OnClic
                     if (key != null) {
                         myPuddlesData.put(key, allPuddlesData.get(key));
                     }
+                    myPuddlesDataStored = myPuddlesData;
                     puddleListRecyclerView.setLayoutManager(new GridLayoutManager(PuddleListActivity.this, 2));
                     puddleListRecyclerView.setAdapter(new MyPuddlesAdapter(PuddleListActivity.this, myPuddlesData));
                     setSelectedButton(myPuddlesBtn);
                     setUnselectedButton(nearMeBtn);
+                }
+
+                if(myPuddlesData.size() == 0){
+                    noResultFound.setVisibility(TextView.VISIBLE);
+                } else {
+                    noResultFound.setVisibility(TextView.GONE);
                 }
             }
 

@@ -21,6 +21,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 
+import com.bumptech.glide.Glide;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.imageview.ShapeableImageView;
@@ -28,7 +29,7 @@ import com.cs5520.assignments.numad22su_team24_puddle.Model.PuddleMarker;
 
 public class MapFragment extends Fragment{
     int memberCount;
-    String puddleName;
+    String puddleName, puddleDescription, bannerURL, puddleId;
     TextView mapMemberCount, mapPuddleName;
     ImageView mapPuddleBg, mapOpenPuddleButton;
 
@@ -38,6 +39,9 @@ public class MapFragment extends Fragment{
         MapFragment fragment = new MapFragment();
         fragment.memberCount= puddleMarker.getMemberCount();
         fragment.puddleName= puddleMarker.getName();
+        fragment.bannerURL = puddleMarker.getBackground();
+        fragment.puddleDescription= puddleMarker.getDescription();
+        fragment.puddleId = puddleMarker.getPuddleId();
         return fragment;
     }
 
@@ -64,17 +68,19 @@ public class MapFragment extends Fragment{
                 View layoutView = View.inflate(activity, R.layout.puddle_modal, null);
                 AlertDialog dialog = new MaterialAlertDialogBuilder(activity).setTitle(puddleName).setView(layoutView).create();
                 TextView tv = layoutView.findViewById(R.id.puddle_modal_name_tv);
-                tv.setText("Puddle Description");
+                tv.setText(puddleDescription);
                 ShapeableImageView im = layoutView.findViewById(R.id.puddle_modal_item_image);
-                im.setImageBitmap(BitmapFactory.decodeResource(activity.getResources(),
-                        R.drawable.pub_night));
+                Glide.with(getContext()).load(bannerURL).into(im);
                 MaterialButton button = layoutView.findViewById(R.id.puddle_modal_join_btn);
                 button.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Intent intent = new Intent(activity, PuddleChatroomActivity.class);
-                        activity.startActivity(intent);
-//                       Toast.makeText(getContext(), "You clicked on "+mapPuddleName.getText().toString(), Toast.LENGTH_SHORT).show();
+                        dialog.dismiss();
+
+                        Intent intent = new Intent(getContext(), PuddleChatroomActivity.class);
+                        intent.putExtra("puddleID", puddleId);
+
+                        getContext().startActivity(intent);
                     }
                 });
                 dialog.show();

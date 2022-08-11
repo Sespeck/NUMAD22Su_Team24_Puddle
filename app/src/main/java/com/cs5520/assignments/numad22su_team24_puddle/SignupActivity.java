@@ -13,7 +13,7 @@ import com.google.android.material.textfield.TextInputEditText;
 public class SignupActivity extends AppCompatActivity {
 
     private Button signupBtn;
-    private TextInputEditText emailEditText, usernameEditText, passwordEditText;
+    private TextInputEditText usernameEditText, passwordEditText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -21,7 +21,6 @@ public class SignupActivity extends AppCompatActivity {
         setContentView(R.layout.activity_signup);
 
         signupBtn = findViewById(R.id.register_btn);
-        emailEditText = findViewById(R.id.signup_email_et);
         usernameEditText = findViewById(R.id.signup_username_et);
         passwordEditText = findViewById(R.id.signup_password_et);
 

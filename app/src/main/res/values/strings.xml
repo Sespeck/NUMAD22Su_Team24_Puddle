@@ -53,5 +53,6 @@
     <string name="finance">Finance</string>
     <string name="sports">Sports</string>
     <string name="music">Music</string>
+    <string name="share_puddle">Share Puddle</string>
 
 </resources>

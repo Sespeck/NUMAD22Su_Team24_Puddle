@@ -196,6 +196,7 @@ public class CreatePuddle extends AppCompatActivity {
 
         String pud_key = ref.push().getKey();
         HashMap<String, Object> puddleMap = new HashMap<>();
+        puddleMap.put("id", pud_key);
         puddleMap.put("name", puddleName.getText().toString());
         puddleMap.put("bio", puddleBio.getText().toString());
         puddleMap.put("isPrivate", String.valueOf(isPrivate.isChecked()));

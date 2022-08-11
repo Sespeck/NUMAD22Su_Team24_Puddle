@@ -4,12 +4,22 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
+import androidx.core.content.FileProvider;
 
+import android.Manifest;
 import android.content.ContentResolver;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
+import android.provider.MediaStore;
+import android.telephony.PhoneNumberFormattingTextWatcher;
+import android.telephony.PhoneNumberUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -32,15 +42,18 @@ import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
+import java.io.File;
+import java.net.URI;
 import java.util.HashMap;
 
 public class ProfileActivity extends AppCompatActivity {
 
-    ShapeableImageView profileIcon;
-    TextInputEditText displayET, usernameET, bioET, phoneNumberET;
+    ShapeableImageView profileIcon, cameraBtn;
+    TextInputEditText displayET, bioET, phoneNumberET;
     Button saveBtn;
     Uri imageUri = null;
     String dpUrl = "";
+    File photoFile;
 
     DatabaseReference imgRef;
     StorageReference storeRef;
@@ -53,7 +66,20 @@ public class ProfileActivity extends AppCompatActivity {
                 if (result.getResultCode() == AppCompatActivity.RESULT_OK) {
                     Intent data = result.getData();
                     imageUri = data.getData();
-                    Log.d("here",imageUri.toString());
+                    Log.d("here", imageUri.toString());
+                    profileIcon.setImageURI(imageUri);
+                }
+            }
+    );
+
+    ActivityResultLauncher<Intent> startActivityForResultCamera = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            result -> {
+                if (result.getResultCode() == AppCompatActivity.RESULT_OK) {
+                    Uri uri = Uri.fromFile(photoFile);
+                    // RESIZE BITMAP, see section below
+                    // Load the taken image into a preview
+                    imageUri = uri;
                     profileIcon.setImageURI(imageUri);
                 }
             }
@@ -69,32 +95,64 @@ public class ProfileActivity extends AppCompatActivity {
 
         profileIcon = findViewById(R.id.profile_user_icon);
         displayET = findViewById(R.id.profile_display_name_et);
-        usernameET = findViewById(R.id.profile_username_et);
         bioET = findViewById(R.id.profile_description_et);
         phoneNumberET = findViewById(R.id.profile_phone_number_et);
+        phoneNumberET.addTextChangedListener(new PhoneNumberFormattingTextWatcher());
         saveBtn = findViewById(R.id.profile_save_btn);
+        cameraBtn = findViewById(R.id.profile_camera_icn);
 
         saveBtn.setOnClickListener(v -> saveBtnClick());
         profileIcon.setOnClickListener(v -> setProfileImage());
+        cameraBtn.setOnClickListener(v -> clickCameraBtn());
 
         fillDetails();
 
     }
 
+    private void clickCameraBtn() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
+                == PackageManager.PERMISSION_GRANTED) {
+            Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+            String photoFileName = "photo.jpg";
+            photoFile = getPhotoFileUri(photoFileName);
+            Uri fileProvider = FileProvider.getUriForFile(ProfileActivity.this, "com.cs5520.assignments.numad22su_team24_puddle", photoFile);
+            intent.putExtra(MediaStore.EXTRA_OUTPUT, fileProvider);
+            startActivityForResultCamera.launch(intent);
+        } else {
+            Toast.makeText(this, "Add Camera Permission", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    public File getPhotoFileUri(String fileName) {
+        // Get safe storage directory for photos
+        // Use `getExternalFilesDir` on Context to access package-specific directories.
+        // This way, we don't need to request external read/write runtime permissions.
+        File mediaStorageDir = new File(getExternalFilesDir(Environment.DIRECTORY_PICTURES), "Puddle");
+
+        // Create the storage directory if it does not exist
+        if (!mediaStorageDir.exists() && !mediaStorageDir.mkdirs()){
+            Log.d("Puddle", "failed to create directory");
+        }
+
+        // Return the file target for the photo based on filename
+        File file = new File(mediaStorageDir.getPath() + File.separator + fileName);
+
+        return file;
+    }
+
     private void setProfileImage() {
-            Intent gallery = new Intent();
-            gallery.setAction(Intent.ACTION_GET_CONTENT);
-            gallery.setType("image/*");
-            startActivityForResult.launch(gallery);
+        Intent gallery = new Intent();
+        gallery.setAction(Intent.ACTION_GET_CONTENT);
+        gallery.setType("image/*");
+        startActivityForResult.launch(gallery);
     }
 
     private void fillDetails() {
         displayET.setText(FirebaseDB.currentUser.getDisplay_name());
-        usernameET.setText(FirebaseDB.currentUser.getUsername());
         bioET.setText(FirebaseDB.currentUser.getBio());
         phoneNumberET.setText(FirebaseDB.currentUser.getPhone_number());
 
-        if(!FirebaseDB.currentUser.getProfile_icon().equals("")){
+        if (!FirebaseDB.currentUser.getProfile_icon().equals("")) {
             dpUrl = FirebaseDB.currentUser.getProfile_icon();
             Glide.with(ProfileActivity.this).load(dpUrl).into(profileIcon);
         }
@@ -102,32 +160,26 @@ public class ProfileActivity extends AppCompatActivity {
 
     private void saveBtnClick() {
         apiBar.showDialog();
-        if(imageUri != null){
+        if (imageUri != null) {
             uploadImageToStore(imageUri);
         } else {
             uploadDataToFB();
         }
     }
 
-    public void uploadDataToFB(){
+    public void uploadDataToFB() {
         DatabaseReference ref = FirebaseDB.getDataReference("Users").child(FirebaseDB.currentUser.getId());
-        HashMap<String, Object> hashMap = new HashMap<>();
-        HashMap<String, Object> myPud = new HashMap<>();
+        HashMap<String, Object> hashMap = FirebaseDB.currentUser.getUserMap();
 
-        hashMap.put("id", FirebaseDB.currentUser.getId());
-        hashMap.put("username", FirebaseDB.currentUser.getUsername());
-        hashMap.put("password", FirebaseDB.currentUser.getPassword());
-        hashMap.put("email", FirebaseDB.currentUser.getEmail());
         hashMap.put("display_name", displayET.getText().toString());
         hashMap.put("bio", bioET.getText().toString());
         hashMap.put("phone_number", phoneNumberET.getText().toString());
         hashMap.put("profile_icon", dpUrl);
-        hashMap.put("my_puddles", FirebaseDB.currentUser.getMy_puddles());
 
         ref.setValue(hashMap).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
-                apiHandler.post(()->{
+                apiHandler.post(() -> {
                     apiBar.dismissBar();
                 });
 
@@ -165,7 +217,7 @@ public class ProfileActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    public void uploadImageToStore(Uri uri){
+    public void uploadImageToStore(Uri uri) {
         StorageReference ref = FirebaseDB.storageRef.child(System.currentTimeMillis() + "." + getFileExtension(uri));
         ref.putFile(uri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
             @Override
@@ -179,10 +231,10 @@ public class ProfileActivity extends AppCompatActivity {
                             public void run() {
                                 dpUrl = uri.toString();
 
-                                if(dpUrl != null || dpUrl != ""){
+                                if (dpUrl != null || dpUrl != "") {
                                     uploadDataToFB();
                                 } else {
-                                    apiHandler.post(()->{
+                                    apiHandler.post(() -> {
                                         apiBar.dismissBar();
                                     });
                                     Toast.makeText(ProfileActivity.this, "Error sending image to Store", Toast.LENGTH_SHORT).show();
