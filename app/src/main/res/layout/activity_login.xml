@@ -76,6 +76,7 @@
                 android:id="@+id/login_password_et"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:inputType="textPassword"
                 android:textSize="@dimen/font_size_mid"
                 android:textStyle="bold" />
 
