@@ -69,6 +69,7 @@ public class PuddleChatroomActivity extends AppCompatActivity {
         if (savedInstanceState != null){
             puddleID = savedInstanceState.getString("puddleID");
             currentTab = tabLayout.getTabAt(savedInstanceState.getInt("current_tab"));
+            Log.d("current_tab",String.valueOf(currentTab.getPosition()));
             tabLayout.selectTab(currentTab);
             completeFragmentNavigation(currentTab,0);
         }

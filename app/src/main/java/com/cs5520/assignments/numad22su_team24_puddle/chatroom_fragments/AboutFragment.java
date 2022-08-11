@@ -48,6 +48,7 @@ public class AboutFragment extends Fragment {
     private ShimmerFrameLayout shimmerFrameLayout;
     private final String FRAGMENT_ID = "2";
     private CardView cardView;
+    private String profilePicUri;
     private EventsFragment.endShimmerEffectCallback callback = new EventsFragment.endShimmerEffectCallback(){
         @Override
         public void onLayoutInflated() {
@@ -70,6 +71,13 @@ public class AboutFragment extends Fragment {
         this.puddleName = view.findViewById(R.id.about_puddle_name);
         this.shimmerFrameLayout = view.findViewById(R.id.about_shimmer_frame_layout);
         this.cardView = view.findViewById(R.id.about_card_view);
+        if (savedInstanceState != null) {
+            tagsTextView.setText(savedInstanceState.getString("tags"));
+            bioTextView.setText(savedInstanceState.getString("bio"));
+            puddleName.setText(savedInstanceState.getString("name"));
+            profilePicUri = savedInstanceState.getString("profile_pic_uri");
+            Glide.with(requireContext()).load(profilePicUri).into(bannerIcon);
+        }
         if (!Util.renderShimmerEffect.containsKey(Util.generateShimmerEffectID(FirebaseDB.currentUser.getUsername(),puddleID,FRAGMENT_ID))){
             callback.onLayoutInflated();
             Util.renderShimmerEffect.put(Util.generateShimmerEffectID(FirebaseDB.currentUser.getUsername(),puddleID,FRAGMENT_ID),true);
@@ -93,8 +101,9 @@ public class AboutFragment extends Fragment {
                             if (tags != null) tagsTextView.setText(tags);
                             if (bio != null) bioTextView.setText(bio);
                             if (name != null) puddleName.setText(name);
-                            if (bannerIcon.getBackground() == null) {
-                                Glide.with(getContext()).load(profilePic).into(bannerIcon);
+                            if (bannerIcon.getBackground() == null && isAdded()) {
+                                profilePicUri = profilePic;
+                                Glide.with(requireContext()).load(profilePic).into(bannerIcon);
                             }
                         });
                     }
@@ -109,5 +118,14 @@ public class AboutFragment extends Fragment {
             }
         });
         return view;
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        if (tagsTextView.getText() != null) outState.putString("tags", tagsTextView.getText().toString());
+        if (bioTextView.getText() != null) outState.putString("bio", bioTextView.getText().toString());
+        if (puddleName.getText() != null) outState.putString("name", bioTextView.getText().toString());
+        if (profilePicUri != null) outState.putString("profile_pic_uri", profilePicUri);
+        super.onSaveInstanceState(outState);
     }
 }

@@ -47,44 +47,19 @@
                 android:src="@drawable/category_icon" />
 
 
-            <Spinner
-                android:id="@+id/category_modal_text"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="start|center"
-                android:textSize="32sp" />
+                <!-- text view to display selected items-->
+                <TextView
+                    android:textAlignment="textStart"
+                    android:textSize="28sp"
+                    android:id="@+id/filter_by_category_view"
+                    android:layout_width="300sp"
+                    android:layout_height="wrap_content"
+                    android:drawablePadding="16dp"
+                    android:text="Filter By Category"
+                    app:drawableRightCompat="@android:drawable/arrow_down_float" />
 
 
-            <ImageView
-                android:id="@+id/dates_bottom_modal_icon"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="start|center"
-                android:src="@drawable/calendar_icon" />
 
-            <TextView
-                android:id="@+id/start_dates_bottom_modal_text_view"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="start|center"
-                android:text="@string/start_date"
-                android:textSize="32sp" />
-
-            <ImageView
-                android:id="@+id/filler"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="start|center"
-                android:src="@drawable/calendar_icon"
-                android:visibility="invisible" />
-
-            <TextView
-                android:id="@+id/end_date_bottom_modal_text_view"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="start|center"
-                android:text="End Date"
-                android:textSize="32sp" />
 
             <ImageView
                 android:id="@+id/location_bottom_modal_img"

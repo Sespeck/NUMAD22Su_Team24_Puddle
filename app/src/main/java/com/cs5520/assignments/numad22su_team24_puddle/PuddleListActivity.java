@@ -47,6 +47,7 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.StorageReference;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -277,24 +278,9 @@ public class PuddleListActivity extends AppCompatActivity implements View.OnClic
         getSupportFragmentManager().setFragmentResultListener("filter_result", this,
                 ((requestKey, result) -> {
                     // result extras can be null if user didn't select them
-                    if (result.getString("start_date") != null && result.getString("end_date") != null) {
-                        String startDate = result.getString("start_date");
-                        String endDate = result.getString("end_date");
-                    }
-                    Category category = null;
-                    if (result.getString("category") != null) {
-                        switch (result.getString("category")) {
-                            case "Music":
-                                category = Category.MUSIC;
-                                break;
-                            case "Finance":
-                                category = Category.FINANCE;
-                                break;
-                            case "Travel":
-                                category = Category.TRAVEL;
-                            case "Education":
-                                category = Category.EDUCATION;
-                        }
+                    if (result.getStringArrayList("selected_categories") != null){
+                        ArrayList<String> selectedCategories = result.getStringArrayList("selected_categories");
+                        Log.d("here", selectedCategories.toString());
                     }
                     double distance = result.getDouble("distance");
                 }));

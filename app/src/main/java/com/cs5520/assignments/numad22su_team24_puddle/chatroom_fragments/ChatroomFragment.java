@@ -84,10 +84,9 @@ public class ChatroomFragment extends Fragment {
                     class PushNewMsgToDB implements Runnable {
                         @Override
                         public void run() {
-
                             String id = messageRef.child(puddleID).push().getKey();
                             handler.post(() -> {
-                                Message newmsg = adapter.addNewImg(new Message(currentUser.getUsername(), imageUri.toString(), Instant.now().toString(),
+                                adapter.addNewMessage(new Message(currentUser.getUsername(), imageUri.toString(), Instant.now().toString(),
                                         currentUser.getProfile_icon(), id, true));
                                 recyclerView.scrollToPosition(adapter.getItemCount() - 1);
                             });
