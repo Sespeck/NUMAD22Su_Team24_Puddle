@@ -1,8 +1,6 @@
 package com.cs5520.assignments.numad22su_team24_puddle.Model;
 
-import android.util.Log;
-
-import com.cs5520.assignments.numad22su_team24_puddle.Category;
+import android.os.Parcelable;
 
 import java.util.HashMap;
 
@@ -103,5 +101,9 @@ public class Puddle {
 
     public void setRange(String range) {
         this.range = range;
+    }
+
+    public String generatePuddleAppLink() {
+        return "http://puddle-team24-app.com/join/" + this.id;
     }
 }

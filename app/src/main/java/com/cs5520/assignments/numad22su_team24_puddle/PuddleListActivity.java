@@ -84,7 +84,7 @@ public class PuddleListActivity extends AppCompatActivity implements View.OnClic
 
     private HashMap<Category, List<Puddle>> categoryPuddlesData;
     private ShimmerFrameLayout shimmerFrameLayout;
-    private EventsFragment.endShimmerEffectCallback callback = new EventsFragment.endShimmerEffectCallback(){
+    private EventsFragment.endShimmerEffectCallback callback = new EventsFragment.endShimmerEffectCallback() {
         @Override
         public void onLayoutInflated() {
             handler.postDelayed(new Runnable() {
@@ -101,7 +101,6 @@ public class PuddleListActivity extends AppCompatActivity implements View.OnClic
     public interface endShimmerEffectCallback {
         void onLayoutInflated();
     }
-
 
 
     @Override
@@ -181,7 +180,7 @@ public class PuddleListActivity extends AppCompatActivity implements View.OnClic
                 }
             });
             Util.puddleListPopulated = true;
-        } else{
+        } else {
             shimmerFrameLayout.stopShimmer();
             shimmerFrameLayout.setVisibility(View.GONE);
             puddleListRecyclerView.setVisibility(View.VISIBLE);
@@ -225,10 +224,22 @@ public class PuddleListActivity extends AppCompatActivity implements View.OnClic
         String appLinkAction = intent.getAction();
         Uri appLinkData = intent.getData();
         if (Intent.ACTION_VIEW.equals(appLinkAction) && appLinkData != null) {
-//            updateRecyclerView(nearMeBtn);
+//
             String puddleId = appLinkData.getLastPathSegment();
-            Puddle puddle = allPuddlesData.get(puddleId);
-            showJoinPuddleDialogue(this, puddle);
+            DatabaseReference puddleRef = FirebaseDB.getDataReference("Puddles").child(puddleId);
+            puddleRef.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    Puddle puddle = snapshot.getValue(Puddle.class);
+                    showJoinPuddleDialogue(PuddleListActivity.this, puddle);
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+
+                }
+            });
+
         }
     }
 
@@ -245,7 +256,9 @@ public class PuddleListActivity extends AppCompatActivity implements View.OnClic
 //                }
                 FirebaseDB.currentUser = snapshot.getValue(User.class);
                 Log.d("currentUser", FirebaseDB.currentUser.toString());
-                Glide.with(PuddleListActivity.this).load(FirebaseDB.currentUser.getProfile_icon()).into(profileIcon);
+                if (!FirebaseDB.currentUser.getProfile_icon().equals("")) {
+                    Glide.with(PuddleListActivity.this).load(FirebaseDB.currentUser.getProfile_icon()).into(profileIcon);
+                }
             }
 
             @Override
@@ -411,7 +424,33 @@ public class PuddleListActivity extends AppCompatActivity implements View.OnClic
 
     public void showJoinPuddleDialogue(Context context, Puddle puddle) {
 
-        if(myPuddlesData.containsKey(puddle.getId())){
+        if(FirebaseDB.currentUser == null){
+            FirebaseUser current_user = FirebaseDB.getCurrentUser();
+            DatabaseReference userRef = FirebaseDB.getDataReference("Users").child(current_user.getUid());
+            userRef.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    FirebaseDB.currentUser = snapshot.getValue(User.class);
+                    if(FirebaseDB.currentUser != null){
+                        showJoinPuddle(context, puddle);
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+
+                }
+            });
+        } else {
+            showJoinPuddle(context, puddle);
+        }
+
+    }
+
+    public void showJoinPuddle(Context context, Puddle puddle){
+
+
+        if (FirebaseDB.currentUser.getMy_puddles() != null  && FirebaseDB.currentUser.getMy_puddles().containsValue(puddle.getId())) {
             Intent intent = new Intent(PuddleListActivity.this, PuddleChatroomActivity.class);
             intent.putExtra("puddleID", puddle.getId());
             context.startActivity(intent);
@@ -432,11 +471,9 @@ public class PuddleListActivity extends AppCompatActivity implements View.OnClic
             });
             dialog.show();
         }
-
-
     }
 
-    public void addPuddlesToList(String pud_id, Puddle pud){
+    public void addPuddlesToList(String pud_id, Puddle pud) {
         boolean alreadyJoined = this.myPuddlesData.containsKey(pud_id);
 
         new Thread(new Runnable() {
