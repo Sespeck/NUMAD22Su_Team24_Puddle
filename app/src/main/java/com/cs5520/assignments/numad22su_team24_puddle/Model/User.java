@@ -135,7 +135,6 @@ public class User {
 
     public HashMap<String, Object> getUserMap() {
         HashMap<String, Object> hashMap = new HashMap<>();
-        this.my_puddles = new HashMap<>();
         hashMap.put("id", this.id);
         hashMap.put("username", this.username);
         hashMap.put("display_name", this.username);
