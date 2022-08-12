@@ -54,6 +54,7 @@ public class CreatePuddle extends AppCompatActivity {
 
 
     private double lat =0.0 , lng = 0.0;
+    boolean takeCurrentLoc = true;
 
 //    FusedLocationProviderClient fusedLocationProviderClient;
 
@@ -76,7 +77,6 @@ public class CreatePuddle extends AppCompatActivity {
     Handler apiHandler = new Handler();
     double selectedRange = 0.0;
     final ApiLoaderBar apiBar = new ApiLoaderBar(CreatePuddle.this);
-    double latitude = 0.0, longitude = 0.0;
     String address = "";
 
     ActivityResultLauncher<Intent> startActivityForResult = registerForActivityResult(
@@ -96,8 +96,8 @@ public class CreatePuddle extends AppCompatActivity {
                 if (result.getResultCode() == AppCompatActivity.RESULT_OK) {
                     Intent data = result.getData();
                     Bundle bundle = data.getExtras();
-                    latitude = bundle.getDouble("latitude");
-                    longitude= bundle.getDouble("longitude");
+                    lat = bundle.getDouble("latitude");
+                    lng= bundle.getDouble("longitude");
                     address = bundle.getString("selectedLocation");
 
                     selectedLoc.setText(address);
@@ -150,7 +150,6 @@ public class CreatePuddle extends AppCompatActivity {
 
             @Override
             public void onStopTrackingTouch(@NonNull Slider slider) {
-                Log.i("chanegd value", String.valueOf(slider.getValue()));
                 selectedRange = slider.getValue();
                 rangeVal.setText(String.valueOf(slider.getValue()) + "m");
             }
@@ -160,7 +159,11 @@ public class CreatePuddle extends AppCompatActivity {
     public void makeApiCalls(View view){
         if(checkValues()){
             apiBar.showDialog();
-            getLocation();
+            if(!takeCurrentLoc){
+                uploadImageToStore(imgUri);
+            } else {
+                getLocation();
+            }
         } else {
             Toast.makeText(this, "Please provide all values to proceed", Toast.LENGTH_SHORT).show();
         }
@@ -320,12 +323,14 @@ public class CreatePuddle extends AppCompatActivity {
         switch(view.getId()) {
             case R.id.current_loc:
                 if (checked){
+                    takeCurrentLoc = true;
                     selectedLoc.setText("Puddle Location");
                     locationLayout.setVisibility(View.GONE);
                 }
                     break;
             case R.id.custom_loc:
                 if (checked){
+                    takeCurrentLoc = false;
                     locationLayout.setVisibility(View.VISIBLE);
                 }
                     break;
