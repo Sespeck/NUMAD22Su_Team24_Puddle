@@ -609,7 +609,6 @@ public class PuddleListActivity extends AppCompatActivity implements View.OnClic
                             double lat = location.getLatitude();
                             double lng = location.getLongitude();
                             List<Puddle> filteredPuddles = new ArrayList<>(allPuddleList);
-                            List<String> categories = new ArrayList<>();
                             filteredPuddles = FilterService.filteredPuddles(filteredPuddles, filteredDistance * 1609.34, lat, lng, filteredCategories, true, "100");
                             categorizePuddles(filteredPuddles);
                             filterHandler.post(() -> {

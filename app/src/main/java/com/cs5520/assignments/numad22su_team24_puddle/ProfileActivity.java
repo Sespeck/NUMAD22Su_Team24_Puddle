@@ -263,6 +263,4 @@ public class ProfileActivity extends AppCompatActivity {
         MimeTypeMap mime = MimeTypeMap.getSingleton();
         return mime.getExtensionFromMimeType(cr.getType(muri));
     }
-
-
 }

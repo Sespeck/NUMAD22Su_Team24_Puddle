@@ -62,20 +62,30 @@ public class BottomFilterModal extends BottomSheetDialogFragment {
         filterByCategory = view.findViewById(R.id.filter_by_category_view);
         membershipSpinner = view.findViewById(R.id.membership_spinner);
         globalSwitch = view.findViewById(R.id.global_switch);
-        categories = new String[]{"Music", "Sports", "Finance", "Travel", "Education"};
+        List<String> allCategories = Category.getCategoryNames();
+        categories = new String[allCategories.size()];
+        for (int i = 0; i < allCategories.size(); i++) {
+            categories[i] = allCategories.get(i);
+        }
         boolean[] selectedCategory = new boolean[categories.length];
         spinnerMap = new HashMap<>();
         initalizeSpinnerAdapter(membershipSpinner);
 
         selectedCategoryIndexes = new ArrayList<>();
 
+        for (int i = 0; i < categories.length; i++) {
+            if (filteredCategories.contains(categories[i])) {
+                selectedCategoryIndexes.add(i);
+            }
+        }
+
         globalSwitch.setChecked(filteredGlobal);
 
         this.slider = view.findViewById(R.id.slider_filter);
         slider.setValues((float) distanceResults);
 
-        for (String key: spinnerMap.keySet()) {
-            if(spinnerMap.get(key) == filteredMembership) {
+        for (String key : spinnerMap.keySet()) {
+            if (spinnerMap.get(key) == filteredMembership) {
                 membershipFilterResults = key;
                 break;
             }
@@ -86,7 +96,7 @@ public class BottomFilterModal extends BottomSheetDialogFragment {
             public void onClick(View view) {
                 // initialize selected language array
                 boolean[] selectedCategory = new boolean[categories.length];
-                for(int i: selectedCategoryIndexes) {
+                for (int i : selectedCategoryIndexes) {
                     selectedCategory[i] = true;
                 }
                 AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
