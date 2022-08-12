@@ -170,7 +170,6 @@ public class ChatroomFragment extends Fragment {
                             adapter.addNewMessage(new Message(currentUser.getUsername() ,textResult,Instant.now().toString(),
                                     FirebaseDB.currentUser.getProfile_icon(), id, false));
                             recyclerView.scrollToPosition(adapter.getItemCount()-1);
-                            notification.createNotification(currentUser.getUsername(),textResult,0);
                             chatEditText.getText().clear();
                         });
                         messageRef.child(puddleID).push().setValue(newMessage);
@@ -198,6 +197,9 @@ public class ChatroomFragment extends Fragment {
                             String timestamp = Util.convertTocurrentDateTime(snap.child("timestamp").getValue(String.class));
                             Boolean isMessage = snap.child("isMessage").getValue(Boolean.class);
                             chatroomList.add(new Message(username, body, timestamp, profile_url,snap.getKey(),isMessage));
+//                            if (!username.equals(FirebaseDB.currentUser.getUsername()) && !Util.isForeground) {
+//                                notification.createNotification(currentUser.getUsername(), body, FirebaseDB.currentUser.getProfile_icon(), 0);
+//                            }
                         }
                         handler.post(()->{
                             adapter = new ChatroomAdapter(chatroomList,getContext(), messageRef.child(puddleID));
@@ -264,15 +266,15 @@ public class ChatroomFragment extends Fragment {
         return mime.getExtensionFromMimeType(cr.getType(muri));
     }
 
-    @Override
-    public void onStart() {
-        Util.isForeground = true;
-        super.onStart();
-    }
-
-    @Override
-    public void onStop() {
-        Util.isForeground = false;
-        super.onStop();
-    }
+//    @Override
+//    public void onStart() {
+//        Util.isForeground = true;
+//        super.onStart();
+//    }
+//
+//    @Override
+//    public void onStop() {
+//        Util.isForeground = false;
+//        super.onStop();
+//    }
 }

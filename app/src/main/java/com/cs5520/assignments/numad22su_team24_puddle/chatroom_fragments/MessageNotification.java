@@ -7,12 +7,18 @@ import android.app.PendingIntent;
 import android.app.TaskStackBuilder;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
+import android.graphics.drawable.Drawable;
 import android.os.Build;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
+import androidx.core.graphics.drawable.IconCompat;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.target.CustomTarget;
+import com.bumptech.glide.request.transition.Transition;
 import com.cs5520.assignments.numad22su_team24_puddle.PuddleChatroomActivity;
 import com.cs5520.assignments.numad22su_team24_puddle.R;
 
@@ -28,24 +34,38 @@ public class MessageNotification {
     }
 
 
-    public void createNotification(String username, String body, int id){
-        Intent notifyIntent = new Intent(activity, PuddleChatroomActivity.class);
-        notifyIntent.putExtra("username", username);
-        notifyIntent.putExtra("body", body);
-        TaskStackBuilder stackBuilder = TaskStackBuilder.create(activity);
-        stackBuilder.addNextIntentWithParentStack(notifyIntent);
-        PendingIntent notifyPendingIntent =
-                stackBuilder.getPendingIntent(0,
-                        PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
-        NotificationCompat.Builder builder = new
-                NotificationCompat.Builder(activity, CHANNEL_1_ID)
-                .setContentTitle(username).setAutoCancel(true).
-                setContentText(body).setContentIntent(notifyPendingIntent).setSmallIcon(R.drawable.puddle).
-                setPriority(NotificationCompat.PRIORITY_DEFAULT);
-        NotificationManagerCompat notificationManager =
-                NotificationManagerCompat.from(activity);
-        notificationManager.notify(NOTIFICATION_ID,builder.build());
+    public void createNotification(String username, String body, String profileUri, int id) {
+        Glide.with(activity)
+                .asBitmap()
+                .load(profileUri)
+                .into(new CustomTarget<Bitmap>() {
+                    @Override
+                    public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
+                        Intent notifyIntent = new Intent(activity, PuddleChatroomActivity.class);
+                        notifyIntent.putExtra("username", username);
+                        notifyIntent.putExtra("body", body);
+
+                        TaskStackBuilder stackBuilder = TaskStackBuilder.create(activity);
+                        stackBuilder.addNextIntentWithParentStack(notifyIntent);
+                        PendingIntent notifyPendingIntent =
+                                stackBuilder.getPendingIntent(0,
+                                        PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
+                        NotificationCompat.Builder builder = new
+                                NotificationCompat.Builder(activity, CHANNEL_1_ID)
+                                .setContentTitle(username).setAutoCancel(true).setColor(0x9C27B0).setSmallIcon(R.drawable.notification).
+                                setContentText(body).setContentIntent(notifyPendingIntent).setLargeIcon(resource).
+                                setPriority(NotificationCompat.PRIORITY_DEFAULT);
+                        NotificationManagerCompat notificationManager =
+                                NotificationManagerCompat.from(activity);
+                        notificationManager.notify(NOTIFICATION_ID, builder.build());
+                    }
+
+                    @Override
+                    public void onLoadCleared(@Nullable Drawable placeholder) {
+                    }
+                });
     }
+
 
     /**
      * Registers a notification channel. Necessary so phones running newer APIs
