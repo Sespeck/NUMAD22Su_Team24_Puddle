@@ -42,8 +42,6 @@ public class MapService {
                     set.getValue().getBannerUrl(),
                     set.getValue().getBio()));
         }
-        Log.d("MapService", "getPuddleList: "+allPuddlesData.size());
-        Log.d("MapService", "getPuddleList: "+puddleList.size());
         return puddleList;
     }
 

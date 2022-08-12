@@ -57,6 +57,7 @@ public class MapFragment extends Fragment{
         mapMemberCount= view.findViewById(R.id.map_member_count);
         mapPuddleName= view.findViewById(R.id.map_puddle_name);
         mapPuddleBg= view.findViewById(R.id.map_puddle_bg);
+        Glide.with(getContext()).load(bannerURL).centerCrop().into(mapPuddleBg);
         mapOpenPuddleButton= view.findViewById(R.id.map_open_puddle_button);
 
         mapMemberCount.setText(String.valueOf(memberCount));
@@ -70,7 +71,7 @@ public class MapFragment extends Fragment{
                 TextView tv = layoutView.findViewById(R.id.puddle_modal_name_tv);
                 tv.setText(puddleDescription);
                 ShapeableImageView im = layoutView.findViewById(R.id.puddle_modal_item_image);
-                Glide.with(getContext()).load(bannerURL).into(im);
+                Glide.with(getContext()).load(bannerURL). into(im);
                 MaterialButton button = layoutView.findViewById(R.id.puddle_modal_join_btn);
                 button.setOnClickListener(new View.OnClickListener() {
                     @Override
