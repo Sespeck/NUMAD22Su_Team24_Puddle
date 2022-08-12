@@ -241,9 +241,9 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
 
 
-   public void testSelectLocation(View v){
-        startActivity(new Intent(this,SelectLocation.class));
-   }
+//   public void testSelectLocation(View v){
+//        startActivity(new Intent(this,SelectLocation.class));
+//   }
 
     public void fetchAllPuddles() {DatabaseReference pudRef = FirebaseDB.getDataReference("Puddles");
 
