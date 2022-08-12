@@ -44,12 +44,17 @@ public class FilterService {
         return puddleList.filter(x -> !Boolean.parseBoolean(x.getIsGlobal()) || globalSwitch);
     }
 
+    public static Stream<Puddle> privateFilter(Stream<Puddle> puddleList) {
+        return puddleList.filter(x -> !Boolean.parseBoolean(x.getIsPrivate()));
+    }
+
     public static List<Puddle> filteredPuddles(List<Puddle> puddleList, double range, double currentLat, double currentLong, List<String> categories, boolean globalSwitch, int memberCount) {
         return
                 selectedMemberCount(
                         selectedCategoryPuddles(
                                 withinRangePuddles(
-                                        isGlobalPuddles(puddleList.stream(), globalSwitch)
+                                        isGlobalPuddles(privateFilter(puddleList.stream())
+                                                , globalSwitch)
                                         , range, currentLat, currentLong)
                                 , categories)
                         , memberCount)

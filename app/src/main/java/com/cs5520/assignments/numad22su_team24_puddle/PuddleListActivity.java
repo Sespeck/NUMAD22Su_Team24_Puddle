@@ -155,18 +155,31 @@ public class PuddleListActivity extends AppCompatActivity implements View.OnClic
 
             @Override
             public boolean onQueryTextChange(String s) {
-                if (s.equals("")) {
-                    myPuddlesData = myPuddlesDataStored;
-                    puddleListRecyclerView.setLayoutManager(new GridLayoutManager(PuddleListActivity.this, 2));
-                    puddleListRecyclerView.setAdapter(new MyPuddlesAdapter(PuddleListActivity.this, myPuddlesData));
+                if(currentView == myPuddlesBtn){
+                    // my puddles
+                    if (s.equals("")) {
+                        myPuddlesData = myPuddlesDataStored;
+                        puddleListRecyclerView.setLayoutManager(new GridLayoutManager(PuddleListActivity.this, 2));
+                        puddleListRecyclerView.setAdapter(new MyPuddlesAdapter(PuddleListActivity.this, myPuddlesData));
 
-                    if (myPuddlesData.size() == 0) {
-                        noResultFound.setVisibility(TextView.VISIBLE);
+                        if (myPuddlesData.size() == 0) {
+                            noResultFound.setVisibility(TextView.VISIBLE);
+                        } else {
+                            noResultFound.setVisibility(TextView.GONE);
+                        }
                     } else {
-                        noResultFound.setVisibility(TextView.GONE);
+                        filterPuddles(s.toLowerCase());
                     }
                 } else {
-                    filterPuddles(s);
+                    // near me
+                    if(s.equals("")){
+                        puddleListRecyclerView.setLayoutManager(new LinearLayoutManager(PuddleListActivity.this));
+                        puddleListRecyclerView.setAdapter(new PuddleListAdapter(PuddleListActivity.this, categoryPuddlesData));
+//            setSelectedButton(nearMeBtn);
+//            setUnselectedButton(myPuddlesBtn);
+                    } else {
+                        filterNearMeData(s.toLowerCase());
+                    }
                 }
                 return false;
             }
@@ -225,12 +238,36 @@ public class PuddleListActivity extends AppCompatActivity implements View.OnClic
         });
     }
 
+    public void filterNearMeData(String txt){
+        HashMap<Category, List<Puddle>> modifiedCategoryPuddlesData = new HashMap<>();
+
+        for(Map.Entry<Category, List<Puddle>> pud: categoryPuddlesData.entrySet()){
+            Category cat = pud.getKey();
+            List<Puddle> list = pud.getValue();
+            List<Puddle> modifiedList = new ArrayList<>();
+
+            for(Puddle puddle: list){
+                if(puddle.getName().toLowerCase().contains(txt)){
+                    modifiedList.add(puddle);
+                }
+            }
+
+            modifiedCategoryPuddlesData.put(cat, modifiedList);
+
+            puddleListRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+            puddleListRecyclerView.setAdapter(new PuddleListAdapter(this, modifiedCategoryPuddlesData));
+//            setSelectedButton(nearMeBtn);
+//            setUnselectedButton(myPuddlesBtn);
+
+        }
+    }
+
     public void filterPuddles(String txt) {
         HashMap<String, Puddle> modifiedData = new HashMap<>();
 
         for (Map.Entry<String, Puddle> map : myPuddlesData.entrySet()) {
             Puddle pud = map.getValue();
-            if (pud.getName().contains(txt)) {
+            if (pud.getName().toLowerCase().contains(txt)) {
                 modifiedData.put(map.getKey(), map.getValue());
             }
         }
@@ -346,6 +383,8 @@ public class PuddleListActivity extends AppCompatActivity implements View.OnClic
     }
 
     private void updateRecyclerView() {
+        puddleSearch.clearFocus();
+        puddleSearch.setQuery("", false);
         // Initializing RecyclerView
         if (currentView.equals(nearMeBtn)) {
 //            puddleSearch.setVisibility(SearchView.INVISIBLE);
