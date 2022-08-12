@@ -48,12 +48,18 @@ public class PuddleListAdapter extends RecyclerView.Adapter<PuddleListAdapter.Pu
     @Override
     public void onBindViewHolder(@NonNull PuddleListAdapter.PuddleListViewHolder holder, int position) {
         Category category = Util.categoryMap.get(position);
-        holder.puddleCategoryName.setText(category.toString());
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(context);
-        linearLayoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
-        holder.puddleItemRecyclerView.setLayoutManager(linearLayoutManager);
-        holder.puddleAdapter = new PuddleAdapter(context, puddlesList.get(category));
-        holder.puddleItemRecyclerView.setAdapter(holder.puddleAdapter);
+
+        if(puddlesList.get(category).size() == 0){
+            holder.itemView.setVisibility(View.GONE);
+        } else {
+            holder.puddleCategoryName.setText(category.toString());
+            LinearLayoutManager linearLayoutManager = new LinearLayoutManager(context);
+            linearLayoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
+            holder.puddleItemRecyclerView.setLayoutManager(linearLayoutManager);
+            holder.puddleAdapter = new PuddleAdapter(context, puddlesList.get(category));
+            holder.puddleItemRecyclerView.setAdapter(holder.puddleAdapter);
+        }
+
     }
 
     @Override

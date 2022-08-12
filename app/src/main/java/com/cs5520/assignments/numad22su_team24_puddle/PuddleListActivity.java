@@ -591,7 +591,6 @@ public class PuddleListActivity extends AppCompatActivity implements View.OnClic
     public void categorizePuddles(List<Puddle> filteredPuddles) {
         initializePuddles();
         for (Puddle puddle : filteredPuddles) {
-            Log.d("Puddle", puddle.getCategory());
             categoryPuddlesData.get(Category.valueOf(puddle.getCategory().toUpperCase())).add(puddle);
         }
     }
