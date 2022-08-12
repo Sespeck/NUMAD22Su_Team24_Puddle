@@ -3,11 +3,14 @@ package com.cs5520.assignments.numad22su_team24_puddle;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.fragment.app.FragmentResultListener;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -35,7 +38,10 @@ import com.cs5520.assignments.numad22su_team24_puddle.Utils.FirebaseDB;
 import com.cs5520.assignments.numad22su_team24_puddle.Utils.LocationPermissionActivity;
 import com.cs5520.assignments.numad22su_team24_puddle.Utils.Util;
 import com.cs5520.assignments.numad22su_team24_puddle.chatroom_fragments.EventsFragment;
+import com.cs5520.assignments.numad22su_team24_puddle.services.FilterService;
 import com.facebook.shimmer.ShimmerFrameLayout;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.imageview.ShapeableImageView;
@@ -62,6 +68,7 @@ public class PuddleListActivity extends AppCompatActivity implements View.OnClic
     ImageView navigationIcon;
     ImageView filterIcon;
     Button nearMeBtn, myPuddlesBtn;
+    View currentView;
     SearchView puddleSearch;
     TextView noResultFound;
 
@@ -86,7 +93,7 @@ public class PuddleListActivity extends AppCompatActivity implements View.OnClic
     private HashMap<Category, List<Puddle>> categoryPuddlesData;
     private ShimmerFrameLayout shimmerFrameLayout;
     private final String FRAGMENT_ID = "5";
-    private EventsFragment.endShimmerEffectCallback callback = new EventsFragment.endShimmerEffectCallback(){
+    private EventsFragment.endShimmerEffectCallback callback = new EventsFragment.endShimmerEffectCallback() {
         @Override
         public void onLayoutInflated() {
             handler.postDelayed(new Runnable() {
@@ -103,6 +110,12 @@ public class PuddleListActivity extends AppCompatActivity implements View.OnClic
     public interface endShimmerEffectCallback {
         void onLayoutInflated();
     }
+
+    public static double filteredDistance = 20.0;
+    public static List<String> filteredCategories = Category.getCategoryNames();
+    public static int filteredMembership = Integer.MAX_VALUE;
+    public static boolean filteredGlobal = true;
+    Handler filterHandler = new Handler();
 
 
     @Override
@@ -142,12 +155,12 @@ public class PuddleListActivity extends AppCompatActivity implements View.OnClic
 
             @Override
             public boolean onQueryTextChange(String s) {
-                if(s.equals("")) {
+                if (s.equals("")) {
                     myPuddlesData = myPuddlesDataStored;
                     puddleListRecyclerView.setLayoutManager(new GridLayoutManager(PuddleListActivity.this, 2));
                     puddleListRecyclerView.setAdapter(new MyPuddlesAdapter(PuddleListActivity.this, myPuddlesData));
 
-                    if(myPuddlesData.size() == 0){
+                    if (myPuddlesData.size() == 0) {
                         noResultFound.setVisibility(TextView.VISIBLE);
                     } else {
                         noResultFound.setVisibility(TextView.GONE);
@@ -167,17 +180,17 @@ public class PuddleListActivity extends AppCompatActivity implements View.OnClic
         fetchAllPuddles();
         FirebaseDB.fetchAllUsers();
 
-            callback.onLayoutInflated();
+        callback.onLayoutInflated();
         // Initializing Widgets
         puddleListRecyclerView = findViewById(R.id.puddle_list_rv);
 
 
-
-        updateRecyclerView(myPuddlesBtn);
+        currentView = myPuddlesBtn;
+        updateRecyclerView();
         LocationPermissionActivity.checkLocationPermission(this);
 
         handleAppLink(getIntent());
-        if (!Util.renderShimmerEffect.containsKey(Util.generateShimmerEffectID("username","puddle_list",FRAGMENT_ID) ) && getIntent().getStringExtra("new_user") == null){
+        if (!Util.renderShimmerEffect.containsKey(Util.generateShimmerEffectID("username", "puddle_list", FRAGMENT_ID)) && getIntent().getStringExtra("new_user") == null) {
             shimmerFrameLayout.startShimmer();
             shimmerFrameLayout.setVisibility(View.VISIBLE);
             puddleListRecyclerView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
@@ -189,20 +202,35 @@ public class PuddleListActivity extends AppCompatActivity implements View.OnClic
                     puddleListRecyclerView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
                 }
             });
-            Util.renderShimmerEffect.put(Util.generateShimmerEffectID("username","puddle_list",FRAGMENT_ID),true);
-        } else{
+            Util.renderShimmerEffect.put(Util.generateShimmerEffectID("username", "puddle_list", FRAGMENT_ID), true);
+        } else {
             shimmerFrameLayout.stopShimmer();
             shimmerFrameLayout.setVisibility(View.GONE);
             puddleListRecyclerView.setVisibility(View.VISIBLE);
         }
+
+        getSupportFragmentManager().setFragmentResultListener("filter_result", this, new FragmentResultListener() {
+            @Override
+            public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle bundle) {
+                filteredDistance = bundle.getDouble("distance");
+                filteredCategories = bundle.getStringArrayList("selected_categories");
+                filteredMembership = bundle.getInt("membership_filter");
+                filteredGlobal = bundle.getBoolean("is_checked");
+                Log.d("Filters", "filteredCategories: " + filteredCategories);
+                Log.d("Filters", "filteredMembership: " + filteredMembership);
+                Log.d("Filters", "filteredGlobal: " + filteredGlobal);
+                Log.d("Filters", "Distance: " + filteredDistance);
+                updateRecyclerView();
+            }
+        });
     }
 
-    public void filterPuddles(String txt){
+    public void filterPuddles(String txt) {
         HashMap<String, Puddle> modifiedData = new HashMap<>();
 
-        for(Map.Entry<String, Puddle> map: myPuddlesData.entrySet()){
+        for (Map.Entry<String, Puddle> map : myPuddlesData.entrySet()) {
             Puddle pud = map.getValue();
-            if(pud.getName().contains(txt)){
+            if (pud.getName().contains(txt)) {
                 modifiedData.put(map.getKey(), map.getValue());
             }
         }
@@ -210,7 +238,7 @@ public class PuddleListActivity extends AppCompatActivity implements View.OnClic
         puddleListRecyclerView.setLayoutManager(new GridLayoutManager(PuddleListActivity.this, 2));
         puddleListRecyclerView.setAdapter(new MyPuddlesAdapter(PuddleListActivity.this, modifiedData));
 
-        if(modifiedData.size() == 0){
+        if (modifiedData.size() == 0) {
             noResultFound.setVisibility(TextView.VISIBLE);
         } else {
             noResultFound.setVisibility(TextView.GONE);
@@ -259,6 +287,7 @@ public class PuddleListActivity extends AppCompatActivity implements View.OnClic
 //                    userDetails.put(snap.getKey(), snap.getValue(String.class));
 //                }
                 FirebaseDB.currentUser = snapshot.getValue(User.class);
+                Log.d("currentUser", FirebaseDB.currentUser.toString());
                 if (!FirebaseDB.currentUser.getProfile_icon().equals("")) {
                     Glide.with(PuddleListActivity.this).load(FirebaseDB.currentUser.getProfile_icon()).into(profileIcon);
                 }
@@ -277,10 +306,10 @@ public class PuddleListActivity extends AppCompatActivity implements View.OnClic
         getSupportFragmentManager().setFragmentResultListener("filter_result", this,
                 ((requestKey, result) -> {
                     // result extras can be null if user didn't select them
-                    if (result.getStringArrayList("selected_categories") != null){
+                    if (result.getStringArrayList("selected_categories") != null) {
                         ArrayList<String> selectedCategories = result.getStringArrayList("selected_categories");
                     }
-                    if (result.getString("membership_filter") != null){
+                    if (result.getString("membership_filter") != null) {
                         String membershipFilter = result.getString("membership_filter");
                     }
                     double distance = result.getDouble("distance");
@@ -293,7 +322,8 @@ public class PuddleListActivity extends AppCompatActivity implements View.OnClic
         if (view.equals(profileIcon)) {
             startActivity(new Intent(this, ProfileActivity.class));
         } else if (view.equals(nearMeBtn) || view.equals(myPuddlesBtn)) {
-            updateRecyclerView(view);
+            currentView = view;
+            updateRecyclerView();
         } else if (view.equals(createIcon)) {
             if (LocationPermissionActivity.checkLocationPermission(this)) {
                 startActivity(new Intent(PuddleListActivity.this, CreatePuddle.class));
@@ -310,22 +340,18 @@ public class PuddleListActivity extends AppCompatActivity implements View.OnClic
                 }
             }
         } else if (view.equals(filterIcon)) {
-            BottomFilterModal modal = new BottomFilterModal();
+            BottomFilterModal modal = new BottomFilterModal(filteredDistance, filteredCategories, filteredMembership, filteredGlobal);
             modal.show(getSupportFragmentManager(), "filter");
         }
     }
 
-    private void updateRecyclerView(View view) {
+    private void updateRecyclerView() {
         // Initializing RecyclerView
-        if (view.equals(nearMeBtn)) {
+        if (currentView.equals(nearMeBtn)) {
 //            puddleSearch.setVisibility(SearchView.INVISIBLE);
             noResultFound.setVisibility(View.GONE);
             if (LocationPermissionActivity.checkLocationPermission(this)) {
-                categorizePuddles();
-                puddleListRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-                puddleListRecyclerView.setAdapter(new PuddleListAdapter(this, categoryPuddlesData));
-                setSelectedButton(nearMeBtn);
-                setUnselectedButton(myPuddlesBtn);
+                getLocation();
             } else {
                 LocationPermissionActivity.requestPermission(this, REQUEST_CODE_LOCATION_FOR_NEAR_ME);
             }
@@ -335,7 +361,7 @@ public class PuddleListActivity extends AppCompatActivity implements View.OnClic
             setSelectedButton(myPuddlesBtn);
             setUnselectedButton(nearMeBtn);
 
-            if(myPuddlesData.size() == 0){
+            if (myPuddlesData.size() == 0) {
 //                puddleSearch.setVisibility(SearchView.GONE);
                 noResultFound.setVisibility(SearchView.VISIBLE);
             } else {
@@ -405,7 +431,8 @@ public class PuddleListActivity extends AppCompatActivity implements View.OnClic
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     LocationPermissionActivity.locationPermissionGranted = true;
                     Toast.makeText(this, "Location access successfully granted", Toast.LENGTH_SHORT).show();
-                    updateRecyclerView(nearMeBtn);
+                    currentView = nearMeBtn;
+                    updateRecyclerView();
                 } else {
                     Toast.makeText(this, "Location access is not granted", Toast.LENGTH_SHORT).show();
                 }
@@ -415,14 +442,14 @@ public class PuddleListActivity extends AppCompatActivity implements View.OnClic
 
     public void showJoinPuddleDialogue(Context context, Puddle puddle) {
 
-        if(FirebaseDB.currentUser == null){
+        if (FirebaseDB.currentUser == null) {
             FirebaseUser current_user = FirebaseDB.getCurrentUser();
             DatabaseReference userRef = FirebaseDB.getDataReference("Users").child(current_user.getUid());
             userRef.addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot snapshot) {
                     FirebaseDB.currentUser = snapshot.getValue(User.class);
-                    if(FirebaseDB.currentUser != null){
+                    if (FirebaseDB.currentUser != null) {
                         showJoinPuddle(context, puddle);
                     }
                 }
@@ -438,10 +465,10 @@ public class PuddleListActivity extends AppCompatActivity implements View.OnClic
 
     }
 
-    public void showJoinPuddle(Context context, Puddle puddle){
+    public void showJoinPuddle(Context context, Puddle puddle) {
 
 
-        if (FirebaseDB.currentUser.getMy_puddles() != null  &&
+        if (FirebaseDB.currentUser.getMy_puddles() != null &&
                 FirebaseDB.currentUser.getMy_puddles().containsValue(puddle.getId())) {
             Intent intent = new Intent(PuddleListActivity.this, PuddleChatroomActivity.class);
             intent.putExtra("puddleID", puddle.getId());
@@ -537,8 +564,8 @@ public class PuddleListActivity extends AppCompatActivity implements View.OnClic
                     setUnselectedButton(nearMeBtn);
                 }
 
-                if(myPuddlesData.size() == 0){
-//                    puddleSearch.setVisibility(SearchView.GONE);
+                if (myPuddlesData.size() == 0) {
+                    puddleSearch.setVisibility(SearchView.GONE);
                     noResultFound.setVisibility(TextView.VISIBLE);
                 } else {
                     puddleSearch.setVisibility(SearchView.VISIBLE);
@@ -560,13 +587,47 @@ public class PuddleListActivity extends AppCompatActivity implements View.OnClic
     }
 
     // To categorize puddles for near me screen
-    public void categorizePuddles() {
+    public void categorizePuddles(List<Puddle> filteredPuddles) {
         initializePuddles();
-        for (String id : allPuddlesData.keySet()) {
-            Puddle puddle = allPuddlesData.get(id);
+        for (Puddle puddle : filteredPuddles) {
             Log.d("Puddle", puddle.getCategory());
             categoryPuddlesData.get(Category.valueOf(puddle.getCategory().toUpperCase())).add(puddle);
         }
+    }
 
+    public void getLocation() {
+
+        if (LocationPermissionActivity.checkMapServices(this)) {
+            if (LocationPermissionActivity.locationPermissionGranted) {
+                FusedLocationProviderClient fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
+                if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                    return;
+                }
+                fusedLocationProviderClient.getLastLocation().addOnSuccessListener(this, location -> {
+                    new Thread(() -> {
+                        if (location != null) {
+                            double lat = location.getLatitude();
+                            double lng = location.getLongitude();
+                            List<Puddle> filteredPuddles = new ArrayList<>(allPuddleList);
+                            List<String> categories = new ArrayList<>();
+                            filteredPuddles = FilterService.filteredPuddles(filteredPuddles, filteredDistance * 1609.34, lat, lng, filteredCategories);
+                            categorizePuddles(filteredPuddles);
+                            filterHandler.post(() -> {
+                                puddleListRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+                                puddleListRecyclerView.setAdapter(new PuddleListAdapter(this, categoryPuddlesData));
+                                setSelectedButton(nearMeBtn);
+                                setUnselectedButton(myPuddlesBtn);
+                            });
+
+                        } else {
+                            Toast.makeText(PuddleListActivity.this, "Failed to get user location, Please provide location acccess to continue", Toast.LENGTH_LONG).show();
+                        }
+                    }).start();
+                });
+
+            } else {
+                LocationPermissionActivity.requestPermission(this, LocationPermissionActivity.REQUEST_CODE_FINE_LOCATION);
+            }
+        }
     }
 }

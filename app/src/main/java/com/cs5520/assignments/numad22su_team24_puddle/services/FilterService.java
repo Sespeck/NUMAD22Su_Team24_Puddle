@@ -40,13 +40,12 @@ public class FilterService {
         return puddleList.filter(x -> categories.contains(x.getCategory()));
     }
 
-    public static List<Puddle> filteredPuddles(List<Puddle> puddleList, double range, double currentLat, double currentLong, List<String> categories, String startDate, String endDate) {
-        return withinDatePuddles(
-                withinRangePuddles(
-                        selectedCategoryPuddles(
-                                puddleList.stream(), categories),
-                        range, currentLat, currentLong),
-                startDate, endDate
-        ).collect(Collectors.toList());
+    public static List<Puddle> filteredPuddles(List<Puddle> puddleList, double range, double currentLat, double currentLong, List<String> categories) {
+        return
+            withinRangePuddles(
+                    selectedCategoryPuddles(
+                            puddleList.stream(), categories),
+                    range, currentLat, currentLong
+            ).collect(Collectors.toList());
     }
 }
