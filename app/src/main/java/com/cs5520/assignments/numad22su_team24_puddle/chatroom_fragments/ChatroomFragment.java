@@ -64,6 +64,7 @@ public class ChatroomFragment extends Fragment {
     private String dbID;
     private ShimmerFrameLayout shimmerFrameLayout;
     private String FRAGMENT_ID = "1";
+    private MessageNotification notification;
     private EventsFragment.endShimmerEffectCallback callback = new EventsFragment.endShimmerEffectCallback(){
         @Override
         public void onLayoutInflated() {
@@ -91,6 +92,7 @@ public class ChatroomFragment extends Fragment {
                                 recyclerView.scrollToPosition(adapter.getItemCount() - 1);
                             });
                             uploadToFirebase(imageUri);
+
                         }
                     }
                     if (imageUri != null) {
@@ -111,6 +113,7 @@ public class ChatroomFragment extends Fragment {
         this.chatEditText = view.findViewById(R.id.chat_room_edit_text);
         this.messageRef =  FirebaseDB.getDataReference("Messages");
         this.shimmerFrameLayout = view.findViewById(R.id.chatroom_shimmer_layout);
+        this.notification = new MessageNotification(requireActivity());
         recyclerView.hasFixedSize();
         uploadImageToFb();
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
@@ -136,14 +139,11 @@ public class ChatroomFragment extends Fragment {
             shimmerFrameLayout.setVisibility(View.GONE);
             recyclerView.setVisibility(View.VISIBLE);
         }
-        view.findViewById(R.id.add_image_button).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent gallery = new Intent();
-                gallery.setAction(Intent.ACTION_GET_CONTENT);
-                gallery.setType("image/*");
-                startActivityForResult.launch(gallery);
-            }
+        view.findViewById(R.id.add_image_button).setOnClickListener(v -> {
+            Intent gallery = new Intent();
+            gallery.setAction(Intent.ACTION_GET_CONTENT);
+            gallery.setType("image/*");
+            startActivityForResult.launch(gallery);
         });
         return view;
     }
@@ -170,6 +170,7 @@ public class ChatroomFragment extends Fragment {
                             adapter.addNewMessage(new Message(currentUser.getUsername() ,textResult,Instant.now().toString(),
                                     FirebaseDB.currentUser.getProfile_icon(), id, false));
                             recyclerView.scrollToPosition(adapter.getItemCount()-1);
+                            notification.createNotification(currentUser.getUsername(),textResult,0);
                             chatEditText.getText().clear();
                         });
                         messageRef.child(puddleID).push().setValue(newMessage);
@@ -261,5 +262,17 @@ public class ChatroomFragment extends Fragment {
         ContentResolver cr = getActivity().getContentResolver();
         MimeTypeMap mime = MimeTypeMap.getSingleton();
         return mime.getExtensionFromMimeType(cr.getType(muri));
+    }
+
+    @Override
+    public void onStart() {
+        Util.isForeground = true;
+        super.onStart();
+    }
+
+    @Override
+    public void onStop() {
+        Util.isForeground = false;
+        super.onStop();
     }
 }
