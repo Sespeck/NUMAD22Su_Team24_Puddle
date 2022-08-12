@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
+<androidx.coordinatorlayout.widget.CoordinatorLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -7,98 +7,121 @@
     android:layout_height="match_parent"
     tools:context=".PuddleListActivity">
 
-    <include
-        android:id="@+id/puddle_list_header"
-        layout="@layout/puddles_list_header" />
-
-    <SearchView
-        android:id="@+id/search"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_margin="8dp"
-        android:layout_marginStart="24dp"
-        android:layout_marginTop="24dp"
-        android:layout_marginEnd="24dp"
-        android:background="@drawable/search_bg"
-        android:queryHint="Search"
-        app:layout_constraintBottom_toTopOf="@+id/puddle_list_rv"
-        app:layout_constraintEnd_toEndOf="@+id/puddle_list_header"
-        app:layout_constraintStart_toStartOf="@+id/puddle_list_header"
-        app:layout_constraintTop_toBottomOf="@id/puddle_list_header" />
-
-    <TextView
-        android:id="@+id/no_result_found"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="No Puddles Found!!"
-        android:textColor="#000000"
-        android:textSize="24sp"
-        android:textStyle="bold"
-        android:visibility="visible"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/search"  />
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:visibility="invisible"
-        android:id="@+id/puddle_list_rv"
-        android:layout_width="@dimen/fit_constraint"
-        android:layout_height="@dimen/fit_constraint"
-        android:layout_marginTop="@dimen/margin_mid"
-        android:layout_marginStart="@dimen/margin_mid"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/search" />
-
-    <com.facebook.shimmer.ShimmerFrameLayout
-        android:id="@+id/events_shimmer_layout"
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="0sp"
-        android:visibility="visible"
+        android:layout_height="match_parent">
+
+        <include
+            android:id="@+id/puddle_list_header"
+            layout="@layout/puddles_list_header" />
+
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/nestedScrollView"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/fit_constraint"
+        android:fillViewport="true"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/search"
-        app:shimmer_auto_start="true">
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/puddle_list_header">
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
-
-            <LinearLayout
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                >
+                android:layout_height="wrap_content">
 
-                <include layout="@layout/my_puddle_placeholder" />
+                <SearchView
+                    android:id="@+id/search"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="8dp"
+                    android:layout_marginStart="24dp"
+                    android:layout_marginTop="24dp"
+                    android:layout_marginEnd="24dp"
+                    android:background="@drawable/search_bg"
+                    android:queryHint="Search"
+                    app:layout_constraintBottom_toTopOf="@+id/puddle_list_rv"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
 
-                <include layout="@layout/my_puddle_placeholder" />
+                <TextView
+                    android:id="@+id/no_result_found"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="No Puddles Found!!"
+                    android:textColor="#000000"
+                    android:textSize="24sp"
+                    android:textStyle="bold"
+                    android:visibility="visible"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/search" />
 
-            </LinearLayout>
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/puddle_list_rv"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/margin_mid"
+                    android:layout_marginTop="@dimen/margin_mid"
+                    android:visibility="invisible"
+                    android:nestedScrollingEnabled="false"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/search" />
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
+                <com.facebook.shimmer.ShimmerFrameLayout
+                    android:id="@+id/events_shimmer_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="0sp"
+                    android:visibility="visible"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/search"
+                    app:shimmer_auto_start="true">
 
-                <include layout="@layout/my_puddle_placeholder" />
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
 
-                <include layout="@layout/my_puddle_placeholder" />
-            </LinearLayout>
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal">
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
+                            <include layout="@layout/my_puddle_placeholder" />
 
-                <include layout="@layout/my_puddle_placeholder" />
+                            <include layout="@layout/my_puddle_placeholder" />
 
-                <include layout="@layout/my_puddle_placeholder" />
-            </LinearLayout>
-        </LinearLayout>
+                        </LinearLayout>
 
-    </com.facebook.shimmer.ShimmerFrameLayout>
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal">
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+                            <include layout="@layout/my_puddle_placeholder" />
+
+                            <include layout="@layout/my_puddle_placeholder" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal">
+
+                            <include layout="@layout/my_puddle_placeholder" />
+
+                            <include layout="@layout/my_puddle_placeholder" />
+                        </LinearLayout>
+                    </LinearLayout>
+
+                </com.facebook.shimmer.ShimmerFrameLayout>
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </androidx.core.widget.NestedScrollView>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>
