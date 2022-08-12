@@ -4,6 +4,7 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
 
@@ -31,6 +32,7 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.cs5520.assignments.numad22su_team24_puddle.Model.ApiLoaderBar;
 import com.cs5520.assignments.numad22su_team24_puddle.Utils.FirebaseDB;
+import com.cs5520.assignments.numad22su_team24_puddle.Utils.LocationPermissionActivity;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -59,6 +61,8 @@ public class ProfileActivity extends AppCompatActivity {
     StorageReference storeRef;
     Handler apiHandler = new Handler();
     final ApiLoaderBar apiBar = new ApiLoaderBar(ProfileActivity.this);
+
+    public static final int CAMERA_REQUEST_CODE = 102;
 
     ActivityResultLauncher<Intent> startActivityForResult = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
@@ -112,15 +116,19 @@ public class ProfileActivity extends AppCompatActivity {
     private void clickCameraBtn() {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
                 == PackageManager.PERMISSION_GRANTED) {
-            Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-            String photoFileName = "photo.jpg";
-            photoFile = getPhotoFileUri(photoFileName);
-            Uri fileProvider = FileProvider.getUriForFile(ProfileActivity.this, "com.cs5520.assignments.numad22su_team24_puddle", photoFile);
-            intent.putExtra(MediaStore.EXTRA_OUTPUT, fileProvider);
-            startActivityForResultCamera.launch(intent);
+            openCamera();
         } else {
-            Toast.makeText(this, "Add Camera Permission", Toast.LENGTH_SHORT).show();
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA}, CAMERA_REQUEST_CODE);
         }
+    }
+
+    private void openCamera() {
+        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        String photoFileName = "photo.jpg";
+        photoFile = getPhotoFileUri(photoFileName);
+        Uri fileProvider = FileProvider.getUriForFile(ProfileActivity.this, "com.cs5520.assignments.numad22su_team24_puddle", photoFile);
+        intent.putExtra(MediaStore.EXTRA_OUTPUT, fileProvider);
+        startActivityForResultCamera.launch(intent);
     }
 
     public File getPhotoFileUri(String fileName) {
@@ -130,7 +138,7 @@ public class ProfileActivity extends AppCompatActivity {
         File mediaStorageDir = new File(getExternalFilesDir(Environment.DIRECTORY_PICTURES), "Puddle");
 
         // Create the storage directory if it does not exist
-        if (!mediaStorageDir.exists() && !mediaStorageDir.mkdirs()){
+        if (!mediaStorageDir.exists() && !mediaStorageDir.mkdirs()) {
             Log.d("Puddle", "failed to create directory");
         }
 
@@ -262,5 +270,20 @@ public class ProfileActivity extends AppCompatActivity {
         ContentResolver cr = getContentResolver();
         MimeTypeMap mime = MimeTypeMap.getSingleton();
         return mime.getExtensionFromMimeType(cr.getType(muri));
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        switch (requestCode) {
+            case CAMERA_REQUEST_CODE:
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    openCamera();
+                } else {
+                    Toast.makeText(this, "Camera access is not granted", Toast.LENGTH_SHORT).show();
+                }
+                break;
+        }
     }
 }
