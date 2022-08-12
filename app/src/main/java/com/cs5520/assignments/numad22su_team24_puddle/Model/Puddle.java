@@ -22,12 +22,13 @@ public class Puddle {
     private String name;
     private String range;
     private int count;
+    private String isGlobal;
     private HashMap<String, String> Location = new HashMap<>();
 
     public Puddle() {
     }
 
-    public Puddle(String id, String bannerUrl, String bio, String category, String isPrivate, String name, String range, int count, HashMap<String, String> location) {
+    public Puddle(String id, String bannerUrl, String bio, String category, String isPrivate, String name, String range, int count, String isGlobal, HashMap<String, String> location) {
         this.id = id;
         this.bannerUrl = bannerUrl;
         this.bio = bio;
@@ -36,6 +37,7 @@ public class Puddle {
         this.name = name;
         this.range = range;
         this.count = count;
+        this.isGlobal = isGlobal;
         Location = location;
     }
 
@@ -105,5 +107,13 @@ public class Puddle {
 
     public String generatePuddleAppLink() {
         return "http://puddle-team24-app.com/join/" + this.id;
+    }
+
+    public String getIsGlobal() {
+        return isGlobal;
+    }
+
+    public void setIsGlobal(String isGlobal) {
+        this.isGlobal = isGlobal;
     }
 }

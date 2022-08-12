@@ -22,6 +22,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.RadioButton;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -53,6 +54,7 @@ public class CreatePuddle extends AppCompatActivity {
 
 
     private double lat =0.0 , lng = 0.0;
+    boolean takeCurrentLoc = true;
 
 //    FusedLocationProviderClient fusedLocationProviderClient;
 
@@ -66,12 +68,16 @@ public class CreatePuddle extends AppCompatActivity {
     AutoCompleteTextView menu;
     ImageView selectedImg;
     TextView rangeVal;
+    LinearLayout locationLayout;
+    TextView selectedLoc;
+
 
     Uri imgUri = null;
     String bannerUrl = "";
     Handler apiHandler = new Handler();
     double selectedRange = 0.0;
     final ApiLoaderBar apiBar = new ApiLoaderBar(CreatePuddle.this);
+    String address = "";
 
     ActivityResultLauncher<Intent> startActivityForResult = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
@@ -80,6 +86,21 @@ public class CreatePuddle extends AppCompatActivity {
                     Intent data = result.getData();
                     imgUri = data.getData();
                     selectedImg.setImageURI(imgUri);
+                }
+            }
+    );
+
+    ActivityResultLauncher<Intent> locationResult = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            result -> {
+                if (result.getResultCode() == AppCompatActivity.RESULT_OK) {
+                    Intent data = result.getData();
+                    Bundle bundle = data.getExtras();
+                    lat = bundle.getDouble("latitude");
+                    lng= bundle.getDouble("longitude");
+                    address = bundle.getString("selectedLocation");
+
+                    selectedLoc.setText(address);
                 }
             }
     );
@@ -99,6 +120,8 @@ public class CreatePuddle extends AppCompatActivity {
         menu = findViewById(R.id.category_menu);
         selectedImg = findViewById(R.id.selected_pud_img);
         rangeVal = findViewById(R.id.range_val);
+        locationLayout = findViewById(R.id.location_custom);
+        selectedLoc = findViewById(R.id.locationTxt);
 
         // Options for the menu in the dropdown
         String[] options = {
@@ -127,7 +150,6 @@ public class CreatePuddle extends AppCompatActivity {
 
             @Override
             public void onStopTrackingTouch(@NonNull Slider slider) {
-                Log.i("chanegd value", String.valueOf(slider.getValue()));
                 selectedRange = slider.getValue();
                 rangeVal.setText(String.valueOf(slider.getValue()) + "m");
             }
@@ -137,7 +159,11 @@ public class CreatePuddle extends AppCompatActivity {
     public void makeApiCalls(View view){
         if(checkValues()){
             apiBar.showDialog();
-            getLocation();
+            if(!takeCurrentLoc){
+                uploadImageToStore(imgUri);
+            } else {
+                getLocation();
+            }
         } else {
             Toast.makeText(this, "Please provide all values to proceed", Toast.LENGTH_SHORT).show();
         }
@@ -162,8 +188,8 @@ public class CreatePuddle extends AppCompatActivity {
                                 } else {
                                     apiHandler.post(()->{
                                         apiBar.dismissBar();
+                                        Toast.makeText(CreatePuddle.this, "Error sending image to Store", Toast.LENGTH_SHORT).show();
                                     });
-                                    Toast.makeText(CreatePuddle.this, "Error sending image to Store", Toast.LENGTH_SHORT).show();
                                 }
                             }
                         }).start();
@@ -200,6 +226,7 @@ public class CreatePuddle extends AppCompatActivity {
         puddleMap.put("name", puddleName.getText().toString());
         puddleMap.put("bio", puddleBio.getText().toString());
         puddleMap.put("isPrivate", String.valueOf(isPrivate.isChecked()));
+        puddleMap.put("isGlobal", "false");
         puddleMap.put("bannerUrl", bannerUrl);
         puddleMap.put("range", String.valueOf(range.getValue()));
         puddleMap.put("category", menu.getText().toString());
@@ -250,8 +277,8 @@ public class CreatePuddle extends AppCompatActivity {
                         } else {
                             apiHandler.post(() -> {
                                 apiBar.dismissBar();
+                                Toast.makeText(CreatePuddle.this, "Failed to get user location, Please provide location acccess to continue", Toast.LENGTH_LONG).show();
                             });
-                            Toast.makeText(CreatePuddle.this, "Failed to get user location, Please provide location acccess to continue", Toast.LENGTH_LONG).show();
                         }
                     }).start();
                 });
@@ -284,5 +311,29 @@ public class CreatePuddle extends AppCompatActivity {
         }
 
         return allValues;
+    }
+
+    public void selectLocation(View view){
+        Intent intent = new Intent(CreatePuddle.this, SelectLocation.class);
+        locationResult.launch(intent);
+    }
+
+    public void onLocationOptionClick(View view){
+        boolean checked = ((RadioButton) view).isChecked();
+        switch(view.getId()) {
+            case R.id.current_loc:
+                if (checked){
+                    takeCurrentLoc = true;
+                    selectedLoc.setText("Puddle Location");
+                    locationLayout.setVisibility(View.GONE);
+                }
+                    break;
+            case R.id.custom_loc:
+                if (checked){
+                    takeCurrentLoc = false;
+                    locationLayout.setVisibility(View.VISIBLE);
+                }
+                    break;
+        }
     }
 }

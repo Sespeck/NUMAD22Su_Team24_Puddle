@@ -318,7 +318,7 @@ public class PuddleListActivity extends AppCompatActivity implements View.OnClic
     private void updateRecyclerView(View view) {
         // Initializing RecyclerView
         if (view.equals(nearMeBtn)) {
-            puddleSearch.setVisibility(SearchView.INVISIBLE);
+//            puddleSearch.setVisibility(SearchView.INVISIBLE);
             noResultFound.setVisibility(View.GONE);
             if (LocationPermissionActivity.checkLocationPermission(this)) {
                 categorizePuddles();
@@ -336,7 +336,7 @@ public class PuddleListActivity extends AppCompatActivity implements View.OnClic
             setUnselectedButton(nearMeBtn);
 
             if(myPuddlesData.size() == 0){
-                puddleSearch.setVisibility(SearchView.GONE);
+//                puddleSearch.setVisibility(SearchView.GONE);
                 noResultFound.setVisibility(SearchView.VISIBLE);
             } else {
                 puddleSearch.setVisibility(SearchView.VISIBLE);
@@ -538,7 +538,7 @@ public class PuddleListActivity extends AppCompatActivity implements View.OnClic
                 }
 
                 if(myPuddlesData.size() == 0){
-                    puddleSearch.setVisibility(SearchView.GONE);
+//                    puddleSearch.setVisibility(SearchView.GONE);
                     noResultFound.setVisibility(TextView.VISIBLE);
                 } else {
                     puddleSearch.setVisibility(SearchView.VISIBLE);

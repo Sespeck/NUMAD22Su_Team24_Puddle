@@ -219,7 +219,7 @@ public class SelectLocation extends AppCompatActivity implements OnMapReadyCallb
         intent.putExtras(extras);
 
         Log.d("select location", "sendSelectedLocation: " + selectedLocation + ' ' + pin_lat+ ' '+ pin_lng);
-        setResult(999, intent);
+        setResult(RESULT_OK, intent);
 
         SelectLocation.super.onBackPressed();
         finish();
