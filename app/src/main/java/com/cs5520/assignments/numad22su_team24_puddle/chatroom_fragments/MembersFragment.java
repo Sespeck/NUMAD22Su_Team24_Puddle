@@ -16,8 +16,10 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.cs5520.assignments.numad22su_team24_puddle.R;
 import com.cs5520.assignments.numad22su_team24_puddle.Utils.FirebaseDB;
+import com.cs5520.assignments.numad22su_team24_puddle.Utils.Util;
 import com.cs5520.assignments.numad22su_team24_puddle.chatroom_fragments.adapters.Member;
 import com.cs5520.assignments.numad22su_team24_puddle.chatroom_fragments.adapters.MembersAdapter;
+import com.facebook.shimmer.ShimmerFrameLayout;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -34,6 +36,21 @@ public class MembersFragment extends Fragment {
     private MembersAdapter membersAdapter;
     private final String FRAGMENT_ID = "3";
     private Context context;
+    private ShimmerFrameLayout shimmerFrameLayout;
+    private EventsFragment.endShimmerEffectCallback callback = new EventsFragment.endShimmerEffectCallback(){
+        @Override
+        public void onLayoutInflated() {
+            handler.postDelayed((Runnable) () -> {
+                shimmerFrameLayout.stopShimmer();
+                shimmerFrameLayout.setVisibility(View.GONE);
+                recyclerView.setVisibility(View.VISIBLE);
+            }, 800);
+        }
+    };
+
+    public interface endShimmerEffectCallback {
+        void onLayoutInflated();
+    }
 
 
 
@@ -45,7 +62,26 @@ public class MembersFragment extends Fragment {
         membersRef = FirebaseDB.getDataReference("Members").child(puddleID);
         recyclerView = view.findViewById(R.id.members_recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-//        recyclerView.hasFixedSize();
+        recyclerView.hasFixedSize();
+        shimmerFrameLayout = view.findViewById(R.id.members_shimmer_frame_layout);
+        if (!Util.renderShimmerEffect.containsKey(Util.generateShimmerEffectID(FirebaseDB.currentUser.getUsername(),puddleID,FRAGMENT_ID)) && getArguments().getString("new_chatroom") == null) {
+            shimmerFrameLayout.startShimmer();
+            shimmerFrameLayout.setVisibility(View.VISIBLE);
+            recyclerView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+                @Override
+                public void onGlobalLayout() {
+                    if (callback != null) {
+                        callback.onLayoutInflated();
+                    }
+                    recyclerView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                }
+            });
+            Util.renderShimmerEffect.put(Util.generateShimmerEffectID(FirebaseDB.currentUser.getUsername(),puddleID,FRAGMENT_ID), true);
+        } else{
+            shimmerFrameLayout.stopShimmer();
+            shimmerFrameLayout.setVisibility(View.GONE);
+            recyclerView.setVisibility(View.VISIBLE);
+        }
         context = getContext();
         initializeRecyclerView();
         return view;

@@ -1,18 +1,64 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.facebook.shimmer.ShimmerFrameLayout
-    android:elevation="10sp"
-    android:id="@+id/temp_shimmer_image_placeholder"
-    android:layout_width="200sp"
-    android:layout_height="200sp"
+<androidx.constraintlayout.widget.ConstraintLayout
+    android:id="@+id/chatroom_full_message"
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
-<ImageView
-    android:background="#a9a9a9"
-android:layout_width="200sp"
-android:layout_height="200sp"
-android:layout_margin="5sp"
-android:layout_marginStart="10sp"
-android:singleLine="false"
-android:textSize="14sp"
-    />
-</com.facebook.shimmer.ShimmerFrameLayout>
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="10sp">
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/chatroom_message_profile_pic"
+        android:layout_width="40sp"
+        android:layout_height="40sp"
+        android:src="#a9a9a9"
+        app:civ_border_width=".5sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:textColor="@android:color/transparent"
+        android:background="#a9a9a9"
+        android:layout_marginStart="5sp"
+        android:id="@+id/chatroom_message_item_username"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Temp Username"
+        android:textSize="18sp"
+        app:layout_constraintStart_toEndOf="@+id/chatroom_message_profile_pic"
+        app:layout_constraintTop_toTopOf="parent" />
+
+
+
+    <TextView
+        android:background="#a9a9a9"
+        android:id="@+id/chatroom_message_datetime"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10sp"
+        android:text=""
+        android:textSize="14sp"
+        app:layout_constraintBottom_toBottomOf="@+id/chatroom_message_item_username"
+        app:layout_constraintStart_toEndOf="@id/chatroom_message_item_username"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:textColor="@android:color/transparent"
+        android:background="#a9a9a9"
+        android:id="@+id/chatroom_message_body"
+        android:layout_marginStart="10sp"
+        android:layout_margin="5sp"
+        android:layout_width="0sp"
+        android:layout_height="wrap_content"
+        android:singleLine="false"
+        android:text="Nulla at sapien ipsum. Nam gravida nibh a dui fringilla,ibusulla at sapien ulla at sapien ipsum. Nam gravida nibh a dui fringilla,ibus ulla at sapien ipsum. Nam grangilla,ibus  tellus at molndum."
+        android:textSize="14sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/chatroom_message_profile_pic"
+        app:layout_constraintTop_toBottomOf="@+id/chatroom_message_item_username"
+
+        />
+
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

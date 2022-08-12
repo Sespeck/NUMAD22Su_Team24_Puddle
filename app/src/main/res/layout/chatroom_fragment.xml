@@ -17,42 +17,25 @@
             android:orientation="vertical"
             >
             <include
-                layout="@layout/chatroom_message_item_placeholder"
+                layout="@layout/chat_message_image_shimmer_placeholder"
                 />
 
 
             <include
-                layout="@layout/chatroom_message_item_placeholder"
+                layout="@layout/chat_message_image_shimmer_placeholder"
                 />
 
             <include
-                layout="@layout/chatroom_message_item_placeholder"
+                layout="@layout/chat_message_image_shimmer_placeholder"
                 />
 
             <include
-                layout="@layout/chatroom_message_item_placeholder"
+                layout="@layout/chat_message_image_shimmer_placeholder"
                 />
 
             <include
-                layout="@layout/chatroom_message_item_placeholder"
+                layout="@layout/chat_message_image_shimmer_placeholder"
                 />
-
-
-            <include
-                layout="@layout/chatroom_message_item_placeholder"
-                />
-
-            <include
-                layout="@layout/chatroom_message_item_placeholder"
-                />
-
-            <include
-                layout="@layout/chatroom_message_item_placeholder"
-                />
-            <include
-                layout="@layout/chatroom_message_item_placeholder"
-                />
-
 
         </LinearLayout>
     </com.facebook.shimmer.ShimmerFrameLayout>

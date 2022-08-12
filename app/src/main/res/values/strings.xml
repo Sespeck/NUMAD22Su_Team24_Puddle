@@ -58,5 +58,6 @@
     <string name="share_puddle">Share Puddle</string>
     <string name="filter_by_membership">Filter By Membership</string>
     <string name="filter_by_category">Filter By Category</string>
+    <string name="example_username_here">example username here</string>
 
 </resources>
