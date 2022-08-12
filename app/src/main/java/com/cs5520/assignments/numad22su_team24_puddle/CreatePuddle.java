@@ -67,6 +67,7 @@ public class CreatePuddle extends AppCompatActivity {
     ImageView selectedImg;
     TextView rangeVal;
 
+
     Uri imgUri = null;
     String bannerUrl = "";
     Handler apiHandler = new Handler();
@@ -162,8 +163,8 @@ public class CreatePuddle extends AppCompatActivity {
                                 } else {
                                     apiHandler.post(()->{
                                         apiBar.dismissBar();
+                                        Toast.makeText(CreatePuddle.this, "Error sending image to Store", Toast.LENGTH_SHORT).show();
                                     });
-                                    Toast.makeText(CreatePuddle.this, "Error sending image to Store", Toast.LENGTH_SHORT).show();
                                 }
                             }
                         }).start();
@@ -200,6 +201,7 @@ public class CreatePuddle extends AppCompatActivity {
         puddleMap.put("name", puddleName.getText().toString());
         puddleMap.put("bio", puddleBio.getText().toString());
         puddleMap.put("isPrivate", String.valueOf(isPrivate.isChecked()));
+        puddleMap.put("isGlobal", "false");
         puddleMap.put("bannerUrl", bannerUrl);
         puddleMap.put("range", String.valueOf(range.getValue()));
         puddleMap.put("category", menu.getText().toString());
@@ -250,8 +252,8 @@ public class CreatePuddle extends AppCompatActivity {
                         } else {
                             apiHandler.post(() -> {
                                 apiBar.dismissBar();
+                                Toast.makeText(CreatePuddle.this, "Failed to get user location, Please provide location acccess to continue", Toast.LENGTH_LONG).show();
                             });
-                            Toast.makeText(CreatePuddle.this, "Failed to get user location, Please provide location acccess to continue", Toast.LENGTH_LONG).show();
                         }
                     }).start();
                 });

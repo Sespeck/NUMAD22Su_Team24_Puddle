@@ -2,6 +2,7 @@ package com.cs5520.assignments.numad22su_team24_puddle.Adapter;
 
 import android.content.Context;
 import android.content.Intent;
+import android.media.Image;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -56,6 +57,7 @@ public class MyPuddlesAdapter extends RecyclerView.Adapter<MyPuddlesAdapter.MyPu
         holder.memberCount.setText(String.valueOf(myPud.getCount()) + " Members");
         Glide.with(this.ct).load(myPud.getBannerUrl()).into(holder.puddleBg);
         holder.privateLock.setVisibility(myPud.getIsPrivate().equals("true") ? ImageView.VISIBLE : ImageView.GONE);
+        holder.global.setVisibility(myPud.getIsGlobal().equals("true") ? ImageView.VISIBLE : ImageView.GONE);
 
         holder.itemView.setOnClickListener((v) -> {
             Intent intent = new Intent(ct, PuddleChatroomActivity.class);
@@ -75,6 +77,7 @@ public class MyPuddlesAdapter extends RecyclerView.Adapter<MyPuddlesAdapter.MyPu
         TextView puddleName;
         TextView memberCount;
         ImageView privateLock;
+        ImageView global;
 
         public MyPudAdapter(@NonNull View itemView) {
             super(itemView);
@@ -83,6 +86,7 @@ public class MyPuddlesAdapter extends RecyclerView.Adapter<MyPuddlesAdapter.MyPu
             puddleName = itemView.findViewById(R.id.puddle_name);
             memberCount = itemView.findViewById(R.id.members_count);
             privateLock = itemView.findViewById(R.id.private_icon);
+            global = itemView.findViewById(R.id.global_icon);
         }
     }
 }
