@@ -395,8 +395,17 @@ public class PuddleListActivity extends AppCompatActivity implements View.OnClic
                 LocationPermissionActivity.requestPermission(this, REQUEST_CODE_LOCATION_FOR_NEAR_ME);
             }
         } else {
+            List<Puddle> filteredPuddles = new ArrayList<>();
+            for(String val: myPuddlesData.keySet()) {
+                filteredPuddles.add(myPuddlesData.get(val));
+            }
+            filteredPuddles = FilterService.filteredPuddlesForMyPuddles(filteredPuddles, filteredCategories, filteredGlobal, filteredMembership);
+            HashMap<String, Puddle> filteredMap= new HashMap<>();
+            for(Puddle filteredPuddle: filteredPuddles) {
+                filteredMap.put(filteredPuddle.getId(), filteredPuddle);
+            }
             puddleListRecyclerView.setLayoutManager(new GridLayoutManager(PuddleListActivity.this, 2));
-            puddleListRecyclerView.setAdapter(new MyPuddlesAdapter(PuddleListActivity.this, myPuddlesData));
+            puddleListRecyclerView.setAdapter(new MyPuddlesAdapter(PuddleListActivity.this, filteredMap));
             setSelectedButton(myPuddlesBtn);
             setUnselectedButton(nearMeBtn);
 

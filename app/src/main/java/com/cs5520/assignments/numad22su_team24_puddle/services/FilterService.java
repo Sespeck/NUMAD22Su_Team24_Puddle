@@ -60,4 +60,15 @@ public class FilterService {
                         , memberCount)
                         .collect(Collectors.toList());
     }
+
+    public static List<Puddle> filteredPuddlesForMyPuddles(List<Puddle> puddleList, List<String> categories, boolean globalSwitch, int memberCount) {
+        return
+                selectedMemberCount(
+                        selectedCategoryPuddles(
+                                isGlobalPuddles(puddleList.stream()
+                                        , globalSwitch)
+                                , categories)
+                        , memberCount)
+                        .collect(Collectors.toList());
+    }
 }
