@@ -48,6 +48,10 @@ public class FilterService {
         return puddleList.filter(x -> !Boolean.parseBoolean(x.getIsPrivate()));
     }
 
+    public static Stream<Puddle> showPrivateInNearMe(Stream<Puddle> puddleList, boolean privateSwitch) {
+        return puddleList.filter(x -> !Boolean.parseBoolean(x.getIsPrivate()) || privateSwitch);
+    }
+
     public static List<Puddle> filteredPuddles(List<Puddle> puddleList, double range, double currentLat, double currentLong, List<String> categories, boolean globalSwitch, int memberCount) {
         return
                 selectedMemberCount(
@@ -61,11 +65,12 @@ public class FilterService {
                         .collect(Collectors.toList());
     }
 
-    public static List<Puddle> filteredPuddlesForMyPuddles(List<Puddle> puddleList, List<String> categories, boolean globalSwitch, int memberCount) {
+    public static List<Puddle> filteredPuddlesForMyPuddles(List<Puddle> puddleList, List<String> categories, boolean globalSwitch, int memberCount, boolean privateSwitch) {
         return
                 selectedMemberCount(
                         selectedCategoryPuddles(
-                                isGlobalPuddles(puddleList.stream()
+                                isGlobalPuddles(
+                                        showPrivateInNearMe(puddleList.stream(), privateSwitch)
                                         , globalSwitch)
                                 , categories)
                         , memberCount)

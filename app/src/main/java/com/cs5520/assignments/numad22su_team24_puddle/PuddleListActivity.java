@@ -115,6 +115,7 @@ public class PuddleListActivity extends AppCompatActivity implements View.OnClic
     public static List<String> filteredCategories = Category.getCategoryNames();
     public static int filteredMembership = Integer.MAX_VALUE;
     public static boolean filteredGlobal = true;
+    public static boolean filteredPrivate = true;
     Handler filterHandler = new Handler();
 
 
@@ -155,7 +156,7 @@ public class PuddleListActivity extends AppCompatActivity implements View.OnClic
 
             @Override
             public boolean onQueryTextChange(String s) {
-                if(currentView == myPuddlesBtn){
+                if (currentView == myPuddlesBtn) {
                     // my puddles
                     if (s.equals("")) {
                         myPuddlesData = myPuddlesDataStored;
@@ -172,7 +173,7 @@ public class PuddleListActivity extends AppCompatActivity implements View.OnClic
                     }
                 } else {
                     // near me
-                    if(s.equals("")){
+                    if (s.equals("")) {
                         puddleListRecyclerView.setLayoutManager(new LinearLayoutManager(PuddleListActivity.this));
                         puddleListRecyclerView.setAdapter(new PuddleListAdapter(PuddleListActivity.this, categoryPuddlesData));
 //            setSelectedButton(nearMeBtn);
@@ -229,25 +230,27 @@ public class PuddleListActivity extends AppCompatActivity implements View.OnClic
                 filteredCategories = bundle.getStringArrayList("selected_categories");
                 filteredMembership = bundle.getInt("membership_filter");
                 filteredGlobal = bundle.getBoolean("is_checked");
+                filteredPrivate = bundle.getBoolean("private_puddle");
                 Log.d("Filters", "filteredCategories: " + filteredCategories);
                 Log.d("Filters", "filteredMembership: " + filteredMembership);
                 Log.d("Filters", "filteredGlobal: " + filteredGlobal);
+                Log.d("Filters", "filteredPrivate: " + filteredPrivate);
                 Log.d("Filters", "Distance: " + filteredDistance);
                 updateRecyclerView();
             }
         });
     }
 
-    public void filterNearMeData(String txt){
+    public void filterNearMeData(String txt) {
         HashMap<Category, List<Puddle>> modifiedCategoryPuddlesData = new HashMap<>();
 
-        for(Map.Entry<Category, List<Puddle>> pud: categoryPuddlesData.entrySet()){
+        for (Map.Entry<Category, List<Puddle>> pud : categoryPuddlesData.entrySet()) {
             Category cat = pud.getKey();
             List<Puddle> list = pud.getValue();
             List<Puddle> modifiedList = new ArrayList<>();
 
-            for(Puddle puddle: list){
-                if(puddle.getName().toLowerCase().contains(txt)){
+            for (Puddle puddle : list) {
+                if (puddle.getName().toLowerCase().contains(txt)) {
                     modifiedList.add(puddle);
                 }
             }
@@ -360,6 +363,11 @@ public class PuddleListActivity extends AppCompatActivity implements View.OnClic
             startActivity(new Intent(this, ProfileActivity.class));
         } else if (view.equals(nearMeBtn) || view.equals(myPuddlesBtn)) {
             currentView = view;
+            filteredDistance = 20.0;
+            filteredCategories = Category.getCategoryNames();
+            filteredMembership = Integer.MAX_VALUE;
+            filteredGlobal = true;
+            filteredPrivate = true;
             updateRecyclerView();
         } else if (view.equals(createIcon)) {
             if (LocationPermissionActivity.checkLocationPermission(this)) {
@@ -377,7 +385,7 @@ public class PuddleListActivity extends AppCompatActivity implements View.OnClic
                 }
             }
         } else if (view.equals(filterIcon)) {
-            BottomFilterModal modal = new BottomFilterModal(filteredDistance, filteredCategories, filteredMembership, filteredGlobal);
+            BottomFilterModal modal = new BottomFilterModal(filteredDistance, filteredCategories, filteredMembership, filteredGlobal, filteredPrivate, currentView == nearMeBtn);
             modal.show(getSupportFragmentManager(), "filter");
         }
     }
@@ -396,12 +404,12 @@ public class PuddleListActivity extends AppCompatActivity implements View.OnClic
             }
         } else {
             List<Puddle> filteredPuddles = new ArrayList<>();
-            for(String val: myPuddlesData.keySet()) {
+            for (String val : myPuddlesData.keySet()) {
                 filteredPuddles.add(myPuddlesData.get(val));
             }
-            filteredPuddles = FilterService.filteredPuddlesForMyPuddles(filteredPuddles, filteredCategories, filteredGlobal, filteredMembership);
-            HashMap<String, Puddle> filteredMap= new HashMap<>();
-            for(Puddle filteredPuddle: filteredPuddles) {
+            filteredPuddles = FilterService.filteredPuddlesForMyPuddles(filteredPuddles, filteredCategories, filteredGlobal, filteredMembership, filteredPrivate);
+            HashMap<String, Puddle> filteredMap = new HashMap<>();
+            for (Puddle filteredPuddle : filteredPuddles) {
                 filteredMap.put(filteredPuddle.getId(), filteredPuddle);
             }
             puddleListRecyclerView.setLayoutManager(new GridLayoutManager(PuddleListActivity.this, 2));
