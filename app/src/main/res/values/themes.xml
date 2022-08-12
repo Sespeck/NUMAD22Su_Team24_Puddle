@@ -1,4 +1,9 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
+
+
+    <style name="ThemeOverlay.App.BottomSheetDialog" parent="ThemeOverlay.MaterialComponents.BottomSheetDialog">
+        <item name="bottomSheetStyle">@style/ModalBottomSheetDialog</item>
+    </style>
     <!-- Base application theme. -->
     <style name="Theme.NUMAD22Su_Team24_Puddle" parent="Theme.Material3.DayNight">
         <!-- Primary brand color. -->

@@ -259,7 +259,6 @@ public class PuddleListActivity extends AppCompatActivity implements View.OnClic
 //                    userDetails.put(snap.getKey(), snap.getValue(String.class));
 //                }
                 FirebaseDB.currentUser = snapshot.getValue(User.class);
-                Log.d("currentUser", FirebaseDB.currentUser.toString());
                 if (!FirebaseDB.currentUser.getProfile_icon().equals("")) {
                     Glide.with(PuddleListActivity.this).load(FirebaseDB.currentUser.getProfile_icon()).into(profileIcon);
                 }

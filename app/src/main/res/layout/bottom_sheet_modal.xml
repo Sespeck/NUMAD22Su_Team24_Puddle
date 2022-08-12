@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.coordinatorlayout.widget.CoordinatorLayout
     android:padding="15sp"
+    android:background="@color/white"
+    style="@style/Theme.MaterialComponents.BottomSheetDialog"
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -102,7 +104,6 @@
             app:layout_anchor="@id/filter_grid_view"
             app:layout_anchorGravity="bottom|clip_vertical"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/filter_grid_view" />
 
@@ -123,7 +124,7 @@
             app:layout_constraintTop_toBottomOf="@+id/global_switch" />
 
         <com.google.android.material.switchmaterial.SwitchMaterial
-            android:layout_margin="10sp"
+            android:layout_marginBottom="10sp"
             android:id="@+id/global_switch"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
