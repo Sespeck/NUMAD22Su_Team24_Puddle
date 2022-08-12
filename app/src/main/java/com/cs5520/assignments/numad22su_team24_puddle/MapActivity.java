@@ -252,7 +252,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 for (DataSnapshot snap : snapshot.getChildren()) {
                     Puddle puddle = snap.getValue(Puddle.class);
-                    if (puddle != null) {
+                    if (puddle != null && puddle.getIsGlobal().equals("false")) {
                         Log.d("MapActivity", "fetchAllPuddles: " + snap.getKey());
                         allPuddlesData.put(snap.getKey(), puddle);
                     }

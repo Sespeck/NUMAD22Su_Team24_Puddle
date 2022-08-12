@@ -31,22 +31,27 @@ public class FilterService {
         return puddleList.filter(x -> withinRange(x, currentLat, currentLong, range));
     }
 
-    public static Stream<Puddle> withinDatePuddles(Stream<Puddle> puddleList, String startDate, String endDate) {
-        // need event date information in Puddles objects
-        return puddleList;
+
+    public static Stream<Puddle> selectedMemberCount (Stream<Puddle> puddleList, String memberCount) {
+        return puddleList.filter(x -> x.getCount() <= Integer.parseInt(memberCount));
     }
 
     public static Stream<Puddle> selectedCategoryPuddles(Stream<Puddle> puddleList, List<String> categories) {
         return puddleList.filter(x -> categories.contains(x.getCategory()));
     }
 
-    public static List<Puddle> filteredPuddles(List<Puddle> puddleList, double range, double currentLat, double currentLong, List<String> categories, String startDate, String endDate) {
-        return withinDatePuddles(
+    public static Stream<Puddle> isGlobalPuddles(Stream<Puddle> puddleList, boolean globalSwitch) {
+        return puddleList.filter(x -> Boolean.parseBoolean(x.getIsGlobal()) == globalSwitch);
+    }
+
+    public static List<Puddle> filteredPuddles(List<Puddle> puddleList, double range, double currentLat, double currentLong, List<String> categories, boolean globalSwitch, String memberCount) {
+        return
+                selectedMemberCount(
+                isGlobalPuddles(
                 withinRangePuddles(
                         selectedCategoryPuddles(
                                 puddleList.stream(), categories),
-                        range, currentLat, currentLong),
-                startDate, endDate
-        ).collect(Collectors.toList());
+                        range, currentLat, currentLong), globalSwitch), memberCount)
+        .collect(Collectors.toList());
     }
 }
