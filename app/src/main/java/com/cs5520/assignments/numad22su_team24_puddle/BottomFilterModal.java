@@ -23,7 +23,9 @@ import com.google.android.material.switchmaterial.SwitchMaterial;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class BottomFilterModal extends BottomSheetDialogFragment {
     private static final DecimalFormat df = new DecimalFormat("0.00");
@@ -36,8 +38,21 @@ public class BottomFilterModal extends BottomSheetDialogFragment {
     private Spinner membershipSpinner;
     private String[] categories;
     private String membershipFilterResults;
+    private int membershipFilterValue;
     private SwitchMaterial globalSwitch;
     private ArrayList<Integer> selectedCategoryIndexes;
+    Map<String, Integer> spinnerMap;
+
+    private List<String> filteredCategories;
+    private int filteredMembership;
+    private boolean filteredGlobal;
+
+    public BottomFilterModal(double filteredDistance, List<String> filteredCategories, int filteredMembership, boolean filteredGlobal) {
+        this.distanceResults = filteredDistance;
+        this.filteredCategories = filteredCategories;
+        this.filteredMembership = filteredMembership;
+        this.filteredGlobal = filteredGlobal;
+    }
 
     @Nullable
     @Override
@@ -49,9 +64,22 @@ public class BottomFilterModal extends BottomSheetDialogFragment {
         globalSwitch = view.findViewById(R.id.global_switch);
         categories = new String[]{"Music", "Sports", "Finance", "Travel", "Education"};
         boolean[] selectedCategory = new boolean[categories.length];
+        spinnerMap = new HashMap<>();
         initalizeSpinnerAdapter(membershipSpinner);
 
         selectedCategoryIndexes = new ArrayList<>();
+
+        globalSwitch.setChecked(filteredGlobal);
+
+        this.slider = view.findViewById(R.id.slider_filter);
+        slider.setValues((float) distanceResults);
+
+        for (String key: spinnerMap.keySet()) {
+            if(spinnerMap.get(key) == filteredMembership) {
+                membershipFilterResults = key;
+                break;
+            }
+        }
 
         filterByCategory.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -101,10 +129,10 @@ public class BottomFilterModal extends BottomSheetDialogFragment {
                 builder.show();
             }
         });
-        this.slider = view.findViewById(R.id.slider_filter);
+
         slider.setLabelFormatter(value -> {
             distanceIndicator.setText(value + " miles");
-            distanceResults = Double.parseDouble(df.format(1609.34 * value));
+            distanceResults = value;
             return value + " m";
         });
         view.findViewById(R.id.add_filter_save_button).setOnClickListener(v -> {
@@ -120,13 +148,8 @@ public class BottomFilterModal extends BottomSheetDialogFragment {
             if (globalSwitch.isChecked()) {
                 bundle.putBoolean("is_checked", globalSwitch.isChecked());
             }
-            if (distanceResults != 0) {
-                bundle.putDouble("distance", distanceResults);
-            } else {
-                bundle.putDouble("distance", Double.parseDouble(df.format(1609.34 * 20)));
-            }
-            if (membershipFilterResults != null)
-                bundle.putString("membership_filter", membershipFilterResults);
+            bundle.putDouble("distance", distanceResults);
+            bundle.putInt("membership_filter", spinnerMap.get(membershipFilterResults));
             getParentFragmentManager().setFragmentResult("filter_result", bundle);
             dismiss();
         });
@@ -137,13 +160,20 @@ public class BottomFilterModal extends BottomSheetDialogFragment {
     public void initalizeSpinnerAdapter(Spinner spinner) {
         List<String> interests = new ArrayList<>();
         interests.add(0, "Filter by Membership");
-        interests.add("<10");
         interests.add("10");
         interests.add("50");
         interests.add("100");
         interests.add("500");
         interests.add("1000");
         interests.add(">1000");
+        spinnerMap = new HashMap<>();
+        spinnerMap.put("Filter by Membership", Integer.MAX_VALUE);
+        spinnerMap.put("10", 10);
+        spinnerMap.put("50", 50);
+        spinnerMap.put("100", 100);
+        spinnerMap.put("500", 500);
+        spinnerMap.put("1000", 1000);
+        spinnerMap.put(">1000", Integer.MAX_VALUE);
         fullAdapter = new ArrayAdapter(getActivity(), R.layout.filter_spinner_item, interests);
         fullAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner.setAdapter(fullAdapter);

@@ -111,10 +111,10 @@ public class PuddleListActivity extends AppCompatActivity implements View.OnClic
         void onLayoutInflated();
     }
 
-    public static double filteredDistance = 20000.0;
+    public static double filteredDistance = 20.0;
     public static List<String> filteredCategories = Category.getCategoryNames();
-    public static String filteredMembership = "";
-    public static boolean filteredGlobal = false;
+    public static int filteredMembership = Integer.MAX_VALUE;
+    public static boolean filteredGlobal = true;
     Handler filterHandler = new Handler();
 
 
@@ -214,7 +214,7 @@ public class PuddleListActivity extends AppCompatActivity implements View.OnClic
             public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle bundle) {
                 filteredDistance = bundle.getDouble("distance");
                 filteredCategories = bundle.getStringArrayList("selected_categories");
-                filteredMembership = bundle.getString("membership_filter");
+                filteredMembership = bundle.getInt("membership_filter");
                 filteredGlobal = bundle.getBoolean("is_checked");
                 Log.d("Filters", "filteredCategories: " + filteredCategories);
                 Log.d("Filters", "filteredMembership: " + filteredMembership);
@@ -340,7 +340,7 @@ public class PuddleListActivity extends AppCompatActivity implements View.OnClic
                 }
             }
         } else if (view.equals(filterIcon)) {
-            BottomFilterModal modal = new BottomFilterModal();
+            BottomFilterModal modal = new BottomFilterModal(filteredDistance, filteredCategories, filteredMembership, filteredGlobal);
             modal.show(getSupportFragmentManager(), "filter");
         }
     }
@@ -610,7 +610,7 @@ public class PuddleListActivity extends AppCompatActivity implements View.OnClic
                             double lng = location.getLongitude();
                             List<Puddle> filteredPuddles = new ArrayList<>(allPuddleList);
                             List<String> categories = new ArrayList<>();
-                            filteredPuddles = FilterService.filteredPuddles(filteredPuddles, filteredDistance, lat, lng, filteredCategories);
+                            filteredPuddles = FilterService.filteredPuddles(filteredPuddles, filteredDistance * 1609.34, lat, lng, filteredCategories);
                             categorizePuddles(filteredPuddles);
                             filterHandler.post(() -> {
                                 puddleListRecyclerView.setLayoutManager(new LinearLayoutManager(this));
