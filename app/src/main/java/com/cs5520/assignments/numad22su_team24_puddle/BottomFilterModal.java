@@ -37,7 +37,7 @@ public class BottomFilterModal extends BottomSheetDialogFragment {
     private String[] categories;
     private String membershipFilterResults;
     private SwitchMaterial globalSwitch;
-
+    private ArrayList<Integer> selectedCategoryIndexes;
 
     @Nullable
     @Override
@@ -47,64 +47,20 @@ public class BottomFilterModal extends BottomSheetDialogFragment {
         filterByCategory = view.findViewById(R.id.filter_by_category_view);
         membershipSpinner = view.findViewById(R.id.membership_spinner);
         globalSwitch = view.findViewById(R.id.global_switch);
-        ArrayList<Integer> selectedCategoryIndexes = new ArrayList<>();
         categories = new String[]{"Music", "Sports", "Finance", "Travel", "Education"};
         boolean[] selectedCategory = new boolean[categories.length];
         initalizeSpinnerAdapter(membershipSpinner);
 
+        selectedCategoryIndexes = new ArrayList<>();
 
         filterByCategory.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
-                AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
-                builder.setTitle("Select Category");
-                builder.setCancelable(false);
-                builder.setMultiChoiceItems(categories, selectedCategory, (dialogInterface, i, b) -> {
-                    if (b) {
-                        selectedCategoryIndexes.add(i);
-                        Collections.sort(selectedCategoryIndexes);
-                    } else {
-                        selectedCategoryIndexes.remove(Integer.valueOf(i));
-                    }
-                });
-
-                builder.setPositiveButton("OK", (dialogInterface, i) -> {
-                    StringBuilder stringBuilder = new StringBuilder();
-                    for (int j = 0; j < selectedCategoryIndexes.size(); j++) {
-                        stringBuilder.append(categories[selectedCategoryIndexes.get(j)]);
-                        if (j != selectedCategoryIndexes.size() - 1) {
-                            stringBuilder.append(", ");
-                        }
-                    }
-                    filterByCategory.setText(stringBuilder.toString());
-                });
-
-                builder.setNegativeButton("Cancel", (dialogInterface, i) -> {
-                    dialogInterface.dismiss();
-                });
-                builder.setNeutralButton("Clear All", (dialogInterface, i) -> {
-                    for (int j = 0; j < selectedCategory.length; j++) {
-                        // remove all selection
-                        selectedCategory[j] = false;
-                        // clear language list
-                        selectedCategoryIndexes.clear();
-                        // clear text view value
-                        filterByCategory.setText("Filter By Category");
-                    }
-                });
-                // show dialog
-                builder.show();
-            }
-        });
-
-        filterByCategory.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                ArrayList<Integer> selectedCategoryIndexes = new ArrayList<>();
-                categories = new String[]{"Music", "Sports", "Finance", "Travel", "Education"};
                 // initialize selected language array
                 boolean[] selectedCategory = new boolean[categories.length];
+                for(int i: selectedCategoryIndexes) {
+                    selectedCategory[i] = true;
+                }
                 AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
                 builder.setTitle("Select Member Count");
                 builder.setCancelable(false);
@@ -153,19 +109,24 @@ public class BottomFilterModal extends BottomSheetDialogFragment {
         });
         view.findViewById(R.id.add_filter_save_button).setOnClickListener(v -> {
             Bundle bundle = new Bundle();
-            if (selectedCategoryIndexes.size() >= 1){
+            if (selectedCategoryIndexes.size() >= 1) {
                 ArrayList<String> selectedCategories = new ArrayList<>();
-                for (Integer index:
+                for (Integer index :
                         selectedCategoryIndexes) {
                     selectedCategories.add(categories[index]);
                 }
-                bundle.putStringArrayList("selected_categories",selectedCategories);
+                bundle.putStringArrayList("selected_categories", selectedCategories);
             }
-            if (globalSwitch.isChecked()){
+            if (globalSwitch.isChecked()) {
                 bundle.putBoolean("is_checked", globalSwitch.isChecked());
             }
-            if (distanceResults != 0) bundle.putDouble("distance", distanceResults);
-            if (membershipFilterResults != null) bundle.putString("membership_filter", membershipFilterResults);
+            if (distanceResults != 0) {
+                bundle.putDouble("distance", distanceResults);
+            } else {
+                bundle.putDouble("distance", Double.parseDouble(df.format(1609.34 * 20)));
+            }
+            if (membershipFilterResults != null)
+                bundle.putString("membership_filter", membershipFilterResults);
             getParentFragmentManager().setFragmentResult("filter_result", bundle);
             dismiss();
         });
@@ -189,7 +150,7 @@ public class BottomFilterModal extends BottomSheetDialogFragment {
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                if (position != 0){
+                if (position != 0) {
                     membershipFilterResults = interests.get(position);
                 }
             }
