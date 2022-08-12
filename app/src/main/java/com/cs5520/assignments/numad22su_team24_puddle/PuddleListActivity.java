@@ -523,6 +523,7 @@ public class PuddleListActivity extends AppCompatActivity implements View.OnClic
         pudRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
+                allPuddleList = new ArrayList<>();
                 for (DataSnapshot snap : snapshot.getChildren()) {
                     Puddle puddle = snap.getValue(Puddle.class);
                     if (puddle != null) {
@@ -619,7 +620,9 @@ public class PuddleListActivity extends AppCompatActivity implements View.OnClic
                             });
 
                         } else {
-                            Toast.makeText(PuddleListActivity.this, "Failed to get user location, Please provide location acccess to continue", Toast.LENGTH_LONG).show();
+                            filterHandler.post(() -> {
+                                Toast.makeText(PuddleListActivity.this, "Failed to get user location, Please provide location acccess to continue", Toast.LENGTH_LONG).show();
+                            });
                         }
                     }).start();
                 });
