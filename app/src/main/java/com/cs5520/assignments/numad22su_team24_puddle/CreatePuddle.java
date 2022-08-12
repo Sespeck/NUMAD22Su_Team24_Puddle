@@ -22,6 +22,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.RadioButton;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -66,6 +67,8 @@ public class CreatePuddle extends AppCompatActivity {
     AutoCompleteTextView menu;
     ImageView selectedImg;
     TextView rangeVal;
+    LinearLayout locationLayout;
+    TextView selectedLoc;
 
 
     Uri imgUri = null;
@@ -73,6 +76,8 @@ public class CreatePuddle extends AppCompatActivity {
     Handler apiHandler = new Handler();
     double selectedRange = 0.0;
     final ApiLoaderBar apiBar = new ApiLoaderBar(CreatePuddle.this);
+    double latitude = 0.0, longitude = 0.0;
+    String address = "";
 
     ActivityResultLauncher<Intent> startActivityForResult = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
@@ -81,6 +86,21 @@ public class CreatePuddle extends AppCompatActivity {
                     Intent data = result.getData();
                     imgUri = data.getData();
                     selectedImg.setImageURI(imgUri);
+                }
+            }
+    );
+
+    ActivityResultLauncher<Intent> locationResult = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            result -> {
+                if (result.getResultCode() == AppCompatActivity.RESULT_OK) {
+                    Intent data = result.getData();
+                    Bundle bundle = data.getExtras();
+                    latitude = bundle.getDouble("latitude");
+                    longitude= bundle.getDouble("longitude");
+                    address = bundle.getString("selectedLocation");
+
+                    selectedLoc.setText(address);
                 }
             }
     );
@@ -100,6 +120,8 @@ public class CreatePuddle extends AppCompatActivity {
         menu = findViewById(R.id.category_menu);
         selectedImg = findViewById(R.id.selected_pud_img);
         rangeVal = findViewById(R.id.range_val);
+        locationLayout = findViewById(R.id.location_custom);
+        selectedLoc = findViewById(R.id.locationTxt);
 
         // Options for the menu in the dropdown
         String[] options = {
@@ -286,5 +308,27 @@ public class CreatePuddle extends AppCompatActivity {
         }
 
         return allValues;
+    }
+
+    public void selectLocation(View view){
+        Intent intent = new Intent(CreatePuddle.this, SelectLocation.class);
+        locationResult.launch(intent);
+    }
+
+    public void onLocationOptionClick(View view){
+        boolean checked = ((RadioButton) view).isChecked();
+        switch(view.getId()) {
+            case R.id.current_loc:
+                if (checked){
+                    selectedLoc.setText("Puddle Location");
+                    locationLayout.setVisibility(View.GONE);
+                }
+                    break;
+            case R.id.custom_loc:
+                if (checked){
+                    locationLayout.setVisibility(View.VISIBLE);
+                }
+                    break;
+        }
     }
 }

@@ -146,7 +146,83 @@
                 android:textStyle="bold"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/bio" />
+                app:layout_constraintTop_toBottomOf="@id/location_custom" />
+
+            <TextView
+                android:id="@+id/select_puddle_loc"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Choose Puddle Location"
+                android:textColor="#000"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/bio"
+                />
+
+            <RadioGroup
+                android:id="@+id/location_options"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:text="Puddle Location"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/select_puddle_loc" >
+                <RadioButton
+                    android:id="@+id/current_loc"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Current Location"
+                    android:checked="true"
+                    android:onClick="onLocationOptionClick"/>
+
+                <RadioButton
+                    android:id="@+id/custom_loc"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Custom Location"
+                    android:onClick="onLocationOptionClick"/>
+            </RadioGroup>
+
+            <LinearLayout
+                android:id="@+id/location_custom"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                android:gravity="center_vertical"
+                app:layout_constraintStart_toStartOf="parent"
+                android:visibility="gone"
+                app:layout_constraintTop_toBottomOf="@id/location_options">
+
+                <TextView
+                    android:id="@+id/locationTxt"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Puddle Location"
+                    android:textColor="#000"
+                    android:textSize="18sp"
+                    android:gravity="center_vertical"
+                    android:layout_weight="1"
+                    android:textStyle="bold" />
+
+                <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Select Location"
+                    android:onClick="selectLocation"
+                    />
+
+            </LinearLayout>
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/puddle_name"
