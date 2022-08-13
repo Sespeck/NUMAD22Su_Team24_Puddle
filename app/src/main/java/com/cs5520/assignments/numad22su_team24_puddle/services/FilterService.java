@@ -33,11 +33,11 @@ public class FilterService {
 
 
     public static Stream<Puddle> selectedMemberCount(Stream<Puddle> puddleList, int memberCount) {
-        return puddleList.filter(x -> x.getCount() <= memberCount || Boolean.parseBoolean(x.getIsGlobal()));
+        return puddleList.filter(x -> x.getCount() <= memberCount);
     }
 
     public static Stream<Puddle> selectedCategoryPuddles(Stream<Puddle> puddleList, List<String> categories) {
-        return puddleList.filter(x -> categories.contains(x.getCategory()) || Boolean.parseBoolean(x.getIsGlobal()));
+        return puddleList.filter(x -> categories.contains(x.getCategory()));
     }
 
     public static Stream<Puddle> isGlobalPuddles(Stream<Puddle> puddleList, boolean globalSwitch) {
