@@ -94,7 +94,7 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
                                                                     puddleMap.put("name", pud.getName());
                                                                     puddleMap.put("bio", pud.getBio());
                                                                     puddleMap.put("isPrivate", pud.getIsPrivate());
-                                                                    puddleMap.put("isGlobal", pud.getIsPrivate());
+                                                                    puddleMap.put("isGlobal", pud.getIsGlobal());
                                                                     puddleMap.put("bannerUrl", pud.getBannerUrl());
                                                                     puddleMap.put("range", pud.getRange());
                                                                     puddleMap.put("category", pud.getCategory());
