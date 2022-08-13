@@ -34,7 +34,7 @@ public class MessageNotification {
     }
 
 
-    public void createNotification(String username, String body, String puddleID) {
+    public void createNotification(String username, String body, String puddleID, String name) {
         Intent notifyIntent = new Intent(activity, PuddleChatroomActivity.class);
         notifyIntent.putExtra("puddleID", puddleID);
 
@@ -45,9 +45,9 @@ public class MessageNotification {
                 stackBuilder.getPendingIntent(0,
                         PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
         NotificationCompat.Builder builder = new
-                NotificationCompat.Builder(activity, CHANNEL_1_ID)
-                .setContentTitle(username).setAutoCancel(true).setColor(0x9C27B0).
-                setContentText(body).setContentIntent(notifyPendingIntent).setSmallIcon(R.drawable.notification).
+                NotificationCompat.Builder(activity, CHANNEL_1_ID).setSubText(name)
+                .setContentTitle(username).setAutoCancel(true).setColor(0x3204AC).setStyle(new NotificationCompat.BigTextStyle().bigText(body)).
+                setContentText(body).setContentIntent(notifyPendingIntent).setSmallIcon(R.drawable.icon_puddle).
                 setPriority(NotificationCompat.PRIORITY_DEFAULT);
         NotificationManagerCompat notificationManager =
                 NotificationManagerCompat.from(activity);

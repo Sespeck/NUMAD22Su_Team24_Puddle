@@ -232,29 +232,23 @@ public class ChatroomFragment extends Fragment {
             @Override
             public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
 
-                ref.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                ref.getDownloadUrl().addOnSuccessListener(uri1 -> new Thread(new Runnable() {
                     @Override
-                    public void onSuccess(Uri uri) {
-                        new Thread(new Runnable() {
-                            @Override
-                            public void run() {
+                    public void run() {
 //                                imageUri = uri;
-                                HashMap<String, Object> newMessage = new HashMap<>();
-                                newMessage.put("timestamp", Instant.now().toString());
-                                FirebaseDB.fetchCurrentUserData();
-                                newMessage.put("username", currentUser.getUsername());
-                                Log.d("here", imageUri.toString());
-                                newMessage.put("body", uri.toString());
-                                newMessage.put("profile_url", currentUser.getProfile_icon());
-                                newMessage.put("isMessage", true);
-                                // Add a new message based off current time, the edittext body, the current user's
-                                // Pfp and name
-                                messageRef.child(puddleID).push().setValue(newMessage);
-                            }
-                        }).start();
+                        HashMap<String, Object> newMessage = new HashMap<>();
+                        newMessage.put("timestamp", Instant.now().toString());
+                        FirebaseDB.fetchCurrentUserData();
+                        newMessage.put("username", currentUser.getUsername());
+                        Log.d("here", imageUri.toString());
+                        newMessage.put("body", uri1.toString());
+                        newMessage.put("profile_url", currentUser.getProfile_icon());
+                        newMessage.put("isMessage", true);
+                        // Add a new message based off current time, the edittext body, the current user's
+                        // Pfp and name
+                        messageRef.child(puddleID).push().setValue(newMessage);
                     }
-
-                });
+                }).start());
             }
         });
     }

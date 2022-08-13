@@ -143,9 +143,23 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                                                 snapshot.getChildren()) {
                                             String senderUsername = snap.child("username").getValue(String.class);
                                             String body = snap.child("body").getValue(String.class);
-                                            String profile_uri = FirebaseDB.allUserData.get(senderUsername).getProfile_icon();
+                                            Boolean isImage = snap.child("isMessage").getValue(Boolean.class);
                                             if (!senderUsername.equals(FirebaseDB.currentUser.getUsername()) && !Util.isForeground && !justOpened) {
-                                                notification.createNotification(senderUsername, body, puddleID);
+                                                FirebaseDB.getDataReference("Puddles").child(puddleID).child("name").addValueEventListener(new ValueEventListener() {
+                                                    @Override
+                                                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                                        String name = snapshot.getValue(String.class);
+                                                        if (isImage != null && isImage) {
+                                                            notification.createNotification(senderUsername, senderUsername + " sent a new image!", puddleID, name);
+                                                        } else {
+                                                            notification.createNotification(senderUsername, body, puddleID, name);
+                                                        }
+                                                    }
+                                                    @Override
+                                                    public void onCancelled(@NonNull DatabaseError error) {
+
+                                                    }
+                                                });
                                             }
                                         }
 

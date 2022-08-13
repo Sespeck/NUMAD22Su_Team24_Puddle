@@ -324,10 +324,25 @@ public class PuddleListActivity extends AppCompatActivity implements View.OnClic
                                                     snapshot.getChildren()) {
                                                 String senderUsername = snap.child("username").getValue(String.class);
                                                 String body = snap.child("body").getValue(String.class);
+                                                Boolean isImage = snap.child("isMessage").getValue(Boolean.class);
                                                 handler.postDelayed(() ->  {
                                                     if (!senderUsername.equals(FirebaseDB.currentUser.getUsername()) && Util.isPuddleListForeground && !justOpened) {
-                                                        Log.d("here", "completed");
-                                                        notification.createNotification(senderUsername, body, puddleID);
+                                                        FirebaseDB.getDataReference("Puddles").child(puddleID).child("name").addValueEventListener(new ValueEventListener() {
+                                                            @Override
+                                                            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                                                String name = snapshot.getValue(String.class);
+                                                                if (isImage != null && isImage) {
+                                                                    notification.createNotification(senderUsername, senderUsername +
+                                                                            " sent a new image!", puddleID, name);
+                                                                } else {
+                                                                    notification.createNotification(senderUsername, body, puddleID, name);
+                                                                }
+                                                            }
+                                                            @Override
+                                                            public void onCancelled(@NonNull DatabaseError error) {
+
+                                                            }
+                                                        });
                                                     }
                                                 },2000);
                                             }

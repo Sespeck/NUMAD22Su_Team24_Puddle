@@ -123,6 +123,7 @@ public class PuddleChatroomActivity extends AppCompatActivity {
                                                 snapshot.getChildren()) {
                                             String senderUsername = snap.child("username").getValue(String.class);
                                             String body = snap.child("body").getValue(String.class);
+                                            Boolean isImage = snap.child("isMessage").getValue(Boolean.class);
 //                                            Log.d("here", "Foreground" + String.valueOf(Util.isForeground));
 //                                            Log.d("here", "JustOpened" + String.valueOf(justOpened));
 //                                            Log.d("here", "Puddle" + puddleID);
@@ -131,7 +132,22 @@ public class PuddleChatroomActivity extends AppCompatActivity {
                                                     || ((!senderUsername.equals(FirebaseDB.currentUser.getUsername()) && !justOpened &&
                                                     !Util.foregroundedPuddle.equals(snapshot.getRef().getKey())))) {
                                                 Log.d("here","chatroomnotifsent");
-                                                notification.createNotification(senderUsername, body, puddleID);
+                                                FirebaseDB.getDataReference("Puddles").child(puddleID).child("name").addValueEventListener(new ValueEventListener() {
+                                                    @Override
+                                                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                                        String name = snapshot.getValue(String.class);
+                                                        if (isImage != null && isImage) {
+                                                            notification.createNotification(senderUsername,senderUsername+" sent a new image!", puddleID, name);
+                                                        } else {
+                                                            notification.createNotification(senderUsername,body, puddleID, name);
+                                                        }
+                                                    }
+
+                                                    @Override
+                                                    public void onCancelled(@NonNull DatabaseError error) {
+
+                                                    }
+                                                });
                                             }
                                         }
 
