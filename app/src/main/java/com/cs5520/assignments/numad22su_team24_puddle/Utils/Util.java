@@ -21,6 +21,7 @@ public class Util {
     public static boolean eventsPopulated = false;
     public static boolean puddleListPopulated = false;
     public static Map<Integer, Category> categoryMap = getCategoryMap();
+    public static boolean isForeground = true;
 
     public static User user;
 
