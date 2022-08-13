@@ -40,18 +40,24 @@ public class BottomFilterModal extends BottomSheetDialogFragment {
     private String membershipFilterResults;
     private int membershipFilterValue;
     private SwitchMaterial globalSwitch;
+    private SwitchMaterial privateSwitch;
     private ArrayList<Integer> selectedCategoryIndexes;
     Map<String, Integer> spinnerMap;
+    List<String> interests;
 
     private List<String> filteredCategories;
     private int filteredMembership;
     private boolean filteredGlobal;
+    private boolean filteredPrivate;
+    private boolean isNearMe;
 
-    public BottomFilterModal(double filteredDistance, List<String> filteredCategories, int filteredMembership, boolean filteredGlobal) {
+    public BottomFilterModal(double filteredDistance, List<String> filteredCategories, int filteredMembership, boolean filteredGlobal, boolean filteredPrivate, boolean isNearby) {
+        this.isNearMe = isNearby;
         this.distanceResults = filteredDistance;
         this.filteredCategories = filteredCategories;
         this.filteredMembership = filteredMembership;
         this.filteredGlobal = filteredGlobal;
+        this.filteredPrivate = filteredPrivate;
     }
 
     @Nullable
@@ -62,20 +68,48 @@ public class BottomFilterModal extends BottomSheetDialogFragment {
         filterByCategory = view.findViewById(R.id.filter_by_category_view);
         membershipSpinner = view.findViewById(R.id.membership_spinner);
         globalSwitch = view.findViewById(R.id.global_switch);
-        categories = new String[]{"Music", "Sports", "Finance", "Travel", "Education"};
-        boolean[] selectedCategory = new boolean[categories.length];
+        privateSwitch = view.findViewById(R.id.private_switch);
+
+        List<String> allCategories = Category.getCategoryNames();
+        categories = new String[allCategories.size()];
+        for (int i = 0; i < allCategories.size(); i++) {
+            categories[i] = allCategories.get(i);
+        }
+
         spinnerMap = new HashMap<>();
+        interests = new ArrayList<>();
         initalizeSpinnerAdapter(membershipSpinner);
 
         selectedCategoryIndexes = new ArrayList<>();
 
+        for (int i = 0; i < categories.length; i++) {
+            if (filteredCategories.contains(categories[i])) {
+                selectedCategoryIndexes.add(i);
+            }
+        }
+
+        setCategoryString();
+        distanceIndicator.setText(distanceResults + " miles");
+        for(String val: spinnerMap.keySet()) {
+            if(spinnerMap.get(val)==filteredMembership) {
+                membershipSpinner.setSelection(interests.indexOf(val));
+                break;
+            }
+        }
+
         globalSwitch.setChecked(filteredGlobal);
+        privateSwitch.setChecked(filteredPrivate);
+        if(isNearMe) {
+           privateSwitch.setVisibility(View.GONE);
+        } else {
+            view.findViewById(R.id.filter_distance).setVisibility(View.GONE);
+        }
 
         this.slider = view.findViewById(R.id.slider_filter);
         slider.setValues((float) distanceResults);
 
-        for (String key: spinnerMap.keySet()) {
-            if(spinnerMap.get(key) == filteredMembership) {
+        for (String key : spinnerMap.keySet()) {
+            if (spinnerMap.get(key) == filteredMembership) {
                 membershipFilterResults = key;
                 break;
             }
@@ -86,7 +120,7 @@ public class BottomFilterModal extends BottomSheetDialogFragment {
             public void onClick(View view) {
                 // initialize selected language array
                 boolean[] selectedCategory = new boolean[categories.length];
-                for(int i: selectedCategoryIndexes) {
+                for (int i : selectedCategoryIndexes) {
                     selectedCategory[i] = true;
                 }
                 AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
@@ -102,14 +136,7 @@ public class BottomFilterModal extends BottomSheetDialogFragment {
                 });
 
                 builder.setPositiveButton("OK", (dialogInterface, i) -> {
-                    StringBuilder stringBuilder = new StringBuilder();
-                    for (int j = 0; j < selectedCategoryIndexes.size(); j++) {
-                        stringBuilder.append(categories[selectedCategoryIndexes.get(j)]);
-                        if (j != selectedCategoryIndexes.size() - 1) {
-                            stringBuilder.append(", ");
-                        }
-                    }
-                    filterByCategory.setText(stringBuilder.toString());
+                    setCategoryString();
                 });
 
                 builder.setNegativeButton("Cancel", (dialogInterface, i) -> {
@@ -144,10 +171,11 @@ public class BottomFilterModal extends BottomSheetDialogFragment {
                     selectedCategories.add(categories[index]);
                 }
                 bundle.putStringArrayList("selected_categories", selectedCategories);
+            } else {
+                bundle.putStringArrayList("selected_categories", new ArrayList<>(allCategories));
             }
-            if (globalSwitch.isChecked()) {
-                bundle.putBoolean("is_checked", globalSwitch.isChecked());
-            }
+            bundle.putBoolean("is_checked", globalSwitch.isChecked());
+            bundle.putBoolean("private_puddle", privateSwitch.isChecked());
             bundle.putDouble("distance", distanceResults);
             bundle.putInt("membership_filter", spinnerMap.get(membershipFilterResults));
             getParentFragmentManager().setFragmentResult("filter_result", bundle);
@@ -158,14 +186,13 @@ public class BottomFilterModal extends BottomSheetDialogFragment {
 
 
     public void initalizeSpinnerAdapter(Spinner spinner) {
-        List<String> interests = new ArrayList<>();
+        interests = new ArrayList<>();
         interests.add(0, "Filter by Membership");
         interests.add("10");
         interests.add("50");
         interests.add("100");
         interests.add("500");
         interests.add("1000");
-        spinnerMap = new HashMap<>();
         spinnerMap.put("Filter by Membership", Integer.MAX_VALUE);
         spinnerMap.put("10", 10);
         spinnerMap.put("50", 50);
@@ -187,6 +214,26 @@ public class BottomFilterModal extends BottomSheetDialogFragment {
             public void onNothingSelected(AdapterView<?> parent) {
             }
         });
+    }
+
+    public void setCategoryString() {
+        if (selectedCategoryIndexes.size() == 0) {
+            filterByCategory.setText("Filter By Category");
+            return;
+        }
+        StringBuilder stringBuilder = new StringBuilder();
+        for (int j = 0; j < Math.min(2, selectedCategoryIndexes.size()); j++) {
+            stringBuilder.append(categories[selectedCategoryIndexes.get(j)]);
+            if (j != Math.min(2, selectedCategoryIndexes.size()) - 1) {
+                stringBuilder.append(", ");
+            }
+        }
+        if (selectedCategoryIndexes.size() > 2) {
+            stringBuilder.append(",+");
+            stringBuilder.append(selectedCategoryIndexes.size() - 2);
+        }
+        filterByCategory.setText(stringBuilder.toString());
+
     }
 }
 

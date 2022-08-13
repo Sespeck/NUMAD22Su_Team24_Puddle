@@ -4,15 +4,111 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <TextView
-        android:id="@+id/settings_share_puddle"
+    <LinearLayout
+        android:id="@+id/share_puddle_layout"
+        android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/margin_mid"
-        android:text="@string/share_puddle"
-        android:textSize="@dimen/font_size_xl"
+        android:layout_gravity="center_horizontal"
+        android:gravity="center_vertical|center_horizontal"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:background="@drawable/chatroom_settings"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_margin="16dp"
+        >
+
+        <ImageView
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:src="@drawable/share"
+            android:layout_marginLeft="8dp"
+            app:tint="@color/black"
+            />
+
+        <TextView
+            android:id="@+id/settings_share_puddle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="8dp"
+            android:padding="8dp"
+            android:text="@string/share_puddle"
+            android:textColor="#000"
+            android:textSize="@dimen/font_size_xl" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/leave_puddle_layout"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:gravity="center_vertical|center_horizontal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:background="@drawable/chatroom_settings"
+        app:layout_constraintTop_toBottomOf="@id/share_puddle_layout"
+        android:layout_margin="16dp"
+        >
+
+        <ImageView
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:src="@drawable/logout"
+            android:layout_marginLeft="8dp"
+            />
+
+        <TextView
+            android:id="@+id/leave_puddle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="8dp"
+            android:padding="8dp"
+            android:text="Leave Puddle"
+            android:textColor="#FF0045"
+            android:textSize="@dimen/font_size_xl" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/report_puddle_layout"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:gravity="center_vertical|center_horizontal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:background="@drawable/chatroom_settings"
+        app:layout_constraintTop_toBottomOf="@id/leave_puddle_layout"
+        android:layout_margin="16dp"
+        >
+
+        <ImageView
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:src="@drawable/settings_report"
+            android:layout_marginLeft="8dp"
+            app:tint="@color/black"
+            />
+
+        <TextView
+            android:id="@+id/report_puddle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="8dp"
+            android:padding="8dp"
+            android:text="Report"
+            android:textColor="#000"
+            android:textSize="@dimen/font_size_xl" />
+    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

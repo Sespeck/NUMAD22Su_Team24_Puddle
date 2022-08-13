@@ -32,8 +32,8 @@ public class FilterService {
     }
 
 
-    public static Stream<Puddle> selectedMemberCount (Stream<Puddle> puddleList, String memberCount) {
-        return puddleList.filter(x -> x.getCount() <= Integer.parseInt(memberCount));
+    public static Stream<Puddle> selectedMemberCount(Stream<Puddle> puddleList, int memberCount) {
+        return puddleList.filter(x -> x.getCount() <= memberCount);
     }
 
     public static Stream<Puddle> selectedCategoryPuddles(Stream<Puddle> puddleList, List<String> categories) {
@@ -41,17 +41,39 @@ public class FilterService {
     }
 
     public static Stream<Puddle> isGlobalPuddles(Stream<Puddle> puddleList, boolean globalSwitch) {
-        return puddleList.filter(x -> Boolean.parseBoolean(x.getIsGlobal()) == globalSwitch);
+        return puddleList.filter(x -> !Boolean.parseBoolean(x.getIsGlobal()) || globalSwitch);
     }
 
-    public static List<Puddle> filteredPuddles(List<Puddle> puddleList, double range, double currentLat, double currentLong, List<String> categories, boolean globalSwitch, String memberCount) {
+    public static Stream<Puddle> privateFilter(Stream<Puddle> puddleList) {
+        return puddleList.filter(x -> !Boolean.parseBoolean(x.getIsPrivate()));
+    }
+
+    public static Stream<Puddle> showPrivateInNearMe(Stream<Puddle> puddleList, boolean privateSwitch) {
+        return puddleList.filter(x -> !Boolean.parseBoolean(x.getIsPrivate()) || privateSwitch);
+    }
+
+    public static List<Puddle> filteredPuddles(List<Puddle> puddleList, double range, double currentLat, double currentLong, List<String> categories, boolean globalSwitch, int memberCount) {
         return
                 selectedMemberCount(
-                isGlobalPuddles(
-                withinRangePuddles(
                         selectedCategoryPuddles(
-                                puddleList.stream(), categories),
-                        range, currentLat, currentLong), globalSwitch), memberCount)
-        .collect(Collectors.toList());
+                                withinRangePuddles(
+                                        isGlobalPuddles(privateFilter(puddleList.stream())
+                                                , globalSwitch)
+                                        , range, currentLat, currentLong)
+                                , categories)
+                        , memberCount)
+                        .collect(Collectors.toList());
+    }
+
+    public static List<Puddle> filteredPuddlesForMyPuddles(List<Puddle> puddleList, List<String> categories, boolean globalSwitch, int memberCount, boolean privateSwitch) {
+        return
+                selectedMemberCount(
+                        selectedCategoryPuddles(
+                                isGlobalPuddles(
+                                        showPrivateInNearMe(puddleList.stream(), privateSwitch)
+                                        , globalSwitch)
+                                , categories)
+                        , memberCount)
+                        .collect(Collectors.toList());
     }
 }
