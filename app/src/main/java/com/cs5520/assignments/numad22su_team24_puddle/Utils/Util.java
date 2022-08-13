@@ -23,6 +23,7 @@ public class Util {
     public static Map<Integer, Category> categoryMap = getCategoryMap();
     public static boolean isForeground = true;
     public static boolean isPuddleListForeground = true;
+    public static boolean isMessageDeleted = false;
     public static String foregroundedPuddle;
 
     public static User user;

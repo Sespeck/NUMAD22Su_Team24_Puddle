@@ -28,6 +28,7 @@ import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
 import com.cs5520.assignments.numad22su_team24_puddle.R;
 import com.cs5520.assignments.numad22su_team24_puddle.Utils.FirebaseDB;
+import com.cs5520.assignments.numad22su_team24_puddle.Utils.Util;
 import com.facebook.shimmer.Shimmer;
 import com.facebook.shimmer.ShimmerDrawable;
 import com.facebook.shimmer.ShimmerFrameLayout;
@@ -132,9 +133,11 @@ public class ChatroomAdapter extends RecyclerView.Adapter<ChatroomAdapter.Chatro
                         case R.id.chatroom_delete_message:
                             messageRef.child(message.getDbKey()).removeValue((error, ref) -> {
 
+
                             });
 
                     }
+                    Util.isMessageDeleted = true;
                     messageList.remove(message);
                     notifyDataSetChanged();
                     return false;

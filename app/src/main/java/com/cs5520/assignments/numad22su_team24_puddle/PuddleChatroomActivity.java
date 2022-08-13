@@ -128,8 +128,8 @@ public class PuddleChatroomActivity extends AppCompatActivity {
 //                                            Log.d("here", "JustOpened" + String.valueOf(justOpened));
 //                                            Log.d("here", "Puddle" + puddleID);
 //                                            Log.d("here", "snapref" + snapshot.getRef().getKey());
-                                            if ((!senderUsername.equals(FirebaseDB.currentUser.getUsername()) && !Util.isForeground)
-                                                    || ((!senderUsername.equals(FirebaseDB.currentUser.getUsername()) && !justOpened &&
+                                            if ((!senderUsername.equals(FirebaseDB.currentUser.getUsername()) && !Util.isMessageDeleted && !Util.isForeground)
+                                                    || ((!senderUsername.equals(FirebaseDB.currentUser.getUsername()) && !Util.isMessageDeleted && !justOpened &&
                                                     !Util.foregroundedPuddle.equals(snapshot.getRef().getKey())))) {
                                                 Log.d("here","chatroomnotifsent");
                                                 FirebaseDB.getDataReference("Puddles").child(puddleID).child("name").addValueEventListener(new ValueEventListener() {
@@ -148,6 +148,9 @@ public class PuddleChatroomActivity extends AppCompatActivity {
 
                                                     }
                                                 });
+                                            }
+                                            if (Util.isMessageDeleted) {
+                                                Util.isMessageDeleted = false;
                                             }
                                         }
 
