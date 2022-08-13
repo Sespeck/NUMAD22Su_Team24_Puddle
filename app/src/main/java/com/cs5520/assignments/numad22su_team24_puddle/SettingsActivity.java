@@ -89,7 +89,7 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
 
                                     pudRef.child(puddleId).setValue(puddleMap);
 
-                                    if(memToDelete != null) memRef.child(memToDelete).removeValue();
+                                    if(!memToDelete.equals("")) memRef.child(memToDelete).removeValue();
 
 
                                     startActivity(new Intent(SettingsActivity.this, PuddleListActivity.class));
