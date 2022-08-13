@@ -31,7 +31,7 @@ public class MapViewPagerAdapter extends FragmentStatePagerAdapter {
     @NonNull
     @Override
     public Fragment getItem(int position) {
-        MapFragment fragment = MapFragment.newInstance(list.get(position));
+        MapFragment fragment = MapFragment.newInstance(list.get(position),list);
         fragmentList.add(fragment);
         return fragment;
 

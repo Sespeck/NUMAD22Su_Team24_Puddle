@@ -26,6 +26,7 @@ import com.cs5520.assignments.numad22su_team24_puddle.Utils.FirebaseDB;
 import com.cs5520.assignments.numad22su_team24_puddle.Utils.LocationPermissionActivity;
 import com.cs5520.assignments.numad22su_team24_puddle.Utils.Util;
 import com.cs5520.assignments.numad22su_team24_puddle.chatroom_fragments.MessageNotification;
+import com.cs5520.assignments.numad22su_team24_puddle.services.FilterService;
 import com.cs5520.assignments.numad22su_team24_puddle.services.MapService;
 import com.cs5520.assignments.numad22su_team24_puddle.services.MarkerService;
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -48,6 +49,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -59,6 +61,8 @@ import java.util.stream.Collectors;
 public class MapActivity extends AppCompatActivity implements OnMapReadyCallback {
     private static final String TAG = "MapActivity";
     private boolean mapInitiated = true;
+    private boolean mapFirstZoom = true;
+    LatLng latLng;
     private GoogleMap mMap;
     private HashMap<String, Puddle> allPuddlesData;
     private Boolean justOpened;
@@ -83,7 +87,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
         allPuddlesData = new HashMap<>();
         categories = new HashSet<String>();
-        fetchAllPuddles();
 
 
         viewPager = findViewById(R.id.viewPager);
@@ -104,14 +107,11 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             @Override
             public void onLocationResult(LocationResult locationResult) {
                 super.onLocationResult(locationResult);
-                if (mMap != null) {
-                    if (mapInitiated == true) {
-                        Location location = locationResult.getLastLocation();
-                        LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
-                        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 17));
-                        mapInitiated = false;
-                    }
-
+                if (mapInitiated == true) {
+                    Location location = locationResult.getLastLocation();
+                    latLng = new LatLng(location.getLatitude(), location.getLongitude());
+                    fetchAllPuddles();
+                    mapInitiated = false;
                 }
             }
         };
@@ -180,6 +180,10 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             return;
         }
         mMap = googleMap;
+        if (mapFirstZoom){
+            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 17));
+            mapFirstZoom = false;
+        }
         mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
         mMap.setMyLocationEnabled(true);
 
@@ -285,7 +289,9 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                 PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             return;
         }
+        Toast.makeText(MapActivity.this, "Locating to your current place.", Toast.LENGTH_SHORT).show();
         fusedLocationProviderClient.requestLocationUpdates(locationRequest, locationCallback, Looper.getMainLooper());
+
     }
 
     private void stopLocationUpdates() {
@@ -311,13 +317,21 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 for (DataSnapshot snap : snapshot.getChildren()) {
                     Puddle puddle = snap.getValue(Puddle.class);
-                    if (puddle != null && puddle.getIsGlobal().equals("false")) {
+                    if (puddle != null && puddle.getIsPrivate().equals("false")) {
                         Log.d("MapActivity", "fetchAllPuddles: " + snap.getKey());
                         allPuddlesData.put(snap.getKey(), puddle);
                     }
                 }
                 Log.d("MapActivity", "fetchAllPuddles: "+allPuddlesData.size());
-                puddleList = MapService.getPuddleList(allPuddlesData);
+                List<Puddle> filteredPuddles = new ArrayList<>(allPuddlesData.values());
+
+                double filteredDistance = 50.0;
+                List<String> filteredCategories = Category.getCategoryNames();
+                boolean filteredGlobal = true;
+                int filteredMembership = 1000;
+                filteredPuddles = FilterService.filteredPuddles(filteredPuddles, filteredDistance * 1609.34, latLng.latitude, latLng.longitude, filteredCategories, filteredGlobal, filteredMembership);
+
+                puddleList = MapService.getPuddleList(filteredPuddles);
                 filteredPuddleList = puddleList;
                 for (PuddleMarker e: filteredPuddleList){
                     Log.d("MapActivity", "fetchAllPuddles: filteredpuddlelist categories "+e.getCategory());
