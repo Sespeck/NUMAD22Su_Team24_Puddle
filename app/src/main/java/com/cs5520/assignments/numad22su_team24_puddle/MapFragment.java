@@ -22,12 +22,25 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 
 import com.bumptech.glide.Glide;
+import com.cs5520.assignments.numad22su_team24_puddle.Model.Puddle;
+import com.cs5520.assignments.numad22su_team24_puddle.Model.User;
+import com.cs5520.assignments.numad22su_team24_puddle.Utils.FirebaseDB;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.imageview.ShapeableImageView;
 import com.cs5520.assignments.numad22su_team24_puddle.Model.PuddleMarker;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.ValueEventListener;
+
+import java.util.HashMap;
+import java.util.List;
 
 public class MapFragment extends Fragment{
+    List<PuddleMarker> myPuddlesData;
+    PuddleMarker puddle;
     int memberCount;
     String puddleName, puddleDescription, bannerURL, puddleId;
     TextView mapMemberCount, mapPuddleName;
@@ -35,8 +48,10 @@ public class MapFragment extends Fragment{
 
     public MapFragment(){}
 
-    public static MapFragment newInstance(PuddleMarker puddleMarker) {
+    public static MapFragment newInstance(PuddleMarker puddleMarker, List<PuddleMarker> list) {
         MapFragment fragment = new MapFragment();
+        fragment.myPuddlesData = list;
+        fragment.puddle = puddleMarker;
         fragment.memberCount= puddleMarker.getMemberCount();
         fragment.puddleName= puddleMarker.getName();
         fragment.bannerURL = puddleMarker.getBackground();
@@ -65,28 +80,107 @@ public class MapFragment extends Fragment{
         mapOpenPuddleButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Activity activity = getActivity();
-                View layoutView = View.inflate(activity, R.layout.puddle_modal, null);
-                AlertDialog dialog = new MaterialAlertDialogBuilder(activity).setTitle(puddleName).setView(layoutView).create();
-                TextView tv = layoutView.findViewById(R.id.puddle_modal_name_tv);
-                tv.setText(puddleDescription);
-                ShapeableImageView im = layoutView.findViewById(R.id.puddle_modal_item_image);
-                Glide.with(getContext()).load(bannerURL). into(im);
-                MaterialButton button = layoutView.findViewById(R.id.puddle_modal_join_btn);
-                button.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        dialog.dismiss();
-
-                        Intent intent = new Intent(getContext(), PuddleChatroomActivity.class);
-                        intent.putExtra("puddleID", puddleId);
-
-                        getContext().startActivity(intent);
-                    }
-                });
-                dialog.show();
+                showJoinPuddleDialogue(getContext(), puddle);
+//                Activity activity = getActivity();
+//                View layoutView = View.inflate(activity, R.layout.puddle_modal, null);
+//                AlertDialog dialog = new MaterialAlertDialogBuilder(activity).setTitle(puddleName).setView(layoutView).create();
+//                TextView tv = layoutView.findViewById(R.id.puddle_modal_name_tv);
+//                tv.setText(puddleDescription);
+//                ShapeableImageView im = layoutView.findViewById(R.id.puddle_modal_item_image);
+//                Glide.with(getContext()).load(bannerURL). into(im);
+//                MaterialButton button = layoutView.findViewById(R.id.puddle_modal_join_btn);
+//                button.setOnClickListener(new View.OnClickListener() {
+//                    @Override
+//                    public void onClick(View v) {
+//                        dialog.dismiss();
+//
+//                        Intent intent = new Intent(getContext(), PuddleChatroomActivity.class);
+//                        intent.putExtra("puddleID", puddleId);
+//
+//                        getContext().startActivity(intent);
+//                    }
+//                });
+//                dialog.show();
             }
         });
     }
+
+    public void showJoinPuddleDialogue(Context context, PuddleMarker puddle) {
+
+        if (FirebaseDB.currentUser == null) {
+            FirebaseUser current_user = FirebaseDB.getCurrentUser();
+            DatabaseReference userRef = FirebaseDB.getDataReference("Users").child(current_user.getUid());
+            userRef.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    FirebaseDB.currentUser = snapshot.getValue(User.class);
+                    if (FirebaseDB.currentUser != null) {
+                        showJoinPuddle(context, puddle);
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+
+                }
+            });
+        } else {
+            showJoinPuddle(context, puddle);
+        }
+
+    }
+
+    public void showJoinPuddle(Context context, PuddleMarker puddle) {
+
+
+        if (FirebaseDB.currentUser.getMy_puddles() != null &&
+                FirebaseDB.currentUser.getMy_puddles().containsValue(puddle.getPuddleId())) {
+            Intent intent = new Intent(context, PuddleChatroomActivity.class);
+            intent.putExtra("puddleID", puddle.getPuddleId());
+            context.startActivity(intent);
+        } else {
+            View layoutView = View.inflate(context, R.layout.puddle_modal, null);
+            AlertDialog dialog = new MaterialAlertDialogBuilder(context).setTitle(puddle.getName()).setView(layoutView).create();
+            TextView tv = layoutView.findViewById(R.id.puddle_modal_name_tv);
+            tv.setText(puddle.getDescription());
+            ShapeableImageView image = layoutView.findViewById(R.id.puddle_modal_item_image);
+            Glide.with(context).load(puddle.getBackground()).into(image);
+            MaterialButton button = layoutView.findViewById(R.id.puddle_modal_join_btn);
+            button.setOnClickListener(v -> {
+                dialog.dismiss();
+                Intent intent = new Intent(context, PuddleChatroomActivity.class);
+                intent.putExtra("puddleID", puddle.getPuddleId());
+                addPuddlesToList(puddle.getPuddleId(), puddle); // api call
+                context.startActivity(intent);
+            });
+            dialog.show();
+        }
+    }
+
+    public void addPuddlesToList(String pud_id, PuddleMarker pud) {
+        boolean alreadyJoined =FirebaseDB.currentUser.getMy_puddles().containsKey(pud_id);
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                // 1. Update the id in my_puddles for user
+                String uid = FirebaseDB.getCurrentUser().getUid();
+                DatabaseReference ref = FirebaseDB.getDataReference("Users").child(uid).child("my_puddles");
+                ref.push().setValue(pud_id);
+
+                // 2. Add Puddle count
+                DatabaseReference pudRef = FirebaseDB.getDataReference("Puddles").child(pud_id).child("count");
+                pudRef.setValue(alreadyJoined ? pud.getMemberCount() : pud.getMemberCount() + 1);
+
+                // 3. Update the members child
+                HashMap<String, String> userData = new HashMap<>();
+                userData.put("username", FirebaseDB.currentUser.getUsername());
+                userData.put("profile_url", FirebaseDB.currentUser.getProfile_icon());
+                DatabaseReference memRef = FirebaseDB.getDataReference("Members").child(pud_id);
+                memRef.push().setValue(userData);
+            }
+        }).start();
+    }
 }
+
 

@@ -16,7 +16,7 @@ import java.util.Objects;
 public class MapService {
 
 
-    public static List<PuddleMarker> getPuddleList(HashMap<String, Puddle> allPuddlesData) {
+    public static List<PuddleMarker> getPuddleList(List<Puddle> allPuddlesData) {
 //        List<PuddleMarker> puddleList = new ArrayList<>();
 //
 //            puddleList.add(new PuddleMarker("Volleyball Sat Out", "vso111", "SPORTS", new LatLng(43.66861, -70.29778), 10, "dsfds"));
@@ -29,18 +29,18 @@ public class MapService {
 
         List<PuddleMarker> puddleList = new ArrayList<>();
 
-        for (Map.Entry<String, Puddle> set :
-                allPuddlesData.entrySet()) {
-            HashMap<String, String> location = set.getValue().getLocation();
+        for (Puddle p :allPuddlesData) {
+            HashMap<String, String> location = p.getLocation();
             double lat = Double.parseDouble(Objects.requireNonNull(location.getOrDefault("latitude", "43.66861")));
             double lng = Double.parseDouble(Objects.requireNonNull(location.getOrDefault("longitude", "-70.29778")));
-            puddleList.add(new PuddleMarker(set.getValue().getName(),
-                    set.getKey(),
-                    set.getValue().getCategory(),
+            puddleList.add(new PuddleMarker(
+                    p.getName(),
+                    p.getId(),
+                    p.getCategory(),
                     new LatLng(lat, lng),
-                    set.getValue().getCount(),
-                    set.getValue().getBannerUrl(),
-                    set.getValue().getBio()));
+                    p.getCount(),
+                    p.getBannerUrl(),
+                    p.getBio()));
         }
         return puddleList;
     }
