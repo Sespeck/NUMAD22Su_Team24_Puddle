@@ -101,7 +101,6 @@ public class ChatroomAdapter extends RecyclerView.Adapter<ChatroomAdapter.Chatro
     }
 
 
-    @SuppressLint("CheckResult")
     @Override
     public void onBindViewHolder(@NonNull ChatroomAdapter.ChatroomViewHolder holder, int position) {
         Message message = messageList.get(position);

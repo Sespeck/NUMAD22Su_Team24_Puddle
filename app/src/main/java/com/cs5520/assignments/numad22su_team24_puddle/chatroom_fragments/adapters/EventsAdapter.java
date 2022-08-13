@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.cs5520.assignments.numad22su_team24_puddle.R;
+import com.cs5520.assignments.numad22su_team24_puddle.Utils.FirebaseDB;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.firebase.database.DatabaseReference;
 import com.squareup.picasso.Picasso;
@@ -27,13 +28,13 @@ import java.util.logging.Handler;
 public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.EventViewHolder> {
     private List<Event> eventList;
     private Context context;
-    private DatabaseReference attendanceRef;
+    private DatabaseReference eventsRef;
 
 
-    public EventsAdapter(List<Event> eventList, Context context, DatabaseReference attendanceRef){
+    public EventsAdapter(List<Event> eventList, Context context, DatabaseReference eventsRef){
         this.context = context;
         this.eventList = eventList;
-        this.attendanceRef = attendanceRef;
+        this.eventsRef = eventsRef;
     }
 
     public static class EventViewHolder extends RecyclerView.ViewHolder {
@@ -62,18 +63,39 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.EventViewH
     @Override
     public void onBindViewHolder(@NonNull EventsAdapter.EventViewHolder holder, int position) {
         Event event = eventList.get(position);
-        holder.imageView.setOnClickListener(v -> {
+        if (event.createdBy.equals(FirebaseDB.currentUser.getUsername())){
+            holder.imageView.setOnClickListener(v -> {
                 new MaterialAlertDialogBuilder(context,
                         R.style.Body_ThemeOverlay_MaterialComponents_MaterialAlertDialog).setTitle(event.name).
-                        setMessage(event.description + "\n" + event.startingDatetime + "\n" +
+                        setMessage(event.description + "\n\n" + event.location + "\n\n" + event.startingDatetime + "\n" +
                                 event.endingDatetime).setPositiveButton("RSVP", (dialog, which) -> {
-                        String newCounterValue =
-                                String.valueOf(Integer.parseInt(holder.attendanceCounter.getText().toString())+1);
-                        holder.attendanceCounter.setText(newCounterValue);
-                        notifyItemChanged(position);
-                        attendanceRef.child(event.id).child("attendance_counter").setValue(newCounterValue);
-                }).show();
-        });
+                            String newCounterValue =
+                                    String.valueOf(Integer.parseInt(holder.attendanceCounter.getText().toString()) + 1);
+                            holder.attendanceCounter.setText(newCounterValue);
+                            notifyItemChanged(position);
+                            eventsRef.child(event.id).child("attendance_counter").setValue(newCounterValue);
+                        }).setNegativeButton("Delete", ((dialog, which) -> {
+                            eventsRef.child(event.id).removeValue((error, ref) -> {
+
+                            });
+                            eventList.remove(event);
+                            notifyDataSetChanged();
+                        })).show();
+            });
+        } else{
+            holder.imageView.setOnClickListener(v -> {
+                new MaterialAlertDialogBuilder(context,
+                        R.style.Body_ThemeOverlay_MaterialComponents_MaterialAlertDialog).setTitle(event.name).
+                        setMessage(event.description + "\n\n" + event.location + "\n\n" + event.startingDatetime + "\n" +
+                                event.endingDatetime).setPositiveButton("RSVP", (dialog, which) -> {
+                            String newCounterValue =
+                                    String.valueOf(Integer.parseInt(holder.attendanceCounter.getText().toString()) + 1);
+                            holder.attendanceCounter.setText(newCounterValue);
+                            notifyItemChanged(position);
+                            eventsRef.child(event.id).child("attendance_counter").setValue(newCounterValue);
+                        }).show();
+            });
+        }
         Glide.with(context).load(event.backgroundImgUri).into(holder.imageView);
         holder.imageView.setColorFilter(R.color.black);
         holder.name.setText(event.getName());

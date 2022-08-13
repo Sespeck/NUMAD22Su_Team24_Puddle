@@ -30,6 +30,7 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
@@ -112,6 +113,7 @@ public class EventsFragment extends Fragment {
                     String title = result.getString("title");
                     String startingTimestamp = DateTimeFormatUtil.formatEventDate(startingDate) + " : " + startingTime;
                     String endingTimestamp = DateTimeFormatUtil.formatEventDate(endingDate) +" : " +endingTime;
+                    String location = result.getString("selected_location");
                     HashMap<String, Object> newEvent = new HashMap<>();
                     newEvent.put("title",title);
                     newEvent.put("description",description);
@@ -120,8 +122,10 @@ public class EventsFragment extends Fragment {
                     newEvent.put("image_uri",backgroundImgUri);
                     newEvent.put("attendance_counter","0");
                     newEvent.put("id",uniqueID);
+                    newEvent.put("selected_location", location);
+                    newEvent.put("created_by",FirebaseDB.currentUser.getUsername());
                     handler.post(()->{
-                        eventsAdapter.addNewEvent(new Event(title,startingTimestamp,endingTimestamp,null,description,result.getString("image_uri"),0, uniqueID));
+                        eventsAdapter.addNewEvent(new Event(title,startingTimestamp,endingTimestamp,location,description,result.getString("image_uri"),0, uniqueID, FirebaseDB.currentUser.getUsername()));
                     });
                     eventsRef.child(puddleID).child(uniqueID).setValue(newEvent);
                 }
@@ -148,9 +152,11 @@ public class EventsFragment extends Fragment {
                             String startingTimestamp = snap.child("starting_timestamp").getValue(String.class);
                             String endingTimestamp = snap.child("ending_timestamp").getValue(String.class);
                             String imageUri = snap.child("image_uri").getValue(String.class);
+                            String location = snap.child("selected_location").getValue(String.class);
                             String id = snap.child("id").getValue(String.class);
+                            String createdBy = snap.child("created_by").getValue(String.class);
                             int attendanceCounter = Integer.parseInt(Objects.requireNonNull(snap.child("attendance_counter").getValue(String.class)));
-                            eventList.add(new Event(title, startingTimestamp, endingTimestamp, null, description, imageUri, attendanceCounter,id));
+                            eventList.add(new Event(title, startingTimestamp, endingTimestamp, location, description, imageUri, attendanceCounter,id, createdBy));
                         }
                         handler.post(() -> {
                             eventsAdapter = new EventsAdapter(eventList, getContext(), eventsRef.child(puddleID));

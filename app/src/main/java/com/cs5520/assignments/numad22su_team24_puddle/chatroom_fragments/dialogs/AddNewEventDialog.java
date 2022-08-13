@@ -6,6 +6,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
 import android.webkit.MimeTypeMap;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -22,6 +23,7 @@ import com.bumptech.glide.Glide;
 import com.cs5520.assignments.numad22su_team24_puddle.MapActivity;
 import com.cs5520.assignments.numad22su_team24_puddle.PuddleListActivity;
 import com.cs5520.assignments.numad22su_team24_puddle.R;
+import com.cs5520.assignments.numad22su_team24_puddle.SelectLocation;
 import com.cs5520.assignments.numad22su_team24_puddle.SettingsActivity;
 import com.cs5520.assignments.numad22su_team24_puddle.Utils.FirebaseDB;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -52,6 +54,8 @@ public class AddNewEventDialog extends AppCompatActivity {
     private TextView endingDateTextView;
     private TextView startingTimeTextView;
     private TextView endingTimeTextView;
+    private TextView addLocationTextView;
+    private String selectedLocation;
 
 
     ActivityResultLauncher<Intent> startActivityForResult = registerForActivityResult(
@@ -65,6 +69,20 @@ public class AddNewEventDialog extends AppCompatActivity {
                 }
             }
     );
+
+
+    ActivityResultLauncher<Intent> startMapActivityForResult = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            result -> {
+                if (result.getResultCode() == RESULT_OK){
+                    Intent intent = result.getData();
+                    if (intent.getStringExtra("selectedLocation") != null) {
+                        selectedLocation = intent.getStringExtra("selectedLocation");
+                        addLocationTextView.setText(selectedLocation);
+
+                    }
+                }
+            });
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -80,6 +98,11 @@ public class AddNewEventDialog extends AppCompatActivity {
         startingTimeTextView = findViewById(R.id.starting_time_text_view);
         endingTimeTextView = findViewById(R.id.ending_time_text_view);
         toolbar = findViewById(R.id.add_event_toolbar);
+        addLocationTextView = findViewById(R.id.add_location_text_view);
+        addLocationTextView.setOnClickListener(v -> {
+            Intent intent = new Intent(this, SelectLocation.class);
+            startMapActivityForResult.launch(intent);
+        });
         setSupportActionBar(toolbar);
         initializeToolbar();
         uploadImageToFb();
@@ -98,7 +121,11 @@ public class AddNewEventDialog extends AppCompatActivity {
             result.putString("ending_date", endingDate);
             result.putString("starting_time", DateTimeFormatUtil.formatEventTime(startingTime[0],startingTime[1]));
             result.putString("ending_time", DateTimeFormatUtil.formatEventTime(endingTime[0],endingTime[1]));
-            Log.d("here",title.getEditText().getText().toString());
+            if (selectedLocation == null) {
+                Toast.makeText(this, "Please enter a location!", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            result.putString("selected_location", selectedLocation);
             // Title is required
             if (title.getEditText().getText() == null || title.getEditText().getText().toString().equals("")) {
                 Toast.makeText(this, "Please enter a title!", Toast.LENGTH_SHORT).show();
@@ -324,6 +351,7 @@ public class AddNewEventDialog extends AppCompatActivity {
         outState.putInt("ending_mins",endingTime[1]);
         outState.putString("starting_date",startingDate);
         outState.putString("ending_date",endingDate);
+        outState.putString("selected_location", selectedLocation);
         if (imageUri != null) {
             outState.putString("image_uri", imageUri.toString());
         }

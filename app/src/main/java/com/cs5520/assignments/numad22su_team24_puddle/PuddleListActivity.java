@@ -330,7 +330,6 @@ public class PuddleListActivity extends AppCompatActivity implements View.OnClic
                                                     snapshot.getChildren()) {
                                                 String senderUsername = snap.child("username").getValue(String.class);
                                                 String body = snap.child("body").getValue(String.class);
-                                                String profile_uri = FirebaseDB.allUserData.get(senderUsername).getProfile_icon();
                                                 if (!senderUsername.equals(FirebaseDB.currentUser.getUsername()) && !Util.isForeground && !justOpened) {
                                                     Log.d("here","completed");
                                                     notification.createNotification(senderUsername, body, puddleID);

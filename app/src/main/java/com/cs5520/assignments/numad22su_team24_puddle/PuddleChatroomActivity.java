@@ -138,21 +138,11 @@ public class PuddleChatroomActivity extends AppCompatActivity {
 
                     }
                 }
+                // To prevent notification population if the user turns the screen on tabs 1-3
                 if (currentTab.getPosition() != 0 && Util.isForeground){
-                    handler.postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            Util.isForeground = false;
-                        }
-                    },800);
+                    handler.postDelayed(() -> Util.isForeground = false,800);
                 }
-
-                handler.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        justOpened = false;
-                    }
-                },1000);
+                handler.postDelayed(() -> justOpened = false,1000);
             }
 
 
