@@ -101,6 +101,7 @@ public class PuddleChatroomActivity extends AppCompatActivity {
             Intent intent = new Intent(this, AddNewEventDialog.class);
             startActivityForResult.launch(intent);
         });
+        initializeNotificationListener();
     }
 
 
@@ -121,8 +122,12 @@ public class PuddleChatroomActivity extends AppCompatActivity {
                                                 snapshot.getChildren()) {
                                             String senderUsername = snap.child("username").getValue(String.class);
                                             String body = snap.child("body").getValue(String.class);
+                                            Log.d("here", "Foreground"+String.valueOf(Util.isForeground));
+                                            Log.d("here", "JustOpened"+String.valueOf(justOpened));
+                                            Log.d("here", "Puddle"+puddleID);
+                                            Log.d("here", "snapref"+snapshot.getRef().getKey());
                                             if ((!senderUsername.equals(FirebaseDB.currentUser.getUsername()) && !Util.isForeground)
-                                                    ||((!senderUsername.equals(FirebaseDB.currentUser.getUsername()) && !justOpened &&
+                                                    || ((!senderUsername.equals(FirebaseDB.currentUser.getUsername()) && !justOpened &&
                                                     !Util.foregroundedPuddle.equals(snapshot.getRef().getKey())))){
                                                 notification.createNotification(senderUsername, body, puddleID);
                                             }
@@ -140,9 +145,9 @@ public class PuddleChatroomActivity extends AppCompatActivity {
                 }
                 // To prevent notification population if the user turns the screen on tabs 1-3
                 if (currentTab.getPosition() != 0 && Util.isForeground){
-                    handler.postDelayed(() -> Util.isForeground = false,800);
+                    handler.postDelayed(() -> Util.isForeground = false,3000);
                 }
-                handler.postDelayed(() -> justOpened = false,1000);
+                handler.postDelayed(() -> justOpened = false,3000);
             }
 
 
@@ -232,7 +237,7 @@ public class PuddleChatroomActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         justOpened = true;
-        initializeNotificationListener();
+        Util.isForeground = true;
     }
 
     @Override

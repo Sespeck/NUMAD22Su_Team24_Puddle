@@ -1,9 +1,5 @@
 package com.cs5520.assignments.numad22su_team24_puddle.chatroom_fragments.adapters;
 
-import android.graphics.Bitmap;
-import android.location.Location;
-import android.util.Log;
-
 import java.util.HashSet;
 
 public class Event {

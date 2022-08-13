@@ -239,9 +239,7 @@ public class PuddleListActivity extends AppCompatActivity implements View.OnClic
             shimmerFrameLayout.setVisibility(View.GONE);
             puddleListRecyclerView.setVisibility(View.VISIBLE);
         }
-        if (FirebaseDB.currentUser != null){
-            initializeNotificationListener();
-        }
+
 
         getSupportFragmentManager().setFragmentResultListener("filter_result", this, new FragmentResultListener() {
             @Override
@@ -289,7 +287,11 @@ public class PuddleListActivity extends AppCompatActivity implements View.OnClic
     protected void onResume() {
         super.onResume();
         justOpened = true;
-        handler.postDelayed(() -> justOpened = false,2000);
+        Util.isForeground = true;
+        if (FirebaseDB.currentUser != null){
+            initializeNotificationListener();
+        }
+
     }
 
     public void filterPuddles(String txt) {
