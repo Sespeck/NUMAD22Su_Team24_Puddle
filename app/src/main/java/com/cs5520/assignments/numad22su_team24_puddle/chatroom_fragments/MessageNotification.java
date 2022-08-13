@@ -34,36 +34,24 @@ public class MessageNotification {
     }
 
 
-    public void createNotification(String username, String body, String profileUri, int id) {
-        Glide.with(activity)
-                .asBitmap()
-                .load(profileUri)
-                .into(new CustomTarget<Bitmap>() {
-                    @Override
-                    public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
-                        Intent notifyIntent = new Intent(activity, PuddleChatroomActivity.class);
-                        notifyIntent.putExtra("username", username);
-                        notifyIntent.putExtra("body", body);
+    public void createNotification(String username, String body, String puddleID) {
+        Intent notifyIntent = new Intent(activity, PuddleChatroomActivity.class);
+        notifyIntent.putExtra("puddleID", puddleID);
 
-                        TaskStackBuilder stackBuilder = TaskStackBuilder.create(activity);
-                        stackBuilder.addNextIntentWithParentStack(notifyIntent);
-                        PendingIntent notifyPendingIntent =
-                                stackBuilder.getPendingIntent(0,
-                                        PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
-                        NotificationCompat.Builder builder = new
-                                NotificationCompat.Builder(activity, CHANNEL_1_ID)
-                                .setContentTitle(username).setAutoCancel(true).setColor(0x9C27B0).setSmallIcon(R.drawable.notification).
-                                setContentText(body).setContentIntent(notifyPendingIntent).setLargeIcon(resource).
-                                setPriority(NotificationCompat.PRIORITY_DEFAULT);
-                        NotificationManagerCompat notificationManager =
-                                NotificationManagerCompat.from(activity);
-                        notificationManager.notify(NOTIFICATION_ID, builder.build());
-                    }
 
-                    @Override
-                    public void onLoadCleared(@Nullable Drawable placeholder) {
-                    }
-                });
+        TaskStackBuilder stackBuilder = TaskStackBuilder.create(activity);
+        stackBuilder.addNextIntentWithParentStack(notifyIntent);
+        PendingIntent notifyPendingIntent =
+                stackBuilder.getPendingIntent(0,
+                        PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
+        NotificationCompat.Builder builder = new
+                NotificationCompat.Builder(activity, CHANNEL_1_ID)
+                .setContentTitle(username).setAutoCancel(true).setColor(0x9C27B0).
+                setContentText(body).setContentIntent(notifyPendingIntent).setSmallIcon(R.drawable.notification).
+                setPriority(NotificationCompat.PRIORITY_DEFAULT);
+        NotificationManagerCompat notificationManager =
+                NotificationManagerCompat.from(activity);
+        notificationManager.notify(NOTIFICATION_ID, builder.build());
     }
 
 

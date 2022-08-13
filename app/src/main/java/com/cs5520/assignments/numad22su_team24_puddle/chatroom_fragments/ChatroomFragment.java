@@ -53,7 +53,6 @@ public class ChatroomFragment extends Fragment {
     private ImageView sendButton;
     private EditText chatEditText;
     private Handler handler = new Handler();
-    private Fragment currentFragment = this;
     private ChatroomAdapter adapter;
     private String puddleID;
     private StorageReference storeRef;
@@ -64,7 +63,6 @@ public class ChatroomFragment extends Fragment {
     private String dbID;
     private ShimmerFrameLayout shimmerFrameLayout;
     private String FRAGMENT_ID = "1";
-    private MessageNotification notification;
     private EventsFragment.endShimmerEffectCallback callback = new EventsFragment.endShimmerEffectCallback(){
         @Override
         public void onLayoutInflated() {
@@ -113,7 +111,6 @@ public class ChatroomFragment extends Fragment {
         this.chatEditText = view.findViewById(R.id.chat_room_edit_text);
         this.messageRef =  FirebaseDB.getDataReference("Messages");
         this.shimmerFrameLayout = view.findViewById(R.id.chatroom_shimmer_layout);
-        this.notification = new MessageNotification(requireActivity());
         recyclerView.hasFixedSize();
         uploadImageToFb();
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
@@ -181,30 +178,31 @@ public class ChatroomFragment extends Fragment {
         });
     }
 
+
     private void initializeRecyclerView(){
         class adapterRunnable implements Runnable{
             @Override
             public void run() {
-               messageRef.child(puddleID).addValueEventListener(new ValueEventListener() {
+
+
+                ValueEventListener initializeRecyclerView = new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
                         List<Message> chatroomList = new ArrayList<>();
-                        for (DataSnapshot snap: snapshot.getChildren()){
+                        for (DataSnapshot snap : snapshot.getChildren()) {
                             String username = snap.child("username").getValue(String.class);
                             String profile_url = FirebaseDB.allUserData.get(username).getProfile_icon();
                             String body = snap.child("body").getValue(String.class);
 //                            String profile_url = snap.child("profile_url").getValue(String.class);
                             String timestamp = Util.convertTocurrentDateTime(snap.child("timestamp").getValue(String.class));
                             Boolean isMessage = snap.child("isMessage").getValue(Boolean.class);
-                            chatroomList.add(new Message(username, body, timestamp, profile_url,snap.getKey(),isMessage));
-//                            if (!username.equals(FirebaseDB.currentUser.getUsername()) && !Util.isForeground) {
-//                                notification.createNotification(currentUser.getUsername(), body, FirebaseDB.currentUser.getProfile_icon(), 0);
-//                            }
+                            chatroomList.add(new Message(username, body, timestamp, profile_url, snap.getKey(), isMessage));
+
                         }
-                        handler.post(()->{
-                            adapter = new ChatroomAdapter(chatroomList,getContext(), messageRef.child(puddleID));
+                        handler.post(() -> {
+                            adapter = new ChatroomAdapter(chatroomList, getContext(), messageRef.child(puddleID));
                             recyclerView.setAdapter(adapter);
-                            recyclerView.scrollToPosition(adapter.getItemCount()-1);
+                            recyclerView.scrollToPosition(adapter.getItemCount() - 1);
                         });
                     }
 
@@ -212,7 +210,8 @@ public class ChatroomFragment extends Fragment {
                     public void onCancelled(@NonNull DatabaseError error) {
 
                     }
-                });
+                };
+                messageRef.child(puddleID).addValueEventListener(initializeRecyclerView);
             }
         }
         Thread worker = new Thread(new adapterRunnable());
@@ -266,15 +265,15 @@ public class ChatroomFragment extends Fragment {
         return mime.getExtensionFromMimeType(cr.getType(muri));
     }
 
-//    @Override
-//    public void onStart() {
-//        Util.isForeground = true;
-//        super.onStart();
-//    }
-//
-//    @Override
-//    public void onStop() {
-//        Util.isForeground = false;
-//        super.onStop();
-//    }
+    @Override
+    public void onStart() {
+        Util.isForeground = true;
+        super.onStart();
+    }
+
+    @Override
+    public void onStop() {
+        Util.isForeground = false;
+        super.onStop();
+    }
 }

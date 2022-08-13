@@ -2,6 +2,7 @@ package com.cs5520.assignments.numad22su_team24_puddle;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.Log;
@@ -20,8 +21,10 @@ import androidx.fragment.app.FragmentTransaction;
 
 import com.cs5520.assignments.numad22su_team24_puddle.Model.User;
 import com.cs5520.assignments.numad22su_team24_puddle.Utils.FirebaseDB;
+import com.cs5520.assignments.numad22su_team24_puddle.Utils.Util;
 import com.cs5520.assignments.numad22su_team24_puddle.chatroom_fragments.AboutFragment;
 import com.cs5520.assignments.numad22su_team24_puddle.chatroom_fragments.ChatroomFragment;
+import com.cs5520.assignments.numad22su_team24_puddle.chatroom_fragments.MessageNotification;
 import com.cs5520.assignments.numad22su_team24_puddle.chatroom_fragments.dialogs.AddNewEventDialog;
 import com.cs5520.assignments.numad22su_team24_puddle.chatroom_fragments.EventsFragment;
 import com.cs5520.assignments.numad22su_team24_puddle.chatroom_fragments.MembersFragment;
@@ -42,6 +45,10 @@ public class PuddleChatroomActivity extends AppCompatActivity {
     private Toolbar toolbar;
     private String puddleID;
     private boolean modalOpen = false;
+    private ChatroomFragment fragment;
+    private MessageNotification notification;
+    private Handler handler = new Handler();
+    private ValueEventListener valueEventListener;
 
     ActivityResultLauncher<Intent> startActivityForResult = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
@@ -64,8 +71,8 @@ public class PuddleChatroomActivity extends AppCompatActivity {
         toolbar.setNavigationIcon(R.drawable.ic_baseline_arrow_back_24);
         toolbar.setNavigationOnClickListener(v -> onBackPressed());
         initializeOnTabSelectedListener();
+//        notification = new MessageNotification(this, puddleID);
         this.fab = findViewById(R.id.fab);
-
         if (savedInstanceState != null){
             puddleID = savedInstanceState.getString("puddleID");
             currentTab = tabLayout.getTabAt(savedInstanceState.getInt("current_tab"));
@@ -93,15 +100,54 @@ public class PuddleChatroomActivity extends AppCompatActivity {
         });
     }
 
+
+
+//    private void initializeNotificationListener(){
+//        class adapterRunnable implements Runnable{
+//            @Override
+//            public void run() {
+//                valueEventListener = new ValueEventListener() {
+//                    @Override
+//                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+//                        Log.d("here", String.valueOf(Util.isForeground));
+//                        for (DataSnapshot snap : snapshot.getChildren()) {
+//                            String username = snap.child("username").getValue(String.class);
+//                            String body = snap.child("body").getValue(String.class);
+//                            if (!username.equals(FirebaseDB.currentUser.getUsername()) && !Util.isForeground) {
+//                                notification.createNotification(FirebaseDB.currentUser.getUsername(), body, FirebaseDB.currentUser.getProfile_icon(), 0);
+//                            }
+//                        }
+//                    }
+//
+//                    @Override
+//                    public void onCancelled(@NonNull DatabaseError error) {
+//
+//                    }
+//                };
+//                FirebaseDB.getDataReference("Messages").child(puddleID).orderByKey().limitToLast(1).addValueEventListener(valueEventListener);
+//                if (currentTab.getPosition() != 0 && Util.isForeground){
+//                    handler.postDelayed(new Runnable() {
+//                        @Override
+//                        public void run() {
+//                            Util.isForeground = false;
+//                        }
+//                    },800);
+//                }
+//            }
+//        }
+//        Thread worker = new Thread(new adapterRunnable());
+//        worker.start();
+//    }
+
     private void completeFragmentNavigation(TabLayout.Tab tab, int flag) {
         Bundle bundle = new Bundle();
         bundle.putString("puddleID",puddleID);
         if (flag == 1) bundle.putString("new_chatroom","dont_animate_shimmer");
         if (tab.getPosition() == 0) {
             fab.setVisibility(View.INVISIBLE);
-            ChatroomFragment chatroomFragment = new ChatroomFragment();
-            chatroomFragment.setArguments(bundle);
-            changeVisibleFragment(R.id.chat_tab, chatroomFragment, "chatroom");
+            fragment  = new ChatroomFragment();
+            fragment.setArguments(bundle);
+            changeVisibleFragment(R.id.chat_tab, fragment, "chatroom");
         } else if (tab.getPosition() == 1) {
             fab.setVisibility(View.INVISIBLE);
             AboutFragment aboutFragment = new AboutFragment();
@@ -150,6 +196,7 @@ public class PuddleChatroomActivity extends AppCompatActivity {
     protected void onSaveInstanceState(@NonNull Bundle outState) {
         outState.putString("puddleID",puddleID);
         outState.putInt("current_tab",currentTab.getPosition());
+        Util.isForeground = true;
         super.onSaveInstanceState(outState);
     }
 
@@ -165,6 +212,7 @@ public class PuddleChatroomActivity extends AppCompatActivity {
             completeFragmentNavigation(currentTab, 0);
         }
     }
+
 
     @Override
     public boolean onSupportNavigateUp() {
