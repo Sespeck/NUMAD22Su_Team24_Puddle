@@ -14,6 +14,7 @@ import com.bumptech.glide.Glide;
 import com.cs5520.assignments.numad22su_team24_puddle.Model.Puddle;
 import com.cs5520.assignments.numad22su_team24_puddle.PuddleChatroomActivity;
 import com.cs5520.assignments.numad22su_team24_puddle.R;
+import com.cs5520.assignments.numad22su_team24_puddle.Utils.Util;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -60,6 +61,7 @@ public class MyPuddlesAdapter extends RecyclerView.Adapter<MyPuddlesAdapter.MyPu
         holder.global.setVisibility(myPud.getIsGlobal().equals("true") ? ImageView.VISIBLE : ImageView.GONE);
 
         holder.itemView.setOnClickListener((v) -> {
+            Util.isPuddleListForeground = false;
             Intent intent = new Intent(ct, PuddleChatroomActivity.class);
             intent.putExtra("puddleID", myPuddleKeys.get(position));
             ct.startActivity(intent);

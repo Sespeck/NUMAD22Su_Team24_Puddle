@@ -138,6 +138,7 @@ public class PuddleListActivity extends AppCompatActivity implements View.OnClic
         setContentView(R.layout.activity_puddle_list);
         justOpened = true;
         Util.isForeground = false;
+        Util.isPuddleListForeground = true;
         userDetails = new HashMap<>();
         allPuddlesData = new HashMap<>();
         categoryPuddlesData = new HashMap<>();
@@ -283,16 +284,6 @@ public class PuddleListActivity extends AppCompatActivity implements View.OnClic
         }
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        justOpened = true;
-        Util.isForeground = true;
-        if (FirebaseDB.currentUser != null){
-            initializeNotificationListener();
-        }
-
-    }
 
     public void filterPuddles(String txt) {
         HashMap<String, Puddle> modifiedData = new HashMap<>();
@@ -332,10 +323,12 @@ public class PuddleListActivity extends AppCompatActivity implements View.OnClic
                                                     snapshot.getChildren()) {
                                                 String senderUsername = snap.child("username").getValue(String.class);
                                                 String body = snap.child("body").getValue(String.class);
-                                                if (!senderUsername.equals(FirebaseDB.currentUser.getUsername()) && !Util.isForeground && !justOpened) {
-                                                    Log.d("here","completed");
-                                                    notification.createNotification(senderUsername, body, puddleID);
-                                                }
+                                                handler.postDelayed(() ->  {
+                                                    if (!senderUsername.equals(FirebaseDB.currentUser.getUsername()) && Util.isPuddleListForeground && !justOpened) {
+                                                        Log.d("here", "completed");
+                                                        notification.createNotification(senderUsername, body, puddleID);
+                                                    }
+                                                },2000);
                                             }
 
                                             }
@@ -572,7 +565,7 @@ public class PuddleListActivity extends AppCompatActivity implements View.OnClic
     }
 
     public void showJoinPuddleDialogue(Context context, Puddle puddle) {
-
+        Util.isPuddleListForeground = false;
         if (FirebaseDB.currentUser == null) {
             FirebaseUser current_user = FirebaseDB.getCurrentUser();
             DatabaseReference userRef = FirebaseDB.getDataReference("Users").child(current_user.getUid());

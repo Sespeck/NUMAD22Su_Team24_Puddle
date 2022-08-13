@@ -36,6 +36,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 public class PuddleChatroomActivity extends AppCompatActivity {
@@ -49,6 +50,8 @@ public class PuddleChatroomActivity extends AppCompatActivity {
     private MessageNotification notification;
     private Handler handler = new Handler();
     private ValueEventListener valueEventListener;
+    private DatabaseReference userRef;
+    private ArrayList<ValueEventListener> valueEventListeners = new ArrayList<>();
 
     ActivityResultLauncher<Intent> startActivityForResult = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
@@ -101,34 +104,33 @@ public class PuddleChatroomActivity extends AppCompatActivity {
             Intent intent = new Intent(this, AddNewEventDialog.class);
             startActivityForResult.launch(intent);
         });
-        initializeNotificationListener();
     }
 
 
     private void initializeNotificationListener() {
-        DatabaseReference userRef = FirebaseDB.getDataReference("Users").child(FirebaseDB.currentUser.getId()).child("my_puddles");
-        userRef.addValueEventListener(new ValueEventListener() {
+        valueEventListener = new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if (snapshot.getChildrenCount() != 0) {
                     for (DataSnapshot snap :
                             snapshot.getChildren()) {
                         String puddleID = snap.getValue(String.class);
-                        FirebaseDB.getDataReference("Messages").child(puddleID).orderByKey().limitToLast(1).
-                                addValueEventListener(new ValueEventListener() {
+
+                        ValueEventListener listener = new ValueEventListener() {
                                     @Override
                                     public void onDataChange(@NonNull DataSnapshot snapshot) {
                                         for (DataSnapshot snap :
                                                 snapshot.getChildren()) {
                                             String senderUsername = snap.child("username").getValue(String.class);
                                             String body = snap.child("body").getValue(String.class);
-                                            Log.d("here", "Foreground"+String.valueOf(Util.isForeground));
-                                            Log.d("here", "JustOpened"+String.valueOf(justOpened));
-                                            Log.d("here", "Puddle"+puddleID);
-                                            Log.d("here", "snapref"+snapshot.getRef().getKey());
+//                                            Log.d("here", "Foreground" + String.valueOf(Util.isForeground));
+//                                            Log.d("here", "JustOpened" + String.valueOf(justOpened));
+//                                            Log.d("here", "Puddle" + puddleID);
+//                                            Log.d("here", "snapref" + snapshot.getRef().getKey());
                                             if ((!senderUsername.equals(FirebaseDB.currentUser.getUsername()) && !Util.isForeground)
                                                     || ((!senderUsername.equals(FirebaseDB.currentUser.getUsername()) && !justOpened &&
-                                                    !Util.foregroundedPuddle.equals(snapshot.getRef().getKey())))){
+                                                    !Util.foregroundedPuddle.equals(snapshot.getRef().getKey())))) {
+                                                Log.d("here","chatroomnotifsent");
                                                 notification.createNotification(senderUsername, body, puddleID);
                                             }
                                         }
@@ -136,26 +138,27 @@ public class PuddleChatroomActivity extends AppCompatActivity {
                                     }
 
                                     @Override
-                                    public void onCancelled (@NonNull DatabaseError error){
+                                    public void onCancelled(@NonNull DatabaseError error) {
 
                                     }
-                                });
-
+                                };
+                        FirebaseDB.getDataReference("Messages").child(puddleID).orderByKey().limitToLast(1).addValueEventListener(listener);
+                        valueEventListeners.add(listener);
                     }
                 }
-                // To prevent notification population if the user turns the screen on tabs 1-3
-                if (currentTab.getPosition() != 0 && Util.isForeground){
-                    handler.postDelayed(() -> Util.isForeground = false,3000);
-                }
-                handler.postDelayed(() -> justOpened = false,3000);
             }
-
-
-            @Override
             public void onCancelled(@NonNull DatabaseError error) {
 
             }
-        });
+        };
+        userRef = FirebaseDB.getDataReference("Users").child(FirebaseDB.currentUser.getId()).child("my_puddles");
+
+        userRef.addValueEventListener(valueEventListener);
+
+        if (currentTab.getPosition() != 0 && Util.isForeground){
+            handler.postDelayed(() -> Util.isForeground = false,3000);
+        }
+        handler.postDelayed(() -> justOpened = false,3000);
     }
 
 
@@ -238,12 +241,19 @@ public class PuddleChatroomActivity extends AppCompatActivity {
         super.onResume();
         justOpened = true;
         Util.isForeground = true;
+        initializeNotificationListener();
     }
 
     @Override
     public boolean onSupportNavigateUp() {
         onBackPressed();
         return true;
+    }
+
+    @Override
+    protected void onPause() {
+        userRef.removeEventListener(valueEventListener);
+        super.onPause();
     }
 
     public void navigateHome(MenuItem item) {

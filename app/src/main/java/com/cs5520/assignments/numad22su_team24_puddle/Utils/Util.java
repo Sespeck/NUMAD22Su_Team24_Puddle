@@ -22,6 +22,7 @@ public class Util {
     public static boolean puddleListPopulated = false;
     public static Map<Integer, Category> categoryMap = getCategoryMap();
     public static boolean isForeground = true;
+    public static boolean isPuddleListForeground = true;
     public static String foregroundedPuddle;
 
     public static User user;

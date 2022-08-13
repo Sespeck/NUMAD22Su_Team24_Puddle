@@ -30,6 +30,7 @@ import android.widget.Toast;
 import com.cs5520.assignments.numad22su_team24_puddle.Model.ApiLoaderBar;
 import com.cs5520.assignments.numad22su_team24_puddle.Utils.FirebaseDB;
 import com.cs5520.assignments.numad22su_team24_puddle.Utils.LocationPermissionActivity;
+import com.cs5520.assignments.numad22su_team24_puddle.Utils.Util;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -253,6 +254,7 @@ public class CreatePuddle extends AppCompatActivity {
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             intent.putExtra("puddleID",pud_key);
             intent.putExtra("new_chatroom","do_not_animate_shimmer");
+            Util.isPuddleListForeground = false;
             CreatePuddle.this.startActivity(intent);
             this.finish();
         });
