@@ -110,6 +110,11 @@ public class PuddleListActivity extends AppCompatActivity implements View.OnClic
                     shimmerFrameLayout.stopShimmer();
                     shimmerFrameLayout.setVisibility(View.GONE);
                     puddleListRecyclerView.setVisibility(View.VISIBLE);
+//                    if (FirebaseDB.currentUser.getMy_puddles().size() == 0){
+//                        noResultFound.setVisibility(View.VISIBLE);
+//                    } else {
+//                        noResultFound.setVisibility(View.GONE);
+//                    }
                 }
             }, 1200);
         }
@@ -323,11 +328,6 @@ public class PuddleListActivity extends AppCompatActivity implements View.OnClic
                                         public void onDataChange(@NonNull DataSnapshot snapshot) {
                                             for (DataSnapshot snap :
                                                     snapshot.getChildren()) {
-                                                Log.d("here","xd");
-                                                Log.d("here",String.valueOf(Util.isForeground));
-                                                Log.d("here",String.valueOf(justOpened));
-
-
                                                 String senderUsername = snap.child("username").getValue(String.class);
                                                 String body = snap.child("body").getValue(String.class);
                                                 String profile_uri = FirebaseDB.allUserData.get(senderUsername).getProfile_icon();
@@ -491,13 +491,13 @@ public class PuddleListActivity extends AppCompatActivity implements View.OnClic
             setSelectedButton(myPuddlesBtn);
             setUnselectedButton(nearMeBtn);
 
-            if (myPuddlesData.size() == 0) {
-//                puddleSearch.setVisibility(SearchView.GONE);
-                noResultFound.setVisibility(SearchView.VISIBLE);
-            } else {
-                puddleSearch.setVisibility(SearchView.VISIBLE);
-                noResultFound.setVisibility(SearchView.GONE);
-            }
+//            if (myPuddlesData.size() == 0) {
+////                puddleSearch.setVisibility(SearchView.GONE);
+//                noResultFound.setVisibility(SearchView.VISIBLE);
+//            } else {
+//                puddleSearch.setVisibility(SearchView.VISIBLE);
+//                noResultFound.setVisibility(SearchView.GONE);
+//            }
 
             new Thread(new Runnable() {
                 @Override
@@ -695,13 +695,13 @@ public class PuddleListActivity extends AppCompatActivity implements View.OnClic
                     setUnselectedButton(nearMeBtn);
                 }
 
-                if (myPuddlesData.size() == 0) {
-                    puddleSearch.setVisibility(SearchView.GONE);
-                    noResultFound.setVisibility(TextView.VISIBLE);
-                } else {
-                    puddleSearch.setVisibility(SearchView.VISIBLE);
-                    noResultFound.setVisibility(TextView.GONE);
-                }
+//                if (myPuddlesData.size() == 0) {
+//                    puddleSearch.setVisibility(SearchView.GONE);
+//                    noResultFound.setVisibility(TextView.VISIBLE);
+//                } else {
+//                    puddleSearch.setVisibility(SearchView.VISIBLE);
+//                    noResultFound.setVisibility(TextView.GONE);
+//                }
             }
 
             @Override

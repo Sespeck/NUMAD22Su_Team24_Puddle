@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
 import android.view.View;
@@ -23,6 +24,8 @@ import com.cs5520.assignments.numad22su_team24_puddle.Model.Puddle;
 import com.cs5520.assignments.numad22su_team24_puddle.Model.PuddleMarker;
 import com.cs5520.assignments.numad22su_team24_puddle.Utils.FirebaseDB;
 import com.cs5520.assignments.numad22su_team24_puddle.Utils.LocationPermissionActivity;
+import com.cs5520.assignments.numad22su_team24_puddle.Utils.Util;
+import com.cs5520.assignments.numad22su_team24_puddle.chatroom_fragments.MessageNotification;
 import com.cs5520.assignments.numad22su_team24_puddle.services.MapService;
 import com.cs5520.assignments.numad22su_team24_puddle.services.MarkerService;
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -58,6 +61,8 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     private boolean mapInitiated = true;
     private GoogleMap mMap;
     private HashMap<String, Puddle> allPuddlesData;
+    private Boolean justOpened;
+    private Handler handler = new Handler();
     FusedLocationProviderClient fusedLocationProviderClient;
     LocationRequest locationRequest;
     LocationCallback locationCallback;
@@ -68,6 +73,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     HashSet<String> categories;
     ChipGroup chipGroup;
     SupportMapFragment mapFragment;
+    MessageNotification notification;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -109,7 +115,60 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                 }
             }
         };
+        notification = new MessageNotification(this);
 
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        justOpened = true;
+        initializeNotificationListener();
+    }
+
+    private void initializeNotificationListener() {
+        DatabaseReference userRef = FirebaseDB.getDataReference("Users").child(FirebaseDB.currentUser.getId()).child("my_puddles");
+        userRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (snapshot.getChildrenCount() != 0) {
+                    for (DataSnapshot snap :
+                            snapshot.getChildren()) {
+                        String puddleID = snap.getValue(String.class);
+                        FirebaseDB.getDataReference("Messages").child(puddleID).orderByKey().limitToLast(1).
+                                addValueEventListener(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                        for (DataSnapshot snap :
+                                                snapshot.getChildren()) {
+                                            String senderUsername = snap.child("username").getValue(String.class);
+                                            String body = snap.child("body").getValue(String.class);
+                                            String profile_uri = FirebaseDB.allUserData.get(senderUsername).getProfile_icon();
+                                            if (!senderUsername.equals(FirebaseDB.currentUser.getUsername()) && !Util.isForeground && !justOpened) {
+                                                notification.createNotification(senderUsername, body, puddleID);
+                                            }
+                                        }
+
+                                    }
+
+                                    @Override
+                                    public void onCancelled (@NonNull DatabaseError error){
+
+                                    }
+                                });
+
+                    }
+                }
+                // Delay intended to prevent notifications populating when a user opens this activity
+                handler.postDelayed(() -> justOpened = false,4000);
+            }
+
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
     }
 
     @Override

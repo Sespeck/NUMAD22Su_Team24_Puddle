@@ -44,7 +44,7 @@ public class PuddleChatroomActivity extends AppCompatActivity {
     private FloatingActionButton fab;
     private Toolbar toolbar;
     private String puddleID;
-    private boolean modalOpen = false;
+    private Boolean justOpened;
     private ChatroomFragment fragment;
     private MessageNotification notification;
     private Handler handler = new Handler();
@@ -70,8 +70,10 @@ public class PuddleChatroomActivity extends AppCompatActivity {
         toolbar = findViewById(R.id.toolbar);
         toolbar.setNavigationIcon(R.drawable.ic_baseline_arrow_back_24);
         toolbar.setNavigationOnClickListener(v -> onBackPressed());
-        initializeOnTabSelectedListener();
-//        notification = new MessageNotification(this, puddleID);
+        notification = new MessageNotification(this);
+        Util.isForeground = true;
+        justOpened = true;
+        Util.foregroundedPuddle = puddleID;
         this.fab = findViewById(R.id.fab);
         if (savedInstanceState != null){
             puddleID = savedInstanceState.getString("puddleID");
@@ -92,6 +94,7 @@ public class PuddleChatroomActivity extends AppCompatActivity {
 
             }
         });
+        initializeOnTabSelectedListener();
         // Opens the full screen add new event modal
         fab.setOnClickListener(v -> {
             currentTab = tabLayout.getTabAt(3);
@@ -101,43 +104,65 @@ public class PuddleChatroomActivity extends AppCompatActivity {
     }
 
 
+    private void initializeNotificationListener() {
+        DatabaseReference userRef = FirebaseDB.getDataReference("Users").child(FirebaseDB.currentUser.getId()).child("my_puddles");
+        userRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (snapshot.getChildrenCount() != 0) {
+                    for (DataSnapshot snap :
+                            snapshot.getChildren()) {
+                        String puddleID = snap.getValue(String.class);
+                        FirebaseDB.getDataReference("Messages").child(puddleID).orderByKey().limitToLast(1).
+                                addValueEventListener(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                        for (DataSnapshot snap :
+                                                snapshot.getChildren()) {
+                                            String senderUsername = snap.child("username").getValue(String.class);
+                                            String body = snap.child("body").getValue(String.class);
+                                            if ((!senderUsername.equals(FirebaseDB.currentUser.getUsername()) && !Util.isForeground)
+                                                    ||((!senderUsername.equals(FirebaseDB.currentUser.getUsername()) && !justOpened &&
+                                                    !Util.foregroundedPuddle.equals(snapshot.getRef().getKey())))){
+                                                notification.createNotification(senderUsername, body, puddleID);
+                                            }
+                                        }
 
-//    private void initializeNotificationListener(){
-//        class adapterRunnable implements Runnable{
-//            @Override
-//            public void run() {
-//                valueEventListener = new ValueEventListener() {
-//                    @Override
-//                    public void onDataChange(@NonNull DataSnapshot snapshot) {
-//                        Log.d("here", String.valueOf(Util.isForeground));
-//                        for (DataSnapshot snap : snapshot.getChildren()) {
-//                            String username = snap.child("username").getValue(String.class);
-//                            String body = snap.child("body").getValue(String.class);
-//                            if (!username.equals(FirebaseDB.currentUser.getUsername()) && !Util.isForeground) {
-//                                notification.createNotification(FirebaseDB.currentUser.getUsername(), body, FirebaseDB.currentUser.getProfile_icon(), 0);
-//                            }
-//                        }
-//                    }
-//
-//                    @Override
-//                    public void onCancelled(@NonNull DatabaseError error) {
-//
-//                    }
-//                };
-//                FirebaseDB.getDataReference("Messages").child(puddleID).orderByKey().limitToLast(1).addValueEventListener(valueEventListener);
-//                if (currentTab.getPosition() != 0 && Util.isForeground){
-//                    handler.postDelayed(new Runnable() {
-//                        @Override
-//                        public void run() {
-//                            Util.isForeground = false;
-//                        }
-//                    },800);
-//                }
-//            }
-//        }
-//        Thread worker = new Thread(new adapterRunnable());
-//        worker.start();
-//    }
+                                    }
+
+                                    @Override
+                                    public void onCancelled (@NonNull DatabaseError error){
+
+                                    }
+                                });
+
+                    }
+                }
+                if (currentTab.getPosition() != 0 && Util.isForeground){
+                    handler.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            Util.isForeground = false;
+                        }
+                    },800);
+                }
+
+                handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        justOpened = false;
+                    }
+                },1000);
+            }
+
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+    }
+
 
     private void completeFragmentNavigation(TabLayout.Tab tab, int flag) {
         Bundle bundle = new Bundle();
@@ -213,6 +238,12 @@ public class PuddleChatroomActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        justOpened = true;
+        initializeNotificationListener();
+    }
 
     @Override
     public boolean onSupportNavigateUp() {
