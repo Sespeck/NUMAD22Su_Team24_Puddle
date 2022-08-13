@@ -16,11 +16,10 @@ public class Event {
     String backgroundImgUri;
     int attendanceCount;
     String createdBy;
-    HashSet<String> hasClicked;
 
 
     public Event(String name, String startingDatetime, String endingDatetime, String location,
-                 String description, String backgroundImgUri, int attendanceCount, String id, String createdBy, HashSet<String> hasClicked){
+                 String description, String backgroundImgUri, int attendanceCount, String id, String createdBy){
         this.name = name;
         this.startingDatetime = startingDatetime;
         this.endingDatetime = endingDatetime;
@@ -30,7 +29,6 @@ public class Event {
         this.attendanceCount = attendanceCount;
         this.id = id;
         this.createdBy = createdBy;
-        this.hasClicked = hasClicked;
     }
 
     public String getName() {
@@ -59,9 +57,5 @@ public class Event {
 
     public int getAttendanceCount(){
         return attendanceCount;
-    }
-
-    public HashSet<String> getHasClicked() {
-        return hasClicked;
     }
 }
