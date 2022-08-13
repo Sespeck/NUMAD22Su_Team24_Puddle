@@ -209,6 +209,7 @@ public class PuddleListActivity extends AppCompatActivity implements View.OnClic
         // Api Calls
         fetchCurrentUserData();
         fetchAllPuddles();
+        fetchMyPuddles();
         FirebaseDB.fetchAllUsers();
 
         callback.onLayoutInflated();
@@ -662,7 +663,6 @@ public class PuddleListActivity extends AppCompatActivity implements View.OnClic
                         allPuddleList.add(puddle);
                     }
                 }
-                fetchMyPuddles();
             }
 
             @Override
@@ -674,10 +674,6 @@ public class PuddleListActivity extends AppCompatActivity implements View.OnClic
 
     // To store the current user puddles
     public void fetchMyPuddles() {
-        puddleListRecyclerView.setLayoutManager(new GridLayoutManager(PuddleListActivity.this, 2));
-        puddleListRecyclerView.setAdapter(new MyPuddlesAdapter(PuddleListActivity.this, myPuddlesData));
-        setSelectedButton(myPuddlesBtn);
-        setUnselectedButton(nearMeBtn);
 
         DatabaseReference myPuds = FirebaseDB.getDataReference("Users").child(FirebaseDB.getCurrentUser().getUid()).child("my_puddles");
         myPuds.addValueEventListener(new ValueEventListener() {
