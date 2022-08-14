@@ -47,6 +47,11 @@ public class LoginActivity extends AppCompatActivity {
         usernameEditText = findViewById(R.id.username_et);
         passwordEditText = findViewById(R.id.login_password_et);
 
+        boolean showToast = getIntent().getBooleanExtra("showToast", false);
+        if(showToast) {
+            Toast.makeText(this, "Please login/signup to join the Puddle!", Toast.LENGTH_SHORT).show();
+        }
+
         loginButton.setOnClickListener(v -> {
             String username = usernameEditText.getText().toString();
             String password = passwordEditText.getText().toString();
