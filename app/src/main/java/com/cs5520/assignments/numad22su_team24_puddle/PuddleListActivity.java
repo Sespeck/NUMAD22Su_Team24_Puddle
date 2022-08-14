@@ -16,6 +16,7 @@ import android.app.Notification;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
@@ -186,7 +187,8 @@ public class PuddleListActivity extends AppCompatActivity implements View.OnClic
                     // my puddles
                     if (s.equals("")) {
                         myPuddlesData = myPuddlesDataStored;
-                        puddleListRecyclerView.setLayoutManager(new GridLayoutManager(PuddleListActivity.this, 2));
+//                        puddleListRecyclerView.setLayoutManager(new GridLayoutManager(PuddleListActivity.this, 2));
+                        setPuddleLayoutManager();
                         puddleListRecyclerView.setAdapter(new MyPuddlesAdapter(PuddleListActivity.this, myPuddlesData));
 
                         if (myPuddlesData.size() == 0) {
@@ -306,7 +308,8 @@ public class PuddleListActivity extends AppCompatActivity implements View.OnClic
             }
         }
 
-        puddleListRecyclerView.setLayoutManager(new GridLayoutManager(PuddleListActivity.this, 2));
+        setPuddleLayoutManager();
+//        puddleListRecyclerView.setLayoutManager(new GridLayoutManager(PuddleListActivity.this, 2));
         puddleListRecyclerView.setAdapter(new MyPuddlesAdapter(PuddleListActivity.this, modifiedData));
 
         if (modifiedData.size() == 0) {
@@ -508,7 +511,8 @@ public class PuddleListActivity extends AppCompatActivity implements View.OnClic
             for (Puddle filteredPuddle : filteredPuddles) {
                 filteredMap.put(filteredPuddle.getId(), filteredPuddle);
             }
-            puddleListRecyclerView.setLayoutManager(new GridLayoutManager(PuddleListActivity.this, 2));
+//            puddleListRecyclerView.setLayoutManager(new GridLayoutManager(PuddleListActivity.this, 2));
+            setPuddleLayoutManager();
             puddleListRecyclerView.setAdapter(new MyPuddlesAdapter(PuddleListActivity.this, filteredMap));
             setSelectedButton(myPuddlesBtn);
             setUnselectedButton(nearMeBtn);
@@ -524,6 +528,16 @@ public class PuddleListActivity extends AppCompatActivity implements View.OnClic
 
         }
 
+    }
+
+    private void setPuddleLayoutManager() {
+        if(currentView == myPuddlesBtn) {
+            if(this.getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
+                puddleListRecyclerView.setLayoutManager(new GridLayoutManager(PuddleListActivity.this, 2));
+            } else {
+                puddleListRecyclerView.setLayoutManager(new GridLayoutManager(PuddleListActivity.this, 4));
+            }
+        }
     }
 
     private void setSelectedButton(Button btn) {
