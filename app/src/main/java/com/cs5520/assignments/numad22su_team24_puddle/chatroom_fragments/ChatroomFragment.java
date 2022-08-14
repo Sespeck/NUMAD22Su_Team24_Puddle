@@ -86,7 +86,7 @@ public class ChatroomFragment extends Fragment {
                             String id = messageRef.child(puddleID).push().getKey();
                             handler.post(() -> {
                                 adapter.addNewMessage(new Message(currentUser.getUsername(), imageUri.toString(),Instant.now().toString(),
-                                        currentUser.getProfile_icon(), id, true));
+                                        currentUser.getProfile_icon(), id, true, true));
                                 recyclerView.scrollToPosition(adapter.getItemCount() - 1);
                             });
                             uploadToFirebase(imageUri);
@@ -160,13 +160,14 @@ public class ChatroomFragment extends Fragment {
                         newMessage.put("profile_url",currentUser.getProfile_icon());
                         newMessage.put("isMessage",false);
                         newMessage.put("isDeleted",false);
+                        newMessage.put("isNew",true);
                         // Add a new message based off current time, the edittext body, the current user's
                         // Pfp and name
 
                         String id = messageRef.child(puddleID).push().getKey();
                         handler.post(()-> {
                             adapter.addNewMessage(new Message(currentUser.getUsername() ,textResult,Instant.now().toString(),
-                                    FirebaseDB.currentUser.getProfile_icon(), id, false));
+                                    FirebaseDB.currentUser.getProfile_icon(), id, false, true));
                             recyclerView.scrollToPosition(adapter.getItemCount()-1);
                             chatEditText.getText().clear();
                         });
@@ -198,8 +199,9 @@ public class ChatroomFragment extends Fragment {
 //                            String profile_url = snap.child("profile_url").getValue(String.class);
                             String timestamp = snap.child("timestamp").getValue(String.class);
                             Boolean isMessage = snap.child("isMessage").getValue(Boolean.class);
+                            Boolean isNew = snap.child("isNew").getValue(Boolean.class);
                             if (isDeleted != null && !isDeleted) {
-                                chatroomList.add(new Message(username, body, timestamp, profile_url, snap.getKey(), isMessage));
+                                chatroomList.add(new Message(username, body, timestamp, profile_url, snap.getKey(), isMessage, isNew));
                             }
 
                         }
@@ -248,6 +250,7 @@ public class ChatroomFragment extends Fragment {
                         newMessage.put("profile_url", currentUser.getProfile_icon());
                         newMessage.put("isMessage", true);
                         newMessage.put("isDeleted",false);
+                        newMessage.put("isNew", true);
                         // Add a new message based off current time, the edittext body, the current user's
                         // Pfp and name
                         messageRef.child(puddleID).push().setValue(newMessage);

@@ -123,10 +123,11 @@ public class PuddleChatroomActivity extends AppCompatActivity {
                                             String senderUsername = snap.child("username").getValue(String.class);
                                             String body = snap.child("body").getValue(String.class);
                                             Boolean isImage = snap.child("isMessage").getValue(Boolean.class);
-                                            Boolean isDeleted = snap.child("isDeleted").getValue(Boolean.class);
-                                            if (isDeleted != null && ((!senderUsername.equals(FirebaseDB.currentUser.getUsername()) && !isDeleted && !Util.isForeground)
-                                                    || ((!senderUsername.equals(FirebaseDB.currentUser.getUsername()) && !isDeleted && !justOpened &&
+                                            Boolean isNew = snap.child("isNew").getValue(Boolean.class);
+                                            if (isNew != null && ((!senderUsername.equals(FirebaseDB.currentUser.getUsername()) && isNew && !Util.isForeground)
+                                                    || ((!senderUsername.equals(FirebaseDB.currentUser.getUsername()) && isNew && !justOpened &&
                                                     !Util.foregroundedPuddle.equals(snapshot.getRef().getKey()))))) {
+                                                snap.getRef().child("isNew").setValue(false);
                                                 FirebaseDB.getDataReference("Puddles").child(puddleID).child("name").
                                                         addValueEventListener(new ValueEventListener() {
                                                     @Override
@@ -147,6 +148,7 @@ public class PuddleChatroomActivity extends AppCompatActivity {
                                                     }
                                                 });
                                             }
+                                            snap.getRef().child("isNew").setValue(false);
                                         }
                                     }
 

@@ -78,6 +78,8 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     ChipGroup chipGroup;
     SupportMapFragment mapFragment;
     MessageNotification notification;
+    private ValueEventListener valueEventListener;
+    private DatabaseReference userRef;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -126,9 +128,15 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         initializeNotificationListener();
     }
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+        userRef.removeEventListener(valueEventListener);
+    }
+
     private void initializeNotificationListener() {
-        DatabaseReference userRef = FirebaseDB.getDataReference("Users").child(FirebaseDB.currentUser.getId()).child("my_puddles");
-        userRef.addValueEventListener(new ValueEventListener() {
+        userRef = FirebaseDB.getDataReference("Users").child(FirebaseDB.currentUser.getId()).child("my_puddles");
+        valueEventListener = new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if (snapshot.getChildrenCount() != 0) {
@@ -144,10 +152,10 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                                             String senderUsername = snap.child("username").getValue(String.class);
                                             String body = snap.child("body").getValue(String.class);
                                             Boolean isImage = snap.child("isMessage").getValue(Boolean.class);
-                                            Boolean isDeleted = snap.child("isDeleted").getValue(Boolean.class);
-                                            handler.postDelayed(() ->  {
-                                                if (isDeleted != null && !isDeleted && !senderUsername.equals(FirebaseDB.currentUser.getUsername())
+                                            Boolean isNew = snap.child("isNew").getValue(Boolean.class);
+                                                if (isNew != null && isNew && !senderUsername.equals(FirebaseDB.currentUser.getUsername())
                                                         && Util.isPuddleListForeground && !justOpened) {
+                                                    snap.getRef().child("isNew").setValue(false);
                                                     FirebaseDB.getDataReference("Puddles").child(puddleID).child("name").addValueEventListener(new ValueEventListener() {
                                                         @Override
                                                         public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -165,7 +173,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                                                         }
                                                     });
                                                 }
-                                            },2000);
+                                                snap.getRef().child("isNew").setValue(false);
                                         }
 
                                     }
@@ -178,6 +186,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
                     }
                 }
+
                 // Delay intended to prevent notifications populating when a user opens this activity
                 handler.postDelayed(() -> justOpened = false,4000);
             }
@@ -187,7 +196,8 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             public void onCancelled(@NonNull DatabaseError error) {
 
             }
-        });
+        };
+        userRef.addValueEventListener(valueEventListener);
     }
 
     @Override

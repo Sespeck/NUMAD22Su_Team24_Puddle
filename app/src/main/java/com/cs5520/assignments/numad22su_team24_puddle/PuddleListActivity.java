@@ -103,6 +103,7 @@ public class PuddleListActivity extends AppCompatActivity implements View.OnClic
     private ShimmerFrameLayout shimmerFrameLayout;
     private final String FRAGMENT_ID = "5";
     private MessageNotification notification;
+    private ValueEventListener valueEventListener;
 
     private EventsFragment.endShimmerEffectCallback callback = new EventsFragment.endShimmerEffectCallback() {
         @Override
@@ -319,59 +320,65 @@ public class PuddleListActivity extends AppCompatActivity implements View.OnClic
         }
     }
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+        userRef.removeEventListener(valueEventListener);
+    }
 
     private void initializeNotificationListener() {
-        DatabaseReference userRef = FirebaseDB.getDataReference("Users").child(FirebaseDB.currentUser.getId()).child("my_puddles");
-        userRef.addValueEventListener(new ValueEventListener() {
+        userRef = FirebaseDB.getDataReference("Users").child(FirebaseDB.currentUser.getId()).child("my_puddles");
+        valueEventListener = new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if (snapshot.getChildrenCount() != 0) {
                     for (DataSnapshot snap :
                             snapshot.getChildren()) {
-                            String puddleID = snap.getValue(String.class);
-                            FirebaseDB.getDataReference("Messages").child(puddleID).orderByKey().limitToLast(1).
-                                    addValueEventListener(new ValueEventListener() {
-                                        @Override
-                                        public void onDataChange(@NonNull DataSnapshot snapshot) {
-                                            for (DataSnapshot snap :
-                                                    snapshot.getChildren()) {
-                                                String senderUsername = snap.child("username").getValue(String.class);
-                                                String body = snap.child("body").getValue(String.class);
-                                                Boolean isImage = snap.child("isMessage").getValue(Boolean.class);
-                                                Boolean isDeleted = snap.child("isDeleted").getValue(Boolean.class);
-                                                handler.postDelayed(() ->  {
-                                                    if (isDeleted != null && !isDeleted && !senderUsername.equals(FirebaseDB.currentUser.getUsername())
-                                                            && Util.isPuddleListForeground && !justOpened) {
-                                                        FirebaseDB.getDataReference("Puddles").child(puddleID).child("name").addValueEventListener(new ValueEventListener() {
-                                                            @Override
-                                                            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                                                                String name = snapshot.getValue(String.class);
-                                                                if (isImage != null && isImage) {
-                                                                    notification.createNotification(senderUsername, senderUsername +
-                                                                            " sent a new image!", puddleID, name);
-                                                                } else {
-                                                                    notification.createNotification(senderUsername, body, puddleID, name);
-                                                                }
-                                                            }
-                                                            @Override
-                                                            public void onCancelled(@NonNull DatabaseError error) {
-
-                                                            }
-                                                        });
+                        String puddleID = snap.getValue(String.class);
+                        FirebaseDB.getDataReference("Messages").child(puddleID).orderByKey().limitToLast(1).
+                                addValueEventListener(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                        for (DataSnapshot snap :
+                                                snapshot.getChildren()) {
+                                            String senderUsername = snap.child("username").getValue(String.class);
+                                            String body = snap.child("body").getValue(String.class);
+                                            Boolean isImage = snap.child("isMessage").getValue(Boolean.class);
+                                            Boolean isNew = snap.child("isNew").getValue(Boolean.class);
+                                            if (isNew != null && isNew && !senderUsername.equals(FirebaseDB.currentUser.getUsername())
+                                                    && Util.isPuddleListForeground && !justOpened) {
+                                                snap.getRef().child("isNew").setValue(false);
+                                                FirebaseDB.getDataReference("Puddles").child(puddleID).child("name").addValueEventListener(new ValueEventListener() {
+                                                    @Override
+                                                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                                        String name = snapshot.getValue(String.class);
+                                                        if (isImage != null && isImage) {
+                                                            notification.createNotification(senderUsername, senderUsername +
+                                                                    " sent a new image!", puddleID, name);
+                                                        } else {
+                                                            notification.createNotification(senderUsername, body, puddleID, name);
+                                                        }
                                                     }
-                                                },2000);
-                                            }
+                                                    @Override
+                                                    public void onCancelled(@NonNull DatabaseError error) {
 
+                                                    }
+                                                });
                                             }
+                                            snap.getRef().child("isNew").setValue(false);
+                                        }
 
-                                            @Override
-                                            public void onCancelled (@NonNull DatabaseError error){
+                                    }
 
-                                            }
-                                    });
+                                    @Override
+                                    public void onCancelled (@NonNull DatabaseError error){
+
+                                    }
+                                });
 
                     }
                 }
+
                 // Delay intended to prevent notifications populating when a user opens this activity
                 handler.postDelayed(() -> justOpened = false,4000);
             }
@@ -381,7 +388,8 @@ public class PuddleListActivity extends AppCompatActivity implements View.OnClic
             public void onCancelled(@NonNull DatabaseError error) {
 
             }
-        });
+        };
+        userRef.addValueEventListener(valueEventListener);
     }
 
             @Override

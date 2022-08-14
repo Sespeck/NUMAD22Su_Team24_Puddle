@@ -7,14 +7,16 @@ public class Message {
     String profilePicture;
     String dbKey;
     Boolean isImage;
+    Boolean isNew;
 
-    public Message(String username, String text, String datetime, String profilePicture, String dbKey, Boolean isImage){
+    public Message(String username, String text, String datetime, String profilePicture, String dbKey, Boolean isImage, Boolean isNew){
         this.body = text;
         this.timestamp = datetime;
         this.username = username;
         this.profilePicture = profilePicture;
         this.dbKey = dbKey;
         this.isImage = isImage;
+        this.isNew = isNew;
     }
 
     public String getDbKey() {
@@ -35,5 +37,9 @@ public class Message {
 
     public String getUsername() {
         return username;
+    }
+
+    public Boolean getIfNew() {
+        return isNew;
     }
 }
