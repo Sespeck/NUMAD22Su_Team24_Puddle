@@ -159,7 +159,6 @@ public class ChatroomFragment extends Fragment {
                         newMessage.put("body",textResult);
                         newMessage.put("profile_url",currentUser.getProfile_icon());
                         newMessage.put("isMessage",false);
-                        newMessage.put("isDeleted",false);
                         newMessage.put("isNew",true);
                         // Add a new message based off current time, the edittext body, the current user's
                         // Pfp and name
@@ -195,14 +194,11 @@ public class ChatroomFragment extends Fragment {
                             String username = snap.child("username").getValue(String.class);
                             String profile_url = FirebaseDB.allUserData.get(username).getProfile_icon();
                             String body = snap.child("body").getValue(String.class);
-                            Boolean isDeleted = snap.child("isDeleted").getValue(Boolean.class);
 //                            String profile_url = snap.child("profile_url").getValue(String.class);
                             String timestamp = snap.child("timestamp").getValue(String.class);
                             Boolean isMessage = snap.child("isMessage").getValue(Boolean.class);
                             Boolean isNew = snap.child("isNew").getValue(Boolean.class);
-                            if (isDeleted != null && !isDeleted) {
-                                chatroomList.add(new Message(username, body, timestamp, profile_url, snap.getKey(), isMessage, isNew));
-                            }
+                            chatroomList.add(new Message(username, body, timestamp, profile_url, snap.getKey(), isMessage, isNew));
 
                         }
                         handler.post(() -> {
@@ -249,7 +245,6 @@ public class ChatroomFragment extends Fragment {
                         newMessage.put("body", uri1.toString());
                         newMessage.put("profile_url", currentUser.getProfile_icon());
                         newMessage.put("isMessage", true);
-                        newMessage.put("isDeleted",false);
                         newMessage.put("isNew", true);
                         // Add a new message based off current time, the edittext body, the current user's
                         // Pfp and name

@@ -94,7 +94,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         viewPager = findViewById(R.id.viewPager);
         viewPager.setPageMargin(15);
 
-
         HorizontalScrollView map_filter_chips = findViewById(R.id.map_filter_chips);
         chipGroup = map_filter_chips.findViewById(R.id.map_chip_group);
 
@@ -124,7 +123,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     @Override
     protected void onResume() {
         super.onResume();
-        justOpened = true;
+        Util.isPuddleListForeground = true;
         initializeNotificationListener();
     }
 
@@ -154,7 +153,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                                             Boolean isImage = snap.child("isMessage").getValue(Boolean.class);
                                             Boolean isNew = snap.child("isNew").getValue(Boolean.class);
                                                 if (isNew != null && isNew && !senderUsername.equals(FirebaseDB.currentUser.getUsername())
-                                                        && Util.isPuddleListForeground && !justOpened) {
+                                                        && Util.isPuddleListForeground) {
                                                     snap.getRef().child("isNew").setValue(false);
                                                     FirebaseDB.getDataReference("Puddles").child(puddleID).child("name").addValueEventListener(new ValueEventListener() {
                                                         @Override
@@ -186,9 +185,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
                     }
                 }
-
-                // Delay intended to prevent notifications populating when a user opens this activity
-                handler.postDelayed(() -> justOpened = false,4000);
             }
 
 
