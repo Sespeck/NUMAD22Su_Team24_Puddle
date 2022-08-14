@@ -124,8 +124,8 @@ public class PuddleChatroomActivity extends AppCompatActivity {
                                             String body = snap.child("body").getValue(String.class);
                                             Boolean isImage = snap.child("isMessage").getValue(Boolean.class);
                                             Boolean isDeleted = snap.child("isDeleted").getValue(Boolean.class);
-                                            if (isDeleted != null && ((!senderUsername.equals(FirebaseDB.currentUser.getUsername()) && !isDeleted && !Util.isForeground)
-                                                    || ((!senderUsername.equals(FirebaseDB.currentUser.getUsername()) && !isDeleted && !justOpened &&
+                                            if (isDeleted != null && ((!senderUsername.equals(FirebaseDB.getLocalUser().getUsername()) && !isDeleted && !Util.isForeground)
+                                                    || ((!senderUsername.equals(FirebaseDB.getLocalUser().getUsername()) && !isDeleted && !justOpened &&
                                                     !Util.foregroundedPuddle.equals(snapshot.getRef().getKey()))))) {
                                                 FirebaseDB.getDataReference("Puddles").child(puddleID).child("name").
                                                         addValueEventListener(new ValueEventListener() {
@@ -166,7 +166,7 @@ public class PuddleChatroomActivity extends AppCompatActivity {
 
             }
         };
-        userRef = FirebaseDB.getDataReference("Users").child(FirebaseDB.currentUser.getId()).child("my_puddles");
+        userRef = FirebaseDB.getDataReference("Users").child(FirebaseDB.getLocalUser().getId()).child("my_puddles");
 
         userRef.addValueEventListener(valueEventListener);
 

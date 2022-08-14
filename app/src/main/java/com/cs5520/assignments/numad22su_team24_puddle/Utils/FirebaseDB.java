@@ -128,4 +128,35 @@ public class FirebaseDB {
             }
         });
     }
+
+    public static User getLocalUser(){
+
+        if(FirebaseDB.currentUser == null){
+            final boolean[] isDone = new boolean[1];
+            final FirebaseUser[] current_user = {FirebaseDB.getCurrentUser()};
+            DatabaseReference userRef = FirebaseDB.getDataReference("Users").child(current_user[0].getUid());
+            userRef.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    FirebaseDB.currentUser = snapshot.getValue(User.class);
+                    userRef.removeEventListener(this);
+                    isDone[0] = true;
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+
+                }
+            });
+
+            while(!isDone[0]){
+              continue;
+            }
+            return FirebaseDB.currentUser;
+
+        } else {
+            return FirebaseDB.currentUser;
+        }
+    }
+
 }

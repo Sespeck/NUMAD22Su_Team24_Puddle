@@ -25,6 +25,19 @@ public class SignupActivity extends AppCompatActivity {
         passwordEditText = findViewById(R.id.signup_password_et);
 
         signupBtn.setOnClickListener(v -> {
+
+            // Username text check
+            if(usernameEditText.length() > 15){
+                Toast.makeText(SignupActivity.this, "Username Too long!!", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            // Password length check
+            if(passwordEditText.length() < 6 || passwordEditText.length() > 25){
+                Toast.makeText(SignupActivity.this, "Password should be between 6 and 25 characters", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
             // Implement Firebase signup logic
             if (passwordEditText.getText().toString().isEmpty()) {
                 Toast.makeText(this, "Enter a valid password", Toast.LENGTH_SHORT).show();

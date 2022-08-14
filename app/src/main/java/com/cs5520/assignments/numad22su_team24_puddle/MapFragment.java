@@ -107,14 +107,14 @@ public class MapFragment extends Fragment{
 
     public void showJoinPuddleDialogue(Context context, PuddleMarker puddle) {
 
-        if (FirebaseDB.currentUser == null) {
+        if (FirebaseDB.getLocalUser() == null) {
             FirebaseUser current_user = FirebaseDB.getCurrentUser();
             DatabaseReference userRef = FirebaseDB.getDataReference("Users").child(current_user.getUid());
             userRef.addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot snapshot) {
                     FirebaseDB.currentUser = snapshot.getValue(User.class);
-                    if (FirebaseDB.currentUser != null) {
+                    if (FirebaseDB.getLocalUser() != null) {
                         showJoinPuddle(context, puddle);
                     }
                 }
@@ -133,8 +133,8 @@ public class MapFragment extends Fragment{
     public void showJoinPuddle(Context context, PuddleMarker puddle) {
 
 
-        if (FirebaseDB.currentUser.getMy_puddles() != null &&
-                FirebaseDB.currentUser.getMy_puddles().containsValue(puddle.getPuddleId())) {
+        if (FirebaseDB.getLocalUser().getMy_puddles() != null &&
+                FirebaseDB.getLocalUser().getMy_puddles().containsValue(puddle.getPuddleId())) {
             Intent intent = new Intent(context, PuddleChatroomActivity.class);
             intent.putExtra("puddleID", puddle.getPuddleId());
             context.startActivity(intent);
@@ -158,7 +158,7 @@ public class MapFragment extends Fragment{
     }
 
     public void addPuddlesToList(String pud_id, PuddleMarker pud) {
-        boolean alreadyJoined =FirebaseDB.currentUser.getMy_puddles().containsKey(pud_id);
+        boolean alreadyJoined = FirebaseDB.getLocalUser().getMy_puddles().containsKey(pud_id);
 
         new Thread(new Runnable() {
             @Override
@@ -174,8 +174,8 @@ public class MapFragment extends Fragment{
 
                 // 3. Update the members child
                 HashMap<String, String> userData = new HashMap<>();
-                userData.put("username", FirebaseDB.currentUser.getUsername());
-                userData.put("profile_url", FirebaseDB.currentUser.getProfile_icon());
+                userData.put("username", FirebaseDB.getLocalUser().getUsername());
+                userData.put("profile_url", FirebaseDB.getLocalUser().getProfile_icon());
                 DatabaseReference memRef = FirebaseDB.getDataReference("Members").child(pud_id);
                 memRef.push().setValue(userData);
             }

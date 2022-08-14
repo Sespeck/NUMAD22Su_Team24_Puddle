@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.SearchView;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentResultListener;
@@ -28,7 +29,6 @@ import android.view.ViewTreeObserver;
 import android.webkit.MimeTypeMap;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -112,7 +112,7 @@ public class PuddleListActivity extends AppCompatActivity implements View.OnClic
                     shimmerFrameLayout.stopShimmer();
                     shimmerFrameLayout.setVisibility(View.GONE);
                     puddleListRecyclerView.setVisibility(View.VISIBLE);
-//                    if (FirebaseDB.currentUser.getMy_puddles().size() == 0){
+//                    if (FirebaseDB.getLocalUser().getMy_puddles().size() == 0){
 //                        noResultFound.setVisibility(View.VISIBLE);
 //                    } else {
 //                        noResultFound.setVisibility(View.GONE);
@@ -174,6 +174,14 @@ public class PuddleListActivity extends AppCompatActivity implements View.OnClic
         puddleSearch = findViewById(R.id.search);
         puddleSearch.clearFocus();
         puddleSearch.setIconified(false);
+
+        puddleSearch.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                puddleSearch.setIconified(false);
+            }
+        });
+
         puddleSearch.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String s) {
@@ -319,60 +327,59 @@ public class PuddleListActivity extends AppCompatActivity implements View.OnClic
 
 
     private void initializeNotificationListener() {
-        DatabaseReference userRef = FirebaseDB.getDataReference("Users").child(FirebaseDB.currentUser.getId()).child("my_puddles");
+        DatabaseReference userRef = FirebaseDB.getDataReference("Users").child(FirebaseDB.getLocalUser().getId()).child("my_puddles");
         userRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if (snapshot.getChildrenCount() != 0) {
                     for (DataSnapshot snap :
                             snapshot.getChildren()) {
-                        String puddleID = snap.getValue(String.class);
-                        FirebaseDB.getDataReference("Messages").child(puddleID).orderByKey().limitToLast(1).
-                                addValueEventListener(new ValueEventListener() {
-                                    @Override
-                                    public void onDataChange(@NonNull DataSnapshot snapshot) {
-                                        for (DataSnapshot snap :
-                                                snapshot.getChildren()) {
-                                            String senderUsername = snap.child("username").getValue(String.class);
-                                            String body = snap.child("body").getValue(String.class);
-                                            Boolean isImage = snap.child("isMessage").getValue(Boolean.class);
-                                            Boolean isDeleted = snap.child("isDeleted").getValue(Boolean.class);
-                                            handler.postDelayed(() -> {
-                                                if (isDeleted != null && !isDeleted && !senderUsername.equals(FirebaseDB.currentUser.getUsername())
-                                                        && Util.isPuddleListForeground && !justOpened) {
-                                                    FirebaseDB.getDataReference("Puddles").child(puddleID).child("name").addValueEventListener(new ValueEventListener() {
-                                                        @Override
-                                                        public void onDataChange(@NonNull DataSnapshot snapshot) {
-                                                            String name = snapshot.getValue(String.class);
-                                                            if (isImage != null && isImage) {
-                                                                notification.createNotification(senderUsername, senderUsername +
-                                                                        " sent a new image!", puddleID, name);
-                                                            } else {
-                                                                notification.createNotification(senderUsername, body, puddleID, name);
+                            String puddleID = snap.getValue(String.class);
+                            FirebaseDB.getDataReference("Messages").child(puddleID).orderByKey().limitToLast(1).
+                                    addValueEventListener(new ValueEventListener() {
+                                        @Override
+                                        public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                            for (DataSnapshot snap :
+                                                    snapshot.getChildren()) {
+                                                String senderUsername = snap.child("username").getValue(String.class);
+                                                String body = snap.child("body").getValue(String.class);
+                                                Boolean isImage = snap.child("isMessage").getValue(Boolean.class);
+                                                Boolean isDeleted = snap.child("isDeleted").getValue(Boolean.class);
+                                                handler.postDelayed(() ->  {
+                                                    if (isDeleted != null && !isDeleted && !senderUsername.equals(FirebaseDB.getLocalUser().getUsername())
+                                                            && Util.isPuddleListForeground && !justOpened) {
+                                                        FirebaseDB.getDataReference("Puddles").child(puddleID).child("name").addValueEventListener(new ValueEventListener() {
+                                                            @Override
+                                                            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                                                String name = snapshot.getValue(String.class);
+                                                                if (isImage != null && isImage) {
+                                                                    notification.createNotification(senderUsername, senderUsername +
+                                                                            " sent a new image!", puddleID, name);
+                                                                } else {
+                                                                    notification.createNotification(senderUsername, body, puddleID, name);
+                                                                }
                                                             }
-                                                        }
+                                                            @Override
+                                                            public void onCancelled(@NonNull DatabaseError error) {
 
-                                                        @Override
-                                                        public void onCancelled(@NonNull DatabaseError error) {
+                                                            }
+                                                        });
+                                                    }
+                                                },2000);
+                                            }
 
-                                                        }
-                                                    });
-                                                }
-                                            }, 2000);
-                                        }
+                                            }
 
-                                    }
+                                            @Override
+                                            public void onCancelled (@NonNull DatabaseError error){
 
-                                    @Override
-                                    public void onCancelled(@NonNull DatabaseError error) {
-
-                                    }
-                                });
+                                            }
+                                    });
 
                     }
                 }
                 // Delay intended to prevent notifications populating when a user opens this activity
-                handler.postDelayed(() -> justOpened = false, 4000);
+                handler.postDelayed(() -> justOpened = false,4000);
             }
 
 
@@ -428,10 +435,9 @@ public class PuddleListActivity extends AppCompatActivity implements View.OnClic
 //                    userDetails.put(snap.getKey(), snap.getValue(String.class));
 //                }
                 FirebaseDB.currentUser = snapshot.getValue(User.class);
-                Log.d("currentUser", FirebaseDB.currentUser.toString());
                 initializeNotificationListener();
-                if (!FirebaseDB.currentUser.getProfile_icon().equals("")) {
-                    Glide.with(PuddleListActivity.this).load(FirebaseDB.currentUser.getProfile_icon()).into(profileIcon);
+                if (!FirebaseDB.getLocalUser().getProfile_icon().equals("")) {
+                    Glide.with(getApplicationContext()).load(FirebaseDB.getLocalUser().getProfile_icon()).into(profileIcon);
                 }
             }
 
@@ -606,14 +612,14 @@ public class PuddleListActivity extends AppCompatActivity implements View.OnClic
 
     public void showJoinPuddleDialogue(Context context, Puddle puddle) {
         Util.isPuddleListForeground = false;
-        if (FirebaseDB.currentUser == null) {
+        if (FirebaseDB.getLocalUser() == null) {
             FirebaseUser current_user = FirebaseDB.getCurrentUser();
             DatabaseReference userRef = FirebaseDB.getDataReference("Users").child(current_user.getUid());
             userRef.addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot snapshot) {
                     FirebaseDB.currentUser = snapshot.getValue(User.class);
-                    if (FirebaseDB.currentUser != null) {
+                    if (FirebaseDB.getLocalUser() != null) {
                         showJoinPuddle(context, puddle);
                     }
                 }
@@ -632,8 +638,8 @@ public class PuddleListActivity extends AppCompatActivity implements View.OnClic
     public void showJoinPuddle(Context context, Puddle puddle) {
 
 
-        if (FirebaseDB.currentUser.getMy_puddles() != null &&
-                FirebaseDB.currentUser.getMy_puddles().containsValue(puddle.getId())) {
+        if (FirebaseDB.getLocalUser().getMy_puddles() != null &&
+                FirebaseDB.getLocalUser().getMy_puddles().containsValue(puddle.getId())) {
             Intent intent = new Intent(PuddleListActivity.this, PuddleChatroomActivity.class);
             intent.putExtra("puddleID", puddle.getId());
             context.startActivity(intent);
@@ -673,8 +679,8 @@ public class PuddleListActivity extends AppCompatActivity implements View.OnClic
 
                 // 3. Update the members child
                 HashMap<String, String> userData = new HashMap<>();
-                userData.put("username", FirebaseDB.currentUser.getUsername());
-                userData.put("profile_url", FirebaseDB.currentUser.getProfile_icon());
+                userData.put("username", FirebaseDB.getLocalUser().getUsername());
+                userData.put("profile_url", FirebaseDB.getLocalUser().getProfile_icon());
                 DatabaseReference memRef = FirebaseDB.getDataReference("Members").child(pud_id);
                 memRef.push().setValue(userData);
             }
