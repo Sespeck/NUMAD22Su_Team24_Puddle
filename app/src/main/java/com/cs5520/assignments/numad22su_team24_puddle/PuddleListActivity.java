@@ -285,13 +285,12 @@ public class PuddleListActivity extends AppCompatActivity implements View.OnClic
                     modifiedList.add(puddle);
                 }
             }
-
-            modifiedCategoryPuddlesData.put(cat, modifiedList);
+            if(!modifiedList.isEmpty()) {
+                modifiedCategoryPuddlesData.put(cat, modifiedList);
+            }
 
             puddleListRecyclerView.setLayoutManager(new LinearLayoutManager(this));
             puddleListRecyclerView.setAdapter(new PuddleListAdapter(this, modifiedCategoryPuddlesData));
-//            setSelectedButton(nearMeBtn);
-//            setUnselectedButton(myPuddlesBtn);
 
         }
     }
@@ -751,6 +750,11 @@ public class PuddleListActivity extends AppCompatActivity implements View.OnClic
             initializePuddles();
             for (Puddle puddle : filteredPuddles) {
                 categoryPuddlesData.get(Category.valueOf(puddle.getCategory().toUpperCase())).add(puddle);
+            }
+            for (Category category: Category.values()) {
+                if(categoryPuddlesData.get(category).isEmpty()) {
+                    categoryPuddlesData.remove(category);
+                }
             }
         }
     }
