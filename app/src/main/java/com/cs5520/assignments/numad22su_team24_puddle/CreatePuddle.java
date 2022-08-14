@@ -129,7 +129,8 @@ public class CreatePuddle extends AppCompatActivity {
                 Category.MUSIC.toString(),
                 Category.TRAVEL.toString(),
                 Category.FINANCE.toString(),
-                Category.EDUCATION.toString()
+                Category.EDUCATION.toString(),
+                Category.SPORTS.toString()
         };
 
         ArrayAdapter arrayAdapter = new ArrayAdapter(this, R.layout.category_options, options);
