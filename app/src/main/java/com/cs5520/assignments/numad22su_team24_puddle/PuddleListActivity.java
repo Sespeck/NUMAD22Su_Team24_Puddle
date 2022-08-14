@@ -401,7 +401,11 @@ public class PuddleListActivity extends AppCompatActivity implements View.OnClic
                 @Override
                 public void onDataChange(@NonNull DataSnapshot snapshot) {
                     Puddle puddle = snapshot.getValue(Puddle.class);
-                    showJoinPuddleDialogue(PuddleListActivity.this, puddle);
+                    if(puddle == null) {
+                        Toast.makeText(PuddleListActivity.this, "Invalid Puddle Link!", Toast.LENGTH_SHORT).show();
+                    } else {
+                        showJoinPuddleDialogue(PuddleListActivity.this, puddle);
+                    }
                 }
 
                 @Override
