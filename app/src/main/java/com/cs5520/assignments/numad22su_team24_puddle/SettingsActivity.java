@@ -52,7 +52,7 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
         if(view.getId() == R.id.share_puddle_layout) {
             Intent intent = new Intent(Intent.ACTION_SEND);
             intent.setType("text/plain");
-            String appLink = "http://puddle-team24-app.com/join/" + puddleId;
+            String appLink = "puddle-team24-app.com/join/" + puddleId;
             intent.putExtra(Intent.EXTRA_SUBJECT, appLink);
             intent.putExtra(Intent.EXTRA_TEXT, appLink);
             startActivity(Intent.createChooser(intent, "Share using"));
