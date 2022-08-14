@@ -57,14 +57,76 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
             intent.putExtra(Intent.EXTRA_TEXT, appLink);
             startActivity(Intent.createChooser(intent, "Share using"));
         } else if(view.getId() == R.id.leave_puddle_layout){
-            DatabaseReference ref = FirebaseDB.getDataReference("Users").child(FirebaseDB.currentUser.getId()).child("my_puddles");
-            DatabaseReference pudRef = FirebaseDB.getDataReference("Puddles");
-            DatabaseReference memRef = FirebaseDB.getDataReference("Members").child(puddleId);
-
             new Thread(new Runnable() {
                 @Override
                 public void run() {
-                    ref.addValueEventListener(new ValueEventListener() {
+                    DatabaseReference ref = FirebaseDB.getDataReference("Users").child(FirebaseDB.currentUser.getId()).child("my_puddles");
+                    DatabaseReference pudRef = FirebaseDB.getDataReference("Puddles");
+                    DatabaseReference memRef = FirebaseDB.getDataReference("Members").child(puddleId);
+
+
+                    ValueEventListener puddleValueEventListener = new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot snapshot) {
+                            for(DataSnapshot snap: snapshot.getChildren()){
+                                Puddle pud = snap.getValue(Puddle.class);
+
+                                if(pud.getId().equals(puddleId)){
+                                    puddleMap.put("id", puddleId);
+                                    puddleMap.put("name", pud.getName());
+                                    puddleMap.put("bio", pud.getBio());
+                                    puddleMap.put("isPrivate", pud.getIsPrivate());
+                                    puddleMap.put("isGlobal", pud.getIsGlobal());
+                                    puddleMap.put("bannerUrl", pud.getBannerUrl());
+                                    puddleMap.put("range", pud.getRange());
+                                    puddleMap.put("category", pud.getCategory());
+                                    puddleMap.put("count", Integer.valueOf(pud.getCount()) - 1);
+                                    puddleMap.put("Location", pud.getLocation());
+
+                                    pudRef.removeEventListener(this);
+
+                                    if(!keyToDelete.equals(""))   ref.child(keyToDelete).removeValue();
+
+                                    pudRef.child(puddleId).setValue(puddleMap);
+
+                                    if(!memToDelete.equals("")) memRef.child(memToDelete).removeValue();
+
+
+                                    startActivity(new Intent(SettingsActivity.this, PuddleListActivity.class));
+                                    finish();
+                                    break;
+                                }
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError error) {
+
+                        }
+                    };
+
+
+                    ValueEventListener memValueEventListener = new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot snapshot) {
+                            for(DataSnapshot snap: snapshot.getChildren()){
+                                String username = snap.child("username").getValue(String.class);
+                                if(username.equals(FirebaseDB.currentUser.getUsername())){
+                                    memToDelete = snap.getKey();
+                                    memRef.removeEventListener(this);
+                                    pudRef.addValueEventListener(puddleValueEventListener);
+                                    break;
+                                }
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError error) {
+
+                        }
+                    };
+
+                    ValueEventListener refValueEventListener = new ValueEventListener() {
                         @Override
                         public void onDataChange(@NonNull DataSnapshot snapshot) {
                             for(DataSnapshot snap: snapshot.getChildren()){
@@ -73,6 +135,7 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
                                 if(val.equals(puddleId)){
                                     keyToDelete = snap.getKey();
                                     ref.removeEventListener(this);
+                                    memRef.addValueEventListener(memValueEventListener);
                                     break;
                                 }
                             }
@@ -82,82 +145,11 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
                         public void onCancelled(@NonNull DatabaseError error) {
 
                         }
-                    });
+                    };
 
+                    ref.addValueEventListener(refValueEventListener);
                 }
             }).start();
-
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    memRef.addValueEventListener(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(@NonNull DataSnapshot snapshot) {
-                            for(DataSnapshot snap: snapshot.getChildren()){
-                                String username = snap.child("username").getValue(String.class);
-                                if(username.equals(FirebaseDB.currentUser.getUsername())){
-                                    memToDelete = snap.getKey();
-                                    memRef.removeEventListener(this);
-                                    break;
-                                }
-                            }
-                        }
-
-                        @Override
-                        public void onCancelled(@NonNull DatabaseError error) {
-
-                        }
-                    });
-                }
-            }).start();
-
-           new Thread(new Runnable() {
-               @Override
-               public void run() {
-                   pudRef.addValueEventListener(new ValueEventListener() {
-                       @Override
-                       public void onDataChange(@NonNull DataSnapshot snapshot) {
-                           for(DataSnapshot snap: snapshot.getChildren()){
-                               Puddle pud = snap.getValue(Puddle.class);
-
-                               if(pud.getId().equals(puddleId)){
-                                   pudRef.removeEventListener(this);
-                                   puddleMap.put("id", puddleId);
-                                   puddleMap.put("name", pud.getName());
-                                   puddleMap.put("bio", pud.getBio());
-                                   puddleMap.put("isPrivate", pud.getIsPrivate());
-                                   puddleMap.put("isGlobal", pud.getIsGlobal());
-                                   puddleMap.put("bannerUrl", pud.getBannerUrl());
-                                   puddleMap.put("range", pud.getRange());
-                                   puddleMap.put("category", pud.getCategory());
-                                   puddleMap.put("count", Integer.valueOf(pud.getCount()) - 1);
-                                   puddleMap.put("Location", pud.getLocation());
-
-                                   //  1. remove the lisitng from users child
-                                   if(!keyToDelete.equals(""))   ref.child(keyToDelete).removeValue();
-
-                                   // 2. Reduce the count in puddle child by 1.
-                                   pudRef.child(puddleId).setValue(puddleMap);
-
-                                   //  3. Remove the user from members child
-                                   if(memToDelete != null) memRef.child(memToDelete).removeValue();
-
-                                   startActivity(new Intent(SettingsActivity.this, PuddleListActivity.class));
-                                   finish();
-                                   break;
-                               }
-                           }
-                       }
-
-                       @Override
-                       public void onCancelled(@NonNull DatabaseError error) {
-
-                       }
-                   });
-               }
-           }).start();
-
-
 
 //             1. remove the lisitng from users child
 //            if(keyToDelete != "")   ref.child(keyToDelete).removeValue();

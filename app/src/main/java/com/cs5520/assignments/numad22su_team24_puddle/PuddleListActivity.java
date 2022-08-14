@@ -78,6 +78,8 @@ public class PuddleListActivity extends AppCompatActivity implements View.OnClic
     TextView noResultFound;
     boolean justOpened = true;
 
+    public final static Object categoryObject = new Object();
+
     // Firebase
     FirebaseUser current_user;
     DatabaseReference userRef;
@@ -115,6 +117,12 @@ public class PuddleListActivity extends AppCompatActivity implements View.OnClic
 //                    } else {
 //                        noResultFound.setVisibility(View.GONE);
 //                    }
+                    if (myPuddlesData.size() == 0) {
+                        noResultFound.setVisibility(TextView.VISIBLE);
+                    } else {
+                        noResultFound.setVisibility(TextView.GONE);
+                    }
+
                 }
             }, 1200);
         }
@@ -165,6 +173,7 @@ public class PuddleListActivity extends AppCompatActivity implements View.OnClic
         navigationIcon.setOnClickListener(this);
         puddleSearch = findViewById(R.id.search);
         puddleSearch.clearFocus();
+        puddleSearch.setIconified(false);
         puddleSearch.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String s) {
@@ -210,7 +219,6 @@ public class PuddleListActivity extends AppCompatActivity implements View.OnClic
         // Api Calls
         fetchCurrentUserData();
         fetchAllPuddles();
-        fetchMyPuddles();
         FirebaseDB.fetchAllUsers();
 
         callback.onLayoutInflated();
@@ -224,6 +232,7 @@ public class PuddleListActivity extends AppCompatActivity implements View.OnClic
 
         handleAppLink(getIntent());
         if (!Util.renderShimmerEffect.containsKey(Util.generateShimmerEffectID("username", "puddle_list", FRAGMENT_ID)) && getIntent().getStringExtra("new_user") == null) {
+            noResultFound.setVisibility(View.GONE);
             shimmerFrameLayout.startShimmer();
             shimmerFrameLayout.setVisibility(View.VISIBLE);
             puddleListRecyclerView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
@@ -237,6 +246,7 @@ public class PuddleListActivity extends AppCompatActivity implements View.OnClic
             });
             Util.renderShimmerEffect.put(Util.generateShimmerEffectID("username", "puddle_list", FRAGMENT_ID), true);
         } else {
+            noResultFound.setVisibility(View.GONE);
             shimmerFrameLayout.stopShimmer();
             shimmerFrameLayout.setVisibility(View.GONE);
             puddleListRecyclerView.setVisibility(View.VISIBLE);
@@ -503,20 +513,15 @@ public class PuddleListActivity extends AppCompatActivity implements View.OnClic
             setSelectedButton(myPuddlesBtn);
             setUnselectedButton(nearMeBtn);
 
-//            if (myPuddlesData.size() == 0) {
-////                puddleSearch.setVisibility(SearchView.GONE);
-//                noResultFound.setVisibility(SearchView.VISIBLE);
-//            } else {
-//                puddleSearch.setVisibility(SearchView.VISIBLE);
-//                noResultFound.setVisibility(SearchView.GONE);
-//            }
+            if (myPuddlesData.size() == 0) {
+                noResultFound.setVisibility(SearchView.VISIBLE);
+            } else {
+                noResultFound.setVisibility(SearchView.GONE);
+            }
 
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    fetchMyPuddles();
-                }
-            });
+
+//            fetchMyPuddles();
+
         }
 
     }
@@ -673,6 +678,7 @@ public class PuddleListActivity extends AppCompatActivity implements View.OnClic
                         allPuddleList.add(puddle);
                     }
                 }
+                fetchMyPuddles();
             }
 
             @Override
@@ -684,6 +690,10 @@ public class PuddleListActivity extends AppCompatActivity implements View.OnClic
 
     // To store the current user puddles
     public void fetchMyPuddles() {
+//        puddleListRecyclerView.setLayoutManager(new GridLayoutManager(PuddleListActivity.this, 2));
+//        puddleListRecyclerView.setAdapter(new MyPuddlesAdapter(PuddleListActivity.this, myPuddlesData));
+//        setSelectedButton(myPuddlesBtn);
+//        setUnselectedButton(nearMeBtn);
 
         DatabaseReference myPuds = FirebaseDB.getDataReference("Users").child(FirebaseDB.getCurrentUser().getUid()).child("my_puddles");
         myPuds.addValueEventListener(new ValueEventListener() {
@@ -696,19 +706,12 @@ public class PuddleListActivity extends AppCompatActivity implements View.OnClic
                         myPuddlesData.put(key, allPuddlesData.get(key));
                     }
                     myPuddlesDataStored = myPuddlesData;
-                    puddleListRecyclerView.setLayoutManager(new GridLayoutManager(PuddleListActivity.this, 2));
-                    puddleListRecyclerView.setAdapter(new MyPuddlesAdapter(PuddleListActivity.this, myPuddlesData));
-                    setSelectedButton(myPuddlesBtn);
-                    setUnselectedButton(nearMeBtn);
+//                    puddleListRecyclerView.setLayoutManager(new GridLayoutManager(PuddleListActivity.this, 2));
+//                    puddleListRecyclerView.setAdapter(new MyPuddlesAdapter(PuddleListActivity.this, myPuddlesData));
+//                    setSelectedButton(myPuddlesBtn);
+//                    setUnselectedButton(nearMeBtn);
+                    updateRecyclerView();
                 }
-
-//                if (myPuddlesData.size() == 0) {
-//                    puddleSearch.setVisibility(SearchView.GONE);
-//                    noResultFound.setVisibility(TextView.VISIBLE);
-//                } else {
-//                    puddleSearch.setVisibility(SearchView.VISIBLE);
-//                    noResultFound.setVisibility(TextView.GONE);
-//                }
             }
 
             @Override
@@ -726,9 +729,11 @@ public class PuddleListActivity extends AppCompatActivity implements View.OnClic
 
     // To categorize puddles for near me screen
     public void categorizePuddles(List<Puddle> filteredPuddles) {
-        initializePuddles();
-        for (Puddle puddle : filteredPuddles) {
-            categoryPuddlesData.get(Category.valueOf(puddle.getCategory().toUpperCase())).add(puddle);
+        synchronized (categoryObject){
+            initializePuddles();
+            for (Puddle puddle : filteredPuddles) {
+                categoryPuddlesData.get(Category.valueOf(puddle.getCategory().toUpperCase())).add(puddle);
+            }
         }
     }
 
