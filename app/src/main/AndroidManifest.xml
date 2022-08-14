@@ -67,8 +67,8 @@
             </intent-filter>
         </activity>
         <activity
+            android:taskAffinity=""
             android:name=".PuddleChatroomActivity"
-            android:exported="true"
             android:theme="@style/Theme.NUMAD22Su_Team24_Puddle.NoActionBar" />
         <activity
             android:name=".MainActivity"
