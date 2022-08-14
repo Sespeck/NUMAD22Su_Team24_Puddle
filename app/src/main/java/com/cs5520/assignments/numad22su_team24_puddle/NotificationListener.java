@@ -15,12 +15,17 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 
 public class NotificationListener {
-    private static ValueEventListener valueEventListener;
-    private static DatabaseReference userRef;
-    private static ArrayList<ValueEventListener> valueEventListeners = new ArrayList<>();
-    private static ArrayList<DatabaseReference> references = new ArrayList<>();
+    private ValueEventListener valueEventListener;
+    private DatabaseReference userRef;
+    private ArrayList<ValueEventListener> valueEventListeners = new ArrayList<>();
+    private ArrayList<DatabaseReference> references = new ArrayList<>();
+    private boolean isRegistered = false;
 
-    public static void registerListener(MessageNotification notification) {
+
+    public Boolean isRegistered(){
+        return isRegistered;
+    }
+    public void registerListener(MessageNotification notification) {
             valueEventListener = new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -39,7 +44,7 @@ public class NotificationListener {
                                         Boolean isNew = snap.child("isNew").getValue(Boolean.class);
                                         if (isNew != null && isNew && !senderUsername.equals(FirebaseDB.getLocalUser().getUsername())
                                                 && Util.isPuddleListForeground) {
-                                            Log.d("here", "listactivity");
+                                            Log.d("here", "notificationlistener");
                                             snap.getRef().child("isNew").setValue(false);
                                             FirebaseDB.getDataReference("Puddles").child(puddleID).child("name").
                                                     addValueEventListener(new ValueEventListener() {
@@ -87,7 +92,19 @@ public class NotificationListener {
             userRef = FirebaseDB.getDataReference("Users").child(FirebaseDB.getLocalUser().getId()).child("my_puddles");
 
             userRef.addValueEventListener(valueEventListener);
+            isRegistered = true;
         }
 
+
+        public void setState(Boolean state){
+            isRegistered = state;
+        }
+
+    public void unregisterListener() {
+        for (int i=0; i<references.size(); i++){
+            references.get(i).removeEventListener(valueEventListeners.get(i));
+        }
+        userRef.removeEventListener(valueEventListener);
+        isRegistered = false;
     }
 }

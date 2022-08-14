@@ -78,6 +78,9 @@ public class PuddleChatroomActivity extends AppCompatActivity {
         Util.isForeground = true;
         justOpened = false;
         Util.foregroundedPuddle = puddleID;
+        if (Util.listener.isRegistered()){
+            Util.listener.unregisterListener();
+        }
         this.fab = findViewById(R.id.fab);
         if (savedInstanceState != null){
             puddleID = savedInstanceState.getString("puddleID");
@@ -182,6 +185,8 @@ public class PuddleChatroomActivity extends AppCompatActivity {
     }
 
 
+
+
     private void completeFragmentNavigation(TabLayout.Tab tab, int flag) {
         Bundle bundle = new Bundle();
         bundle.putString("puddleID",puddleID);
@@ -270,8 +275,8 @@ public class PuddleChatroomActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onPause() {
-        super.onPause();
+    protected void onDestroy() {
+        super.onDestroy();
         for (int i=0; i<references.size(); i++){
             references.get(i).removeEventListener(valueEventListeners.get(i));
         }
@@ -300,11 +305,12 @@ public class PuddleChatroomActivity extends AppCompatActivity {
 
     public void navigateToSettings(MenuItem item) {
         Intent intent = new Intent(this, SettingsActivity.class);
-        for (int i=0; i<references.size(); i++){
+        for (int i = 0; i < references.size(); i++) {
             references.get(i).removeEventListener(valueEventListeners.get(i));
         }
         intent.addFlags((Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK));
         intent.putExtra("PuddleId", puddleID);
+        finish();
         startActivity(intent);
     }
 }

@@ -5,6 +5,7 @@ import android.net.ConnectivityManager;
 
 import com.cs5520.assignments.numad22su_team24_puddle.Category;
 import com.cs5520.assignments.numad22su_team24_puddle.Model.User;
+import com.cs5520.assignments.numad22su_team24_puddle.NotificationListener;
 
 import java.text.SimpleDateFormat;
 import java.time.Instant;
@@ -25,6 +26,7 @@ public class Util {
     public static boolean isPuddleListForeground = true;
     public static String foregroundedPuddle;
     public static User user;
+    public static NotificationListener listener = new NotificationListener();
 
     public static String generateShimmerEffectID(String username, String puddleID, String fragmentID){
         return username+puddleID+fragmentID;
