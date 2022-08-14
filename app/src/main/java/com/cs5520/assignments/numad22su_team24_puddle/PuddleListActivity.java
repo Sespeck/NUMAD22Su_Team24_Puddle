@@ -552,7 +552,7 @@ public class PuddleListActivity extends AppCompatActivity implements View.OnClic
             if (this.getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
                 puddleListRecyclerView.setLayoutManager(new GridLayoutManager(PuddleListActivity.this, 2));
             } else {
-                puddleListRecyclerView.setLayoutManager(new GridLayoutManager(PuddleListActivity.this, 4));
+                puddleListRecyclerView.setLayoutManager(new GridLayoutManager(PuddleListActivity.this, 2));
             }
         }
     }
