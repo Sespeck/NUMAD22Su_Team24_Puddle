@@ -44,7 +44,7 @@ public class MapFragment extends Fragment{
     int memberCount;
     String puddleName, puddleDescription, bannerURL, puddleId;
     TextView mapMemberCount, mapPuddleName;
-    ImageView mapPuddleBg, mapOpenPuddleButton;
+    ImageView mapPuddleBg;
 
     public MapFragment(){}
 
@@ -72,37 +72,16 @@ public class MapFragment extends Fragment{
         mapMemberCount= view.findViewById(R.id.map_member_count);
         mapPuddleName= view.findViewById(R.id.map_puddle_name);
         mapPuddleBg= view.findViewById(R.id.map_puddle_bg);
-        Glide.with(getContext()).load(bannerURL).centerCrop().into(mapPuddleBg);
-        mapOpenPuddleButton= view.findViewById(R.id.map_open_puddle_button);
-
-        mapMemberCount.setText(String.valueOf(memberCount));
-        mapPuddleName.setText(puddleName);
-        mapOpenPuddleButton.setOnClickListener(new View.OnClickListener() {
+        mapPuddleBg.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 showJoinPuddleDialogue(getContext(), puddle);
-//                Activity activity = getActivity();
-//                View layoutView = View.inflate(activity, R.layout.puddle_modal, null);
-//                AlertDialog dialog = new MaterialAlertDialogBuilder(activity).setTitle(puddleName).setView(layoutView).create();
-//                TextView tv = layoutView.findViewById(R.id.puddle_modal_name_tv);
-//                tv.setText(puddleDescription);
-//                ShapeableImageView im = layoutView.findViewById(R.id.puddle_modal_item_image);
-//                Glide.with(getContext()).load(bannerURL). into(im);
-//                MaterialButton button = layoutView.findViewById(R.id.puddle_modal_join_btn);
-//                button.setOnClickListener(new View.OnClickListener() {
-//                    @Override
-//                    public void onClick(View v) {
-//                        dialog.dismiss();
-//
-//                        Intent intent = new Intent(getContext(), PuddleChatroomActivity.class);
-//                        intent.putExtra("puddleID", puddleId);
-//
-//                        getContext().startActivity(intent);
-//                    }
-//                });
-//                dialog.show();
             }
         });
+        Glide.with(getContext()).load(bannerURL).centerCrop().into(mapPuddleBg);
+
+        mapMemberCount.setText(String.valueOf(memberCount));
+        mapPuddleName.setText(puddleName);
     }
 
     public void showJoinPuddleDialogue(Context context, PuddleMarker puddle) {
