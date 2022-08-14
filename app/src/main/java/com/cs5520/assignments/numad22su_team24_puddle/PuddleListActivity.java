@@ -50,6 +50,7 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.imageview.ShapeableImageView;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -140,11 +141,18 @@ public class PuddleListActivity extends AppCompatActivity implements View.OnClic
     public static boolean filteredPrivate = true;
     Handler filterHandler = new Handler();
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_puddle_list);
+
+        if(FirebaseAuth.getInstance().getCurrentUser() == null) {
+            Intent intent = new Intent(PuddleListActivity.this, LoginActivity.class);
+            intent.putExtra("showToast", true);
+            startActivity(intent);
+            finish();
+            return;
+        }
         justOpened = true;
         Util.isForeground = false;
         Util.isPuddleListForeground = true;
