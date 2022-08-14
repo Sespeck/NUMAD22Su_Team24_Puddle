@@ -443,10 +443,17 @@ public class PuddleListActivity extends AppCompatActivity implements View.OnClic
 //                    userDetails.put(snap.getKey(), snap.getValue(String.class));
 //                }
                 FirebaseDB.currentUser = snapshot.getValue(User.class);
+
+                if(FirebaseDB.currentUser.getMy_puddles().size() == 0){
+                    currentView = nearMeBtn;
+                    updateRecyclerView();
+                }
+
                 initializeNotificationListener();
                 if (!FirebaseDB.getLocalUser().getProfile_icon().equals("")) {
                     Glide.with(getApplicationContext()).load(FirebaseDB.getLocalUser().getProfile_icon()).into(profileIcon);
                 }
+                userRef.removeEventListener(this);
             }
 
             @Override
