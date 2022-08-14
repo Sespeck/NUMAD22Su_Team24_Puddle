@@ -210,8 +210,10 @@ public class AddNewEventDialog extends AppCompatActivity {
             endingDate = savedInstanceState.getString("ending_date");
             startingDateView.setText(DateTimeFormatUtil.formatEventDate(startingDate));
             endingDateView.setText(DateTimeFormatUtil.formatEventDate(endingDate));
-            imageUri = Uri.parse(savedInstanceState.getString("image_uri"));
-            Glide.with(this).load(imageUri).into(banner);
+            if (savedInstanceState.getString("image_uri") != null) {
+                imageUri = Uri.parse(savedInstanceState.getString("image_uri"));
+                Glide.with(this).load(imageUri).into(banner);
+            }
         } else{
             int[][] initalTime = DateTimeFormatUtil.formatPresetTime(java.time.LocalTime.now().toString());
             startingTime = initalTime[0];
