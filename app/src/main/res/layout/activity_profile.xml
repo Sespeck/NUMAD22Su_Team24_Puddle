@@ -1,138 +1,151 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".ProfileActivity">
 
-    <com.google.android.material.imageview.ShapeableImageView
-        android:id="@+id/profile_user_icon"
-        android:layout_width="@dimen/profile_icon_large"
-        android:layout_height="@dimen/profile_icon_large"
-        android:layout_marginTop="@dimen/margin_xl"
-        android:padding="5dp"
-        android:scaleType="fitXY"
-        android:src="@drawable/blank_image"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.App.RoundedCorners"
-        app:strokeColor="@color/black"
-        app:strokeWidth="5dp" />
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
-    <com.google.android.material.imageview.ShapeableImageView
-        android:id="@+id/profile_camera_icn"
-        android:layout_width="@dimen/icon_size_small"
-        android:layout_height="@dimen/icon_size_small"
-        android:layout_marginLeft="@dimen/margin_xl"
-        android:src="@drawable/camera"
-        app:layout_constraintTop_toTopOf="@id/profile_user_icon"
-        app:layout_constraintBottom_toBottomOf="@id/profile_user_icon"
-        app:layout_constraintStart_toEndOf="@id/profile_user_icon" />
-
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/profile_display_name_layout"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/margin_xl"
-        android:layout_marginTop="@dimen/margin_large"
-        android:layout_marginEnd="@dimen/margin_xl"
-        android:hint="@string/display_name"
-        android:textColorHint="@color/login_signup_text_color"
-        app:boxStrokeWidth="3dp"
-        app:hintAnimationEnabled="true"
-        app:hintEnabled="true"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/profile_user_icon"
-        app:startIconDrawable="@drawable/username_tag"
-        app:startIconTint="@color/login_signup_text_color">
-
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/profile_display_name_et"
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textSize="@dimen/font_size_mid"
-            android:textStyle="bold" />
+            android:layout_height="wrap_content">
 
-    </com.google.android.material.textfield.TextInputLayout>
+            <com.google.android.material.imageview.ShapeableImageView
+                android:id="@+id/profile_user_icon"
+                android:layout_width="@dimen/profile_icon_large"
+                android:layout_height="@dimen/profile_icon_large"
+                android:layout_marginTop="@dimen/margin_xl"
+                android:padding="5dp"
+                android:scaleType="fitXY"
+                android:src="@drawable/blank_image"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.App.RoundedCorners"
+                app:strokeColor="@color/black"
+                app:strokeWidth="5dp" />
 
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/profile_description_layout"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/margin_xl"
-        android:layout_marginTop="@dimen/margin_large"
-        android:layout_marginEnd="@dimen/margin_xl"
-        android:gravity="top|start"
-        android:hint="@string/bio"
-        android:textColorHint="@color/login_signup_text_color"
-        app:boxStrokeWidth="3dp"
-        app:hintAnimationEnabled="true"
-        app:hintEnabled="true"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/profile_display_name_layout"
-        app:startIconDrawable="@drawable/bio"
-        app:startIconTint="@color/login_signup_text_color">
+            <com.google.android.material.imageview.ShapeableImageView
+                android:id="@+id/profile_camera_icn"
+                android:layout_width="@dimen/icon_size_small"
+                android:layout_height="@dimen/icon_size_small"
+                android:layout_marginLeft="@dimen/margin_xl"
+                android:src="@drawable/camera"
+                app:layout_constraintTop_toTopOf="@id/profile_user_icon"
+                app:layout_constraintBottom_toBottomOf="@id/profile_user_icon"
+                app:layout_constraintStart_toEndOf="@id/profile_user_icon" />
 
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/profile_description_et"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="top|left"
-            android:textSize="@dimen/font_size_mid"
-            android:textStyle="bold" />
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/profile_display_name_layout"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/margin_xl"
+                android:layout_marginTop="@dimen/margin_large"
+                android:layout_marginEnd="@dimen/margin_xl"
+                android:hint="@string/display_name"
+                android:textColorHint="@color/login_signup_text_color"
+                app:boxStrokeWidth="3dp"
+                app:hintAnimationEnabled="true"
+                app:hintEnabled="true"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/profile_user_icon"
+                app:startIconDrawable="@drawable/username_tag"
+                app:startIconTint="@color/login_signup_text_color">
 
-    </com.google.android.material.textfield.TextInputLayout>
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/profile_display_name_et"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="@dimen/font_size_mid"
+                    android:textStyle="bold" />
 
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/profile_phone_number_layout"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/margin_xl"
-        android:layout_marginTop="@dimen/margin_large"
-        android:layout_marginEnd="@dimen/margin_xl"
-        android:gravity="top|start"
-        android:hint="@string/phone_number"
-        android:textColorHint="@color/login_signup_text_color"
-        app:boxStrokeWidth="3dp"
-        app:hintAnimationEnabled="true"
-        app:hintEnabled="true"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/profile_description_layout"
-        app:startIconDrawable="@drawable/mobile"
-        app:startIconTint="@color/login_signup_text_color">
+            </com.google.android.material.textfield.TextInputLayout>
 
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/profile_phone_number_et"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="top|left"
-            android:inputType="phone"
-            android:maxLength="14"
-            android:textSize="@dimen/font_size_mid"
-            android:textStyle="bold" />
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/profile_description_layout"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/margin_xl"
+                android:layout_marginTop="@dimen/margin_large"
+                android:layout_marginEnd="@dimen/margin_xl"
+                android:gravity="top|start"
+                android:hint="@string/bio"
+                android:textColorHint="@color/login_signup_text_color"
+                app:boxStrokeWidth="3dp"
+                app:hintAnimationEnabled="true"
+                app:hintEnabled="true"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/profile_display_name_layout"
+                app:startIconDrawable="@drawable/bio"
+                app:startIconTint="@color/login_signup_text_color">
 
-    </com.google.android.material.textfield.TextInputLayout>
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/profile_description_et"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="top|left"
+                    android:textSize="@dimen/font_size_mid"
+                    android:textStyle="bold" />
 
-    <Button
-        android:id="@+id/profile_save_btn"
-        style="@style/Widget.Material3.Button.TonalButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="@dimen/margin_xl"
-        android:backgroundTint="@color/login_signup_button_background"
-        android:text="@string/save"
-        android:textColor="@color/login_signup_text_color"
-        android:textSize="@dimen/font_size_mid"
-        android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/profile_phone_number_layout" />
+            </com.google.android.material.textfield.TextInputLayout>
 
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/profile_phone_number_layout"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/margin_xl"
+                android:layout_marginTop="@dimen/margin_large"
+                android:layout_marginEnd="@dimen/margin_xl"
+                android:gravity="top|start"
+                android:hint="@string/phone_number"
+                android:textColorHint="@color/login_signup_text_color"
+                app:boxStrokeWidth="3dp"
+                app:hintAnimationEnabled="true"
+                app:hintEnabled="true"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/profile_description_layout"
+                app:startIconDrawable="@drawable/mobile"
+                app:startIconTint="@color/login_signup_text_color">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/profile_phone_number_et"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="top|left"
+                    android:inputType="phone"
+                    android:maxLength="14"
+                    android:textSize="@dimen/font_size_mid"
+                    android:textStyle="bold" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <Button
+                android:id="@+id/profile_save_btn"
+                style="@style/Widget.Material3.Button.TonalButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="@dimen/margin_xl"
+                android:backgroundTint="@color/login_signup_button_background"
+                android:text="@string/save"
+                android:textColor="@color/login_signup_text_color"
+                android:textSize="@dimen/font_size_mid"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/profile_phone_number_layout" />
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </ScrollView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
