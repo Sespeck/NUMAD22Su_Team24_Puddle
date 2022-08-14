@@ -85,7 +85,7 @@ public class ChatroomFragment extends Fragment {
                         public void run() {
                             String id = messageRef.child(puddleID).push().getKey();
                             handler.post(() -> {
-                                adapter.addNewMessage(new Message(currentUser.getUsername(), imageUri.toString(),Util.convertTocurrentDateTime(Instant.now().toString()),
+                                adapter.addNewMessage(new Message(currentUser.getUsername(), imageUri.toString(),Instant.now().toString(),
                                         currentUser.getProfile_icon(), id, true));
                                 recyclerView.scrollToPosition(adapter.getItemCount() - 1);
                             });
@@ -153,7 +153,7 @@ public class ChatroomFragment extends Fragment {
                     public void run() {
                         String textResult = chatEditText.getText().toString();
                         HashMap<String, Object> newMessage = new HashMap<>();
-                        newMessage.put("timestamp", Util.convertTocurrentDateTime(Instant.now().toString()));
+                        newMessage.put("timestamp", Instant.now().toString());
                         FirebaseDB.fetchCurrentUserData();
                         newMessage.put("username", currentUser.getUsername());
                         newMessage.put("body",textResult);
@@ -165,7 +165,7 @@ public class ChatroomFragment extends Fragment {
 
                         String id = messageRef.child(puddleID).push().getKey();
                         handler.post(()-> {
-                            adapter.addNewMessage(new Message(currentUser.getUsername() ,textResult,Util.convertTocurrentDateTime(Instant.now().toString()),
+                            adapter.addNewMessage(new Message(currentUser.getUsername() ,textResult,Instant.now().toString(),
                                     FirebaseDB.currentUser.getProfile_icon(), id, false));
                             recyclerView.scrollToPosition(adapter.getItemCount()-1);
                             chatEditText.getText().clear();
@@ -196,7 +196,7 @@ public class ChatroomFragment extends Fragment {
                             String body = snap.child("body").getValue(String.class);
                             Boolean isDeleted = snap.child("isDeleted").getValue(Boolean.class);
 //                            String profile_url = snap.child("profile_url").getValue(String.class);
-                            String timestamp = Util.convertTocurrentDateTime(snap.child("timestamp").getValue(String.class));
+                            String timestamp = snap.child("timestamp").getValue(String.class);
                             Boolean isMessage = snap.child("isMessage").getValue(Boolean.class);
                             if (isDeleted != null && !isDeleted) {
                                 chatroomList.add(new Message(username, body, timestamp, profile_url, snap.getKey(), isMessage));

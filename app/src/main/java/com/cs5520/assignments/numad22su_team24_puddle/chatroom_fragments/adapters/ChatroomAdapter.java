@@ -107,7 +107,7 @@ public class ChatroomAdapter extends RecyclerView.Adapter<ChatroomAdapter.Chatro
         Message message = messageList.get(position);
         Glide.with(context).load(messageList.get(position).profilePicture).into(holder.profilePicture);
         holder.username.setText(messageList.get(position).username);
-        holder.timestamp.setText(messageList.get(position).timestamp);
+        holder.timestamp.setText(Util.convertTocurrentDateTime(messageList.get(position).timestamp));
         if (message.isImage){
                 Shimmer shimmer = new Shimmer.AlphaHighlightBuilder().setDuration(800) // how long the shimmering animation takes to do one full sweep
                         .setBaseAlpha(0.7f) //the alpha of the underlying children

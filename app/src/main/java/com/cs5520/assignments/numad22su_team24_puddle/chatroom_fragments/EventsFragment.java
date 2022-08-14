@@ -120,12 +120,12 @@ public class EventsFragment extends Fragment {
                     newEvent.put("starting_timestamp", startingTimestamp);
                     newEvent.put("ending_timestamp", endingTimestamp);
                     newEvent.put("image_uri",backgroundImgUri);
-                    newEvent.put("attendance_counter","0");
+                    newEvent.put("attendance_counter","1");
                     newEvent.put("id",uniqueID);
                     newEvent.put("selected_location", location);
                     newEvent.put("created_by",FirebaseDB.currentUser.getUsername());
                     handler.post(()->{
-                        eventsAdapter.addNewEvent(new Event(title,startingTimestamp,endingTimestamp,location,description,result.getString("image_uri"),0, uniqueID, FirebaseDB.currentUser.getUsername()));
+                        eventsAdapter.addNewEvent(new Event(title,startingTimestamp,endingTimestamp,location,description,result.getString("image_uri"),1, uniqueID, FirebaseDB.currentUser.getUsername()));
                     });
                     eventsRef.child(puddleID).child(uniqueID).setValue(newEvent);
                 }
