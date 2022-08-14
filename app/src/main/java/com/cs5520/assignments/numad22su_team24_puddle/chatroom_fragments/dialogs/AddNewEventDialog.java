@@ -4,6 +4,7 @@ import android.content.ContentResolver;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -26,14 +27,20 @@ import com.cs5520.assignments.numad22su_team24_puddle.R;
 import com.cs5520.assignments.numad22su_team24_puddle.SelectLocation;
 import com.cs5520.assignments.numad22su_team24_puddle.SettingsActivity;
 import com.cs5520.assignments.numad22su_team24_puddle.Utils.FirebaseDB;
+import com.cs5520.assignments.numad22su_team24_puddle.Utils.Util;
+import com.cs5520.assignments.numad22su_team24_puddle.chatroom_fragments.MessageNotification;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.textfield.TextInputLayout;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Objects;
 
@@ -56,6 +63,11 @@ public class AddNewEventDialog extends AppCompatActivity {
     private TextView endingTimeTextView;
     private TextView addLocationTextView;
     private String selectedLocation;
+    private MessageNotification notification;
+    private ValueEventListener valueEventListener;
+    private DatabaseReference userRef;
+    private ArrayList<ValueEventListener> valueEventListeners = new ArrayList<>();
+    private ArrayList<DatabaseReference> references = new ArrayList<>();
 
 
     ActivityResultLauncher<Intent> startActivityForResult = registerForActivityResult(
@@ -113,6 +125,9 @@ public class AddNewEventDialog extends AppCompatActivity {
             gallery.setType("image/*");
             startActivityForResult.launch(gallery);
         });
+        notification = new MessageNotification(this);
+        Util.isPuddleListForeground = true;
+        initializeNotificationListener();
         findViewById(R.id.add_event_save_button).setOnClickListener(v -> {
             Intent intent_result = new Intent();
             Bundle result = new Bundle();
@@ -193,6 +208,83 @@ public class AddNewEventDialog extends AppCompatActivity {
         return mime.getExtensionFromMimeType(cr.getType(muri));
     }
 
+    private void initializeNotificationListener() {
+        valueEventListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (snapshot.getChildrenCount() != 0) {
+                    for (DataSnapshot snap :
+                            snapshot.getChildren()) {
+                        String puddleID = snap.getValue(String.class);
+                        ValueEventListener listener = new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                for (DataSnapshot snap :
+                                        snapshot.getChildren()) {
+                                    String senderUsername = snap.child("username").getValue(String.class);
+                                    String body = snap.child("body").getValue(String.class);
+                                    Boolean isImage = snap.child("isMessage").getValue(Boolean.class);
+                                    Boolean isNew = snap.child("isNew").getValue(Boolean.class);
+                                    if (isNew != null && isNew && !senderUsername.equals(FirebaseDB.getLocalUser().getUsername())
+                                            && Util.isPuddleListForeground) {
+                                        Log.d("here", "dialog");
+                                        snap.getRef().child("isNew").setValue(false);
+                                        FirebaseDB.getDataReference("Puddles").child(puddleID).child("name").
+                                                addValueEventListener(new ValueEventListener() {
+                                                    @Override
+                                                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                                        String name = snapshot.getValue(String.class);
+                                                        if (isImage != null && isImage) {
+                                                            notification.createNotification(senderUsername, senderUsername +
+                                                                    " sent a new image!", puddleID, name);
+                                                        } else {
+                                                            notification.createNotification(senderUsername, body, puddleID, name);
+                                                        }
+                                                    }
+
+
+                                                    @Override
+                                                    public void onCancelled(@NonNull DatabaseError error) {
+
+                                                    }
+                                                });
+                                    }
+                                    snap.getRef().child("isNew").setValue(false);
+                                }
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError error) {
+
+                            }
+                        };
+
+                        FirebaseDB.getDataReference("Messages").child(puddleID).orderByKey().limitToLast(1).addValueEventListener(listener);
+                        valueEventListeners.add(listener);
+                        references.add(FirebaseDB.getDataReference("Messages").child(puddleID));
+
+
+                    }
+                }
+            }
+
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        };
+        userRef = FirebaseDB.getDataReference("Users").child(FirebaseDB.getLocalUser().getId()).child("my_puddles");
+
+        userRef.addValueEventListener(valueEventListener);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        userRef.removeEventListener(valueEventListener);
+        for (int i=0; i<references.size(); i++){
+            references.get(i).removeEventListener(valueEventListeners.get(i));
+        }
+    }
 
     private void initializeAllTextViewOnClicks(Bundle savedInstanceState) {
         TextView startingTimeView = findViewById(R.id.starting_time_text_view);

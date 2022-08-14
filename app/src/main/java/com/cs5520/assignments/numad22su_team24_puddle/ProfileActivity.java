@@ -33,19 +33,25 @@ import com.bumptech.glide.Glide;
 import com.cs5520.assignments.numad22su_team24_puddle.Model.ApiLoaderBar;
 import com.cs5520.assignments.numad22su_team24_puddle.Utils.FirebaseDB;
 import com.cs5520.assignments.numad22su_team24_puddle.Utils.LocationPermissionActivity;
+import com.cs5520.assignments.numad22su_team24_puddle.Utils.Util;
+import com.cs5520.assignments.numad22su_team24_puddle.chatroom_fragments.MessageNotification;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.imageview.ShapeableImageView;
 import com.google.android.material.textfield.TextInputEditText;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
 import java.io.File;
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 public class ProfileActivity extends AppCompatActivity {
@@ -61,6 +67,11 @@ public class ProfileActivity extends AppCompatActivity {
     StorageReference storeRef;
     Handler apiHandler = new Handler();
     final ApiLoaderBar apiBar = new ApiLoaderBar(ProfileActivity.this);
+    private ArrayList<ValueEventListener> valueEventListeners = new ArrayList<>();
+    private ArrayList<DatabaseReference> references = new ArrayList<>();
+    private MessageNotification notification;
+    private ValueEventListener valueEventListener;
+    private DatabaseReference userRef;
 
     public static final int CAMERA_REQUEST_CODE = 102;
 
@@ -96,6 +107,7 @@ public class ProfileActivity extends AppCompatActivity {
 
         imgRef = FirebaseDB.getDataReference("images");
         storeRef = FirebaseDB.storageRef;
+        Util.isPuddleListForeground = true;
 
         profileIcon = findViewById(R.id.profile_user_icon);
         displayET = findViewById(R.id.profile_display_name_et);
@@ -108,9 +120,88 @@ public class ProfileActivity extends AppCompatActivity {
         saveBtn.setOnClickListener(v -> saveBtnClick());
         profileIcon.setOnClickListener(v -> setProfileImage());
         cameraBtn.setOnClickListener(v -> clickCameraBtn());
-
+        notification = new MessageNotification(this);
+        initializeNotificationListener();
         fillDetails();
 
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        userRef.removeEventListener(valueEventListener);
+        for (int i=0; i<references.size(); i++){
+            references.get(i).removeEventListener(valueEventListeners.get(i));
+        }
+   }
+
+    private void initializeNotificationListener() {
+        valueEventListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (snapshot.getChildrenCount() != 0) {
+                    for (DataSnapshot snap :
+                            snapshot.getChildren()) {
+                        String puddleID = snap.getValue(String.class);
+                        ValueEventListener listener = new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                for (DataSnapshot snap :
+                                        snapshot.getChildren()) {
+                                    String senderUsername = snap.child("username").getValue(String.class);
+                                    String body = snap.child("body").getValue(String.class);
+                                    Boolean isImage = snap.child("isMessage").getValue(Boolean.class);
+                                    Boolean isNew = snap.child("isNew").getValue(Boolean.class);
+                                    if (isNew != null && isNew && !senderUsername.equals(FirebaseDB.getLocalUser().getUsername())
+                                            && Util.isPuddleListForeground) {
+                                        Log.d("here", "profile");
+                                        snap.getRef().child("isNew").setValue(false);
+                                        FirebaseDB.getDataReference("Puddles").child(puddleID).child("name").
+                                                addValueEventListener(new ValueEventListener() {
+                                                    @Override
+                                                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                                        String name = snapshot.getValue(String.class);
+                                                        if (isImage != null && isImage) {
+                                                            notification.createNotification(senderUsername, senderUsername +
+                                                                    " sent a new image!", puddleID, name);
+                                                        } else {
+                                                            notification.createNotification(senderUsername, body, puddleID, name);
+                                                        }
+                                                    }
+
+
+                                                    @Override
+                                                    public void onCancelled(@NonNull DatabaseError error) {
+
+                                                    }
+                                                });
+                                    }
+                                    snap.getRef().child("isNew").setValue(false);
+                                }
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError error) {
+
+                            }
+                        };
+
+                        FirebaseDB.getDataReference("Messages").child(puddleID).orderByKey().limitToLast(1).addValueEventListener(listener);
+                        valueEventListeners.add(listener);
+                        references.add(FirebaseDB.getDataReference("Messages").child(puddleID));
+
+
+                    }
+                }
+            }
+
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        };
+        userRef = FirebaseDB.getDataReference("Users").child(FirebaseDB.getLocalUser().getId()).child("my_puddles");
+
+        userRef.addValueEventListener(valueEventListener);
     }
 
     private void clickCameraBtn() {

@@ -239,7 +239,7 @@ public class PuddleChatroomActivity extends AppCompatActivity {
     protected void onSaveInstanceState(@NonNull Bundle outState) {
         outState.putString("puddleID",puddleID);
         outState.putInt("current_tab",currentTab.getPosition());
-        Util.isForeground = true;
+//        Util.isForeground = true;
         super.onSaveInstanceState(outState);
     }
 
@@ -271,11 +271,11 @@ public class PuddleChatroomActivity extends AppCompatActivity {
 
     @Override
     protected void onPause() {
-        userRef.removeEventListener(valueEventListener);
+        super.onPause();
         for (int i=0; i<references.size(); i++){
             references.get(i).removeEventListener(valueEventListeners.get(i));
         }
-        super.onPause();
+        userRef.removeEventListener(valueEventListener);
     }
 
     public void navigateHome(MenuItem item) {

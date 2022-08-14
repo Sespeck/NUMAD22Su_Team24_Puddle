@@ -103,6 +103,9 @@ public class PuddleListActivity extends AppCompatActivity implements View.OnClic
     private final String FRAGMENT_ID = "5";
     private MessageNotification notification;
     private ValueEventListener valueEventListener;
+    private ArrayList<ValueEventListener> valueEventListeners = new ArrayList<>();
+    private ArrayList<DatabaseReference> references = new ArrayList<>();
+
 
     private EventsFragment.endShimmerEffectCallback callback = new EventsFragment.endShimmerEffectCallback() {
         @Override
@@ -145,7 +148,7 @@ public class PuddleListActivity extends AppCompatActivity implements View.OnClic
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_puddle_list);
-        justOpened = true;
+        justOpened = false;
         Util.isForeground = false;
         Util.isPuddleListForeground = true;
         userDetails = new HashMap<>();
@@ -326,14 +329,18 @@ public class PuddleListActivity extends AppCompatActivity implements View.OnClic
         }
     }
 
+
     @Override
     protected void onPause() {
         super.onPause();
+        for (int i=0; i<references.size(); i++){
+            references.get(i).removeEventListener(valueEventListeners.get(i));
+        }
         userRef.removeEventListener(valueEventListener);
     }
 
+
     private void initializeNotificationListener() {
-        userRef = FirebaseDB.getDataReference("Users").child(FirebaseDB.getLocalUser().getId()).child("my_puddles");
         valueEventListener = new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -341,20 +348,21 @@ public class PuddleListActivity extends AppCompatActivity implements View.OnClic
                     for (DataSnapshot snap :
                             snapshot.getChildren()) {
                         String puddleID = snap.getValue(String.class);
-                        FirebaseDB.getDataReference("Messages").child(puddleID).orderByKey().limitToLast(1).
-                                addValueEventListener(new ValueEventListener() {
-                                    @Override
-                                    public void onDataChange(@NonNull DataSnapshot snapshot) {
-                                        for (DataSnapshot snap :
-                                                snapshot.getChildren()) {
-                                            String senderUsername = snap.child("username").getValue(String.class);
-                                            String body = snap.child("body").getValue(String.class);
-                                            Boolean isImage = snap.child("isMessage").getValue(Boolean.class);
-                                            Boolean isNew = snap.child("isNew").getValue(Boolean.class);
-                                            if (isNew != null && isNew && !senderUsername.equals(FirebaseDB.getLocalUser().getUsername())
-                                                    && Util.isPuddleListForeground && !justOpened) {
-                                                snap.getRef().child("isNew").setValue(false);
-                                                FirebaseDB.getDataReference("Puddles").child(puddleID).child("name").addValueEventListener(new ValueEventListener() {
+                        ValueEventListener listener = new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                for (DataSnapshot snap :
+                                        snapshot.getChildren()) {
+                                    String senderUsername = snap.child("username").getValue(String.class);
+                                    String body = snap.child("body").getValue(String.class);
+                                    Boolean isImage = snap.child("isMessage").getValue(Boolean.class);
+                                    Boolean isNew = snap.child("isNew").getValue(Boolean.class);
+                                    if (isNew != null && isNew && !senderUsername.equals(FirebaseDB.getLocalUser().getUsername())
+                                            && Util.isPuddleListForeground) {
+                                        Log.d("here", "listactivity");
+                                        snap.getRef().child("isNew").setValue(false);
+                                        FirebaseDB.getDataReference("Puddles").child(puddleID).child("name").
+                                                addValueEventListener(new ValueEventListener() {
                                                     @Override
                                                     public void onDataChange(@NonNull DataSnapshot snapshot) {
                                                         String name = snapshot.getValue(String.class);
@@ -365,36 +373,39 @@ public class PuddleListActivity extends AppCompatActivity implements View.OnClic
                                                             notification.createNotification(senderUsername, body, puddleID, name);
                                                         }
                                                     }
+
+
                                                     @Override
                                                     public void onCancelled(@NonNull DatabaseError error) {
 
                                                     }
                                                 });
-                                            }
-                                            snap.getRef().child("isNew").setValue(false);
-                                        }
-
                                     }
+                                    snap.getRef().child("isNew").setValue(false);
+                                }
+                            }
 
-                                    @Override
-                                    public void onCancelled (@NonNull DatabaseError error){
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError error) {
 
-                                    }
-                                });
+                            }
+                        };
+
+                        FirebaseDB.getDataReference("Messages").child(puddleID).orderByKey().limitToLast(1).addValueEventListener(listener);
+                        valueEventListeners.add(listener);
+                        references.add(FirebaseDB.getDataReference("Messages").child(puddleID));
+
 
                     }
                 }
-
-                // Delay intended to prevent notifications populating when a user opens this activity
-//                handler.postDelayed(() -> justOpened = false,4000);
             }
 
-
-            @Override
             public void onCancelled(@NonNull DatabaseError error) {
 
             }
         };
+        userRef = FirebaseDB.getDataReference("Users").child(FirebaseDB.getLocalUser().getId()).child("my_puddles");
+
         userRef.addValueEventListener(valueEventListener);
     }
 
