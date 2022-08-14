@@ -7,29 +7,40 @@
     android:fitsSystemWindows="true"
     tools:context=".SignupActivity">
 
+    <ImageView
+        android:id="@+id/app_icon"
+        android:layout_width="@dimen/icon_size_lg"
+        android:layout_height="@dimen/icon_size_lg"
+        android:layout_gravity="center"
+        android:src="@drawable/icon_puddle"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/linearLayout"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
-
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/constraintLayout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+    <LinearLayout
+        android:id="@+id/linearLayout"
+        android:layout_width="@dimen/fit_constraint"
+        android:layout_height="@dimen/fit_constraint"
+        android:gravity="center"
+        android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/guideline3"
         app:layout_constraintTop_toTopOf="parent">
-
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/signup_username_layout"
-            android:layout_width="@dimen/fit_constraint"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/margin_xl"
-            android:layout_marginEnd="@dimen/margin_xl"
             android:hint="@string/username"
             android:textColorHint="@color/login_signup_text_color"
             app:boxStrokeWidth="3dp"
             app:counterEnabled="true"
             app:counterMaxLength="15"
+            android:layout_marginStart="@dimen/margin_xl"
+            android:layout_marginTop="@dimen/margin_large"
+            android:layout_marginEnd="@dimen/margin_xl"
             app:counterOverflowTextColor="@android:color/holo_red_light"
             app:counterTextAppearance="@style/HelperTextAppearance"
             app:helperText="@string/helper_text_login"
@@ -37,12 +48,9 @@
             app:helperTextTextAppearance="@style/HelperTextAppearance"
             app:hintAnimationEnabled="true"
             app:hintEnabled="true"
-            app:layout_constraintBottom_toTopOf="@id/signup_password_layout"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
             app:startIconDrawable="@drawable/account_circle"
-            app:startIconTint="@color/login_signup_text_color">
+            app:startIconTint="@color/login_signup_text_color"
+            tools:layout_editor_absoluteX="24dp">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/signup_username_et"
@@ -55,22 +63,20 @@
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/signup_password_layout"
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:hint="Password"
             android:layout_marginStart="@dimen/margin_xl"
             android:layout_marginTop="@dimen/margin_large"
             android:layout_marginEnd="@dimen/margin_xl"
-            android:hint="Password"
             android:textColorHint="@color/login_signup_text_color"
             app:boxStrokeWidth="3dp"
             app:hintAnimationEnabled="true"
             app:hintEnabled="true"
-            app:layout_constraintBottom_toTopOf="@id/register_btn"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/signup_username_layout"
             app:startIconDrawable="@drawable/password"
-            app:startIconTint="@color/login_signup_text_color">
+            app:startIconTint="@color/login_signup_text_color"
+            tools:layout_editor_absoluteX="24dp"
+            tools:layout_editor_absoluteY="110dp">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/signup_password_et"
@@ -88,16 +94,20 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
-            android:layout_marginTop="@dimen/margin_xl"
             android:backgroundTint="@color/login_signup_button_background"
             android:text="@string/signup"
             android:textColor="@color/login_signup_text_color"
             android:textSize="@dimen/font_size_mid"
-            android:textStyle="bold"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/signup_password_layout" />
+            android:layout_marginTop="16dp"
+            android:textStyle="bold" />
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+    </LinearLayout>
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.3" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
