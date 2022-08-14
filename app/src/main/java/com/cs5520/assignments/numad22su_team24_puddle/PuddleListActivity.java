@@ -51,7 +51,6 @@ import com.google.android.material.button.MaterialButton;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.imageview.ShapeableImageView;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -118,7 +117,7 @@ public class PuddleListActivity extends AppCompatActivity implements View.OnClic
 //                    } else {
 //                        noResultFound.setVisibility(View.GONE);
 //                    }
-                    if (myPuddlesData.size() == 0) {
+                    if (currentView != null && currentView == myPuddlesBtn && myPuddlesData.size() == 0) {
                         noResultFound.setVisibility(TextView.VISIBLE);
                     } else {
                         noResultFound.setVisibility(TextView.GONE);
@@ -328,52 +327,53 @@ public class PuddleListActivity extends AppCompatActivity implements View.OnClic
                 if (snapshot.getChildrenCount() != 0) {
                     for (DataSnapshot snap :
                             snapshot.getChildren()) {
-                            String puddleID = snap.getValue(String.class);
-                            FirebaseDB.getDataReference("Messages").child(puddleID).orderByKey().limitToLast(1).
-                                    addValueEventListener(new ValueEventListener() {
-                                        @Override
-                                        public void onDataChange(@NonNull DataSnapshot snapshot) {
-                                            for (DataSnapshot snap :
-                                                    snapshot.getChildren()) {
-                                                String senderUsername = snap.child("username").getValue(String.class);
-                                                String body = snap.child("body").getValue(String.class);
-                                                Boolean isImage = snap.child("isMessage").getValue(Boolean.class);
-                                                Boolean isDeleted = snap.child("isDeleted").getValue(Boolean.class);
-                                                handler.postDelayed(() ->  {
-                                                    if (isDeleted != null && !isDeleted && !senderUsername.equals(FirebaseDB.currentUser.getUsername())
-                                                            && Util.isPuddleListForeground && !justOpened) {
-                                                        FirebaseDB.getDataReference("Puddles").child(puddleID).child("name").addValueEventListener(new ValueEventListener() {
-                                                            @Override
-                                                            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                                                                String name = snapshot.getValue(String.class);
-                                                                if (isImage != null && isImage) {
-                                                                    notification.createNotification(senderUsername, senderUsername +
-                                                                            " sent a new image!", puddleID, name);
-                                                                } else {
-                                                                    notification.createNotification(senderUsername, body, puddleID, name);
-                                                                }
+                        String puddleID = snap.getValue(String.class);
+                        FirebaseDB.getDataReference("Messages").child(puddleID).orderByKey().limitToLast(1).
+                                addValueEventListener(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                        for (DataSnapshot snap :
+                                                snapshot.getChildren()) {
+                                            String senderUsername = snap.child("username").getValue(String.class);
+                                            String body = snap.child("body").getValue(String.class);
+                                            Boolean isImage = snap.child("isMessage").getValue(Boolean.class);
+                                            Boolean isDeleted = snap.child("isDeleted").getValue(Boolean.class);
+                                            handler.postDelayed(() -> {
+                                                if (isDeleted != null && !isDeleted && !senderUsername.equals(FirebaseDB.currentUser.getUsername())
+                                                        && Util.isPuddleListForeground && !justOpened) {
+                                                    FirebaseDB.getDataReference("Puddles").child(puddleID).child("name").addValueEventListener(new ValueEventListener() {
+                                                        @Override
+                                                        public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                                            String name = snapshot.getValue(String.class);
+                                                            if (isImage != null && isImage) {
+                                                                notification.createNotification(senderUsername, senderUsername +
+                                                                        " sent a new image!", puddleID, name);
+                                                            } else {
+                                                                notification.createNotification(senderUsername, body, puddleID, name);
                                                             }
-                                                            @Override
-                                                            public void onCancelled(@NonNull DatabaseError error) {
+                                                        }
 
-                                                            }
-                                                        });
-                                                    }
-                                                },2000);
-                                            }
+                                                        @Override
+                                                        public void onCancelled(@NonNull DatabaseError error) {
 
-                                            }
+                                                        }
+                                                    });
+                                                }
+                                            }, 2000);
+                                        }
 
-                                            @Override
-                                            public void onCancelled (@NonNull DatabaseError error){
+                                    }
 
-                                            }
-                                    });
+                                    @Override
+                                    public void onCancelled(@NonNull DatabaseError error) {
+
+                                    }
+                                });
 
                     }
                 }
                 // Delay intended to prevent notifications populating when a user opens this activity
-                handler.postDelayed(() -> justOpened = false,4000);
+                handler.postDelayed(() -> justOpened = false, 4000);
             }
 
 
@@ -384,7 +384,7 @@ public class PuddleListActivity extends AppCompatActivity implements View.OnClic
         });
     }
 
-            @Override
+    @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
         handleAppLink(intent);
@@ -401,7 +401,7 @@ public class PuddleListActivity extends AppCompatActivity implements View.OnClic
                 @Override
                 public void onDataChange(@NonNull DataSnapshot snapshot) {
                     Puddle puddle = snapshot.getValue(Puddle.class);
-                    if(puddle == null) {
+                    if (puddle == null) {
                         Toast.makeText(PuddleListActivity.this, "Invalid Puddle Link!", Toast.LENGTH_SHORT).show();
                     } else {
                         showJoinPuddleDialogue(PuddleListActivity.this, puddle);
@@ -535,8 +535,8 @@ public class PuddleListActivity extends AppCompatActivity implements View.OnClic
     }
 
     private void setPuddleLayoutManager() {
-        if(currentView == myPuddlesBtn) {
-            if(this.getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
+        if (currentView == myPuddlesBtn) {
+            if (this.getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
                 puddleListRecyclerView.setLayoutManager(new GridLayoutManager(PuddleListActivity.this, 2));
             } else {
                 puddleListRecyclerView.setLayoutManager(new GridLayoutManager(PuddleListActivity.this, 4));
@@ -747,7 +747,7 @@ public class PuddleListActivity extends AppCompatActivity implements View.OnClic
 
     // To categorize puddles for near me screen
     public void categorizePuddles(List<Puddle> filteredPuddles) {
-        synchronized (categoryObject){
+        synchronized (categoryObject) {
             initializePuddles();
             for (Puddle puddle : filteredPuddles) {
                 categoryPuddlesData.get(Category.valueOf(puddle.getCategory().toUpperCase())).add(puddle);
