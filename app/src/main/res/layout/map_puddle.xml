@@ -38,16 +38,6 @@
             tools:ignore="UseAppTint" />
 
         <ImageView
-            android:id="@+id/map_open_puddle_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
-            android:layout_alignParentEnd="true"
-            android:layout_marginTop="10dp"
-            android:layout_marginEnd="10dp"
-            app:srcCompat="@drawable/open_puddle" />
-
-        <ImageView
             android:id="@+id/map_member_icon"
             android:layout_width="20dp"
             android:layout_height="20dp"
