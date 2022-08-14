@@ -47,6 +47,11 @@ public class LoginActivity extends AppCompatActivity {
         usernameEditText = findViewById(R.id.username_et);
         passwordEditText = findViewById(R.id.login_password_et);
 
+        boolean showToast = getIntent().getBooleanExtra("showToast", false);
+        if(showToast) {
+            Toast.makeText(this, "Please login/signup to join the Puddle!", Toast.LENGTH_SHORT).show();
+        }
+
         loginButton.setOnClickListener(v -> {
             if (!Util.isNetworkConnected(this)) {
                 Toast.makeText(this, "Please check your internet connection!", Toast.LENGTH_SHORT).show();
