@@ -152,7 +152,7 @@ public class CreatePuddle extends AppCompatActivity {
             @Override
             public void onStopTrackingTouch(@NonNull Slider slider) {
                 selectedRange = slider.getValue();
-                rangeVal.setText(String.valueOf(slider.getValue()) + "m");
+                rangeVal.setText(String.valueOf(slider.getValue()) + " miles");
             }
         });
     }
