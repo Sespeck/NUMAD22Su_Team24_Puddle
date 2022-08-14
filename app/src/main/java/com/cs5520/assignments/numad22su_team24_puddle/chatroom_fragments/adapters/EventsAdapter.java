@@ -1,5 +1,6 @@
 package com.cs5520.assignments.numad22su_team24_puddle.chatroom_fragments.adapters;
 
+import android.app.Activity;
 import android.content.Context;
 import android.net.Uri;
 import android.provider.ContactsContract;
@@ -31,6 +32,7 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.EventViewH
     private List<Event> eventList;
     private Context context;
     private DatabaseReference eventsRef;
+    private Activity activity;
 
 
     public EventsAdapter(List<Event> eventList, Context context, DatabaseReference eventsRef){
@@ -120,7 +122,7 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.EventViewH
                         }).show();
             });
         }
-        Glide.with(context).load(event.backgroundImgUri).into(holder.imageView);
+        Glide.with(context).load(event.backgroundImgUri).dontAnimate().into(holder.imageView);
         holder.imageView.setColorFilter(R.color.black);
         holder.name.setText(event.getName());
         holder.startingDate.setText(event.getStartingDatetime());

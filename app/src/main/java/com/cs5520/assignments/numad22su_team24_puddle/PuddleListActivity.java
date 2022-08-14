@@ -386,7 +386,7 @@ public class PuddleListActivity extends AppCompatActivity implements View.OnClic
                 }
 
                 // Delay intended to prevent notifications populating when a user opens this activity
-                handler.postDelayed(() -> justOpened = false,4000);
+//                handler.postDelayed(() -> justOpened = false,4000);
             }
 
 

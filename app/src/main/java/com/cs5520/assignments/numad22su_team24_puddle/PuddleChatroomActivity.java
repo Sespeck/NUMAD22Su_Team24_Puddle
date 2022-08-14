@@ -236,6 +236,7 @@ public class PuddleChatroomActivity extends AppCompatActivity {
     protected void onSaveInstanceState(@NonNull Bundle outState) {
         outState.putString("puddleID",puddleID);
         outState.putInt("current_tab",currentTab.getPosition());
+        Log.d("here","here"+currentTab.getPosition());
         Util.isForeground = true;
         super.onSaveInstanceState(outState);
     }
