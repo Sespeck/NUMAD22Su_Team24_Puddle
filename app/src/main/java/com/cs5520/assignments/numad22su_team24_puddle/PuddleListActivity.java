@@ -50,6 +50,7 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.imageview.ShapeableImageView;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -143,12 +144,19 @@ public class PuddleListActivity extends AppCompatActivity implements View.OnClic
     public static boolean filteredPrivate = true;
     Handler filterHandler = new Handler();
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_puddle_list);
-        justOpened = false;
+
+        if(FirebaseAuth.getInstance().getCurrentUser() == null) {
+            Intent intent = new Intent(PuddleListActivity.this, LoginActivity.class);
+            intent.putExtra("showToast", true);
+            startActivity(intent);
+            finish();
+            return;
+        }
+        justOpened = true;
         Util.isForeground = false;
         Util.isPuddleListForeground = true;
         userDetails = new HashMap<>();
@@ -383,12 +391,19 @@ public class PuddleListActivity extends AppCompatActivity implements View.OnClic
 //                    userDetails.put(snap.getKey(), snap.getValue(String.class));
 //                }
                 FirebaseDB.currentUser = snapshot.getValue(User.class);
+
+                if(FirebaseDB.currentUser.getMy_puddles().size() == 0){
+                    currentView = nearMeBtn;
+                    updateRecyclerView();
+                }
+
                if (!Util.listener.isRegistered()){
                     Util.listener.registerListener(notification);
                 }
                 if (!FirebaseDB.getLocalUser().getProfile_icon().equals("")) {
                     Glide.with(getApplicationContext()).load(FirebaseDB.getLocalUser().getProfile_icon()).into(profileIcon);
                 }
+                userRef.removeEventListener(this);
             }
 
             @Override

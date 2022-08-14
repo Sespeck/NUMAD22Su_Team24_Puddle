@@ -47,26 +47,38 @@ public class LoginActivity extends AppCompatActivity {
         usernameEditText = findViewById(R.id.username_et);
         passwordEditText = findViewById(R.id.login_password_et);
 
+        boolean showToast = getIntent().getBooleanExtra("showToast", false);
+        if(showToast) {
+            Toast.makeText(this, "Please login/signup to join the Puddle!", Toast.LENGTH_SHORT).show();
+        }
+
         loginButton.setOnClickListener(v -> {
-            if (!Util.isNetworkConnected(this)) {
-                Toast.makeText(this, "Please check your internet connection!", Toast.LENGTH_SHORT).show();
-                return;
-            }
-            FirebaseDB.getInstanceFirebaseAuth().signInWithEmailAndPassword(
-                    usernameEditText.getText().toString().trim() + "@puddle.com",
-                    passwordEditText.getText().toString()).addOnCompleteListener(task -> {
-                if (task.isSuccessful()) {
-                    // Successfully Logged in
-                    Intent intent = new Intent(LoginActivity.this, PuddleListActivity.class);
-                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-                    intent.putExtra("loginUserName", usernameEditText.getText().toString().trim());
-                    finish();
-                    startActivity(intent);
-                } else {
-                    // Error
-                    Toast.makeText(LoginActivity.this, "Error logging in! Please check the credentials.", Toast.LENGTH_SHORT).show();
+            String username = usernameEditText.getText().toString();
+            String password = passwordEditText.getText().toString();
+
+            if(!username.equals("") && !password.equals("")){
+                if (!Util.isNetworkConnected(this)) {
+                    Toast.makeText(this, "Please check your internet connection!", Toast.LENGTH_SHORT).show();
+                    return;
                 }
-            });
+                FirebaseDB.getInstanceFirebaseAuth().signInWithEmailAndPassword(
+                        usernameEditText.getText().toString().trim() + "@puddle.com",
+                        passwordEditText.getText().toString()).addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        // Successfully Logged in
+                        Intent intent = new Intent(LoginActivity.this, PuddleListActivity.class);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                        intent.putExtra("loginUserName", usernameEditText.getText().toString().trim());
+                        finish();
+                        startActivity(intent);
+                    } else {
+                        // Error
+                        Toast.makeText(LoginActivity.this, "Error logging in! Please check the credentials.", Toast.LENGTH_SHORT).show();
+                    }
+                });
+            } else {
+                Toast.makeText(this, "Please enter username and password to login!", Toast.LENGTH_SHORT).show();
+            }
         });
 
         signupButton.setOnClickListener(new View.OnClickListener() {

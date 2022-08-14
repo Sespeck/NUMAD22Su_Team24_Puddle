@@ -75,7 +75,7 @@
         android:id="@+id/header_filter_icon"
         android:layout_width="@dimen/icon_size_small"
         android:layout_height="@dimen/icon_size_small"
-        android:layout_marginEnd="@dimen/margin_large"
+        android:layout_marginEnd="@dimen/margin_mid"
         android:src="@drawable/filter"
         app:layout_constraintBottom_toBottomOf="@id/header_near_me_btn"
         app:layout_constraintEnd_toStartOf="@id/header_navigation_icon"
