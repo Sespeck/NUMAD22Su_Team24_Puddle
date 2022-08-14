@@ -325,8 +325,10 @@ public class PuddleListActivity extends AppCompatActivity implements View.OnClic
                                                 String senderUsername = snap.child("username").getValue(String.class);
                                                 String body = snap.child("body").getValue(String.class);
                                                 Boolean isImage = snap.child("isMessage").getValue(Boolean.class);
+                                                Boolean isDeleted = snap.child("isDeleted").getValue(Boolean.class);
                                                 handler.postDelayed(() ->  {
-                                                    if (!senderUsername.equals(FirebaseDB.currentUser.getUsername()) && Util.isPuddleListForeground && !justOpened) {
+                                                    if (isDeleted != null && !isDeleted && !senderUsername.equals(FirebaseDB.currentUser.getUsername())
+                                                            && Util.isPuddleListForeground && !justOpened) {
                                                         FirebaseDB.getDataReference("Puddles").child(puddleID).child("name").addValueEventListener(new ValueEventListener() {
                                                             @Override
                                                             public void onDataChange(@NonNull DataSnapshot snapshot) {

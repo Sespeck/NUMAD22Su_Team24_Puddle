@@ -131,13 +131,8 @@ public class ChatroomAdapter extends RecyclerView.Adapter<ChatroomAdapter.Chatro
                 menu.setOnMenuItemClickListener(item -> {
                     switch(item.getItemId()){
                         case R.id.chatroom_delete_message:
-                            messageRef.child(message.getDbKey()).removeValue((error, ref) -> {
-
-
-                            });
-
+                            messageRef.child(message.getDbKey()).child("isDeleted").setValue(true);
                     }
-                    Util.isMessageDeleted = true;
                     messageList.remove(message);
                     notifyDataSetChanged();
                     return false;

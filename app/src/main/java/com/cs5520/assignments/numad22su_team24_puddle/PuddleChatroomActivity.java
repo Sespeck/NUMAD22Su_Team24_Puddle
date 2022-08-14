@@ -115,7 +115,6 @@ public class PuddleChatroomActivity extends AppCompatActivity {
                     for (DataSnapshot snap :
                             snapshot.getChildren()) {
                         String puddleID = snap.getValue(String.class);
-
                         ValueEventListener listener = new ValueEventListener() {
                                     @Override
                                     public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -124,24 +123,23 @@ public class PuddleChatroomActivity extends AppCompatActivity {
                                             String senderUsername = snap.child("username").getValue(String.class);
                                             String body = snap.child("body").getValue(String.class);
                                             Boolean isImage = snap.child("isMessage").getValue(Boolean.class);
-//                                            Log.d("here", "Foreground" + String.valueOf(Util.isForeground));
-//                                            Log.d("here", "JustOpened" + String.valueOf(justOpened));
-//                                            Log.d("here", "Puddle" + puddleID);
-//                                            Log.d("here", "snapref" + snapshot.getRef().getKey());
-                                            if ((!senderUsername.equals(FirebaseDB.currentUser.getUsername()) && !Util.isMessageDeleted && !Util.isForeground)
-                                                    || ((!senderUsername.equals(FirebaseDB.currentUser.getUsername()) && !Util.isMessageDeleted && !justOpened &&
-                                                    !Util.foregroundedPuddle.equals(snapshot.getRef().getKey())))) {
-                                                Log.d("here","chatroomnotifsent");
-                                                FirebaseDB.getDataReference("Puddles").child(puddleID).child("name").addValueEventListener(new ValueEventListener() {
+                                            Boolean isDeleted = snap.child("isDeleted").getValue(Boolean.class);
+                                            if (isDeleted != null && ((!senderUsername.equals(FirebaseDB.currentUser.getUsername()) && !isDeleted && !Util.isForeground)
+                                                    || ((!senderUsername.equals(FirebaseDB.currentUser.getUsername()) && !isDeleted && !justOpened &&
+                                                    !Util.foregroundedPuddle.equals(snapshot.getRef().getKey()))))) {
+                                                FirebaseDB.getDataReference("Puddles").child(puddleID).child("name").
+                                                        addValueEventListener(new ValueEventListener() {
                                                     @Override
                                                     public void onDataChange(@NonNull DataSnapshot snapshot) {
                                                         String name = snapshot.getValue(String.class);
                                                         if (isImage != null && isImage) {
-                                                            notification.createNotification(senderUsername,senderUsername+" sent a new image!", puddleID, name);
+                                                            notification.createNotification(senderUsername, senderUsername +
+                                                                    " sent a new image!", puddleID, name);
                                                         } else {
-                                                            notification.createNotification(senderUsername,body, puddleID, name);
+                                                            notification.createNotification(senderUsername, body, puddleID, name);
                                                         }
                                                     }
+
 
                                                     @Override
                                                     public void onCancelled(@NonNull DatabaseError error) {
@@ -149,20 +147,18 @@ public class PuddleChatroomActivity extends AppCompatActivity {
                                                     }
                                                 });
                                             }
-                                            if (Util.isMessageDeleted) {
-                                                Util.isMessageDeleted = false;
-                                            }
                                         }
-
                                     }
 
-                                    @Override
-                                    public void onCancelled(@NonNull DatabaseError error) {
+                                            @Override
+                                            public void onCancelled (@NonNull DatabaseError error){
 
-                                    }
-                                };
+                                            }
+                                        };
+
                         FirebaseDB.getDataReference("Messages").child(puddleID).orderByKey().limitToLast(1).addValueEventListener(listener);
                         valueEventListeners.add(listener);
+
                     }
                 }
             }
