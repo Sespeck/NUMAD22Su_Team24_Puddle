@@ -106,7 +106,7 @@ public class Puddle {
     }
 
     public String generatePuddleAppLink() {
-        return "http://puddle-team24-app.com/join/" + this.id;
+        return "puddle-team24-app.com/join/" + this.id;
     }
 
     public String getIsGlobal() {

@@ -129,7 +129,8 @@ public class CreatePuddle extends AppCompatActivity {
                 Category.MUSIC.toString(),
                 Category.TRAVEL.toString(),
                 Category.FINANCE.toString(),
-                Category.EDUCATION.toString()
+                Category.EDUCATION.toString(),
+                Category.SPORTS.toString()
         };
 
         ArrayAdapter arrayAdapter = new ArrayAdapter(this, R.layout.category_options, options);
@@ -152,7 +153,7 @@ public class CreatePuddle extends AppCompatActivity {
             @Override
             public void onStopTrackingTouch(@NonNull Slider slider) {
                 selectedRange = slider.getValue();
-                rangeVal.setText(String.valueOf(slider.getValue()) + "m");
+                rangeVal.setText(String.valueOf(slider.getValue()) + " miles");
             }
         });
     }
@@ -240,8 +241,8 @@ public class CreatePuddle extends AppCompatActivity {
         puddleMap.put("Location", location);
 
         HashMap<String, String> members = new HashMap<>();
-        members.put("profile_url", FirebaseDB.currentUser.getProfile_icon());
-        members.put("username", FirebaseDB.currentUser.getUsername());
+        members.put("profile_url", FirebaseDB.getLocalUser().getProfile_icon());
+        members.put("username", FirebaseDB.getLocalUser().getUsername());
 
         ref.child(pud_key).setValue(puddleMap);
         ref2.child(pud_key).push().setValue(members);

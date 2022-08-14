@@ -116,9 +116,9 @@ public class ChatroomFragment extends Fragment {
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(layoutManager);
         initializeRecyclerView();
-        currentUser = FirebaseDB.currentUser;
+        currentUser = FirebaseDB.getLocalUser();
         createNewMessageListener();
-        if (FirebaseDB.currentUser != null && !Util.renderShimmerEffect.containsKey(Util.generateShimmerEffectID(FirebaseDB.currentUser.getUsername(),puddleID,FRAGMENT_ID)) && getArguments().getString("new_chatroom") == null) {
+        if (!Util.renderShimmerEffect.containsKey(Util.generateShimmerEffectID(FirebaseDB.getLocalUser().getUsername(),puddleID,FRAGMENT_ID)) && getArguments().getString("new_chatroom") == null) {
             shimmerFrameLayout.startShimmer();
             shimmerFrameLayout.setVisibility(View.VISIBLE);
             recyclerView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
@@ -130,7 +130,7 @@ public class ChatroomFragment extends Fragment {
                     recyclerView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
                 }
             });
-            Util.renderShimmerEffect.put(Util.generateShimmerEffectID(FirebaseDB.currentUser.getUsername(),puddleID,FRAGMENT_ID), true);
+            Util.renderShimmerEffect.put(Util.generateShimmerEffectID(FirebaseDB.getLocalUser().getUsername(),puddleID,FRAGMENT_ID), true);
         } else{
             shimmerFrameLayout.stopShimmer();
             shimmerFrameLayout.setVisibility(View.GONE);
@@ -166,7 +166,7 @@ public class ChatroomFragment extends Fragment {
                         String id = messageRef.child(puddleID).push().getKey();
                         handler.post(()-> {
                             adapter.addNewMessage(new Message(currentUser.getUsername() ,textResult,Instant.now().toString(),
-                                    FirebaseDB.currentUser.getProfile_icon(), id, false, true));
+                                   FirebaseDB.getLocalUser().getProfile_icon(), id, false, true));
                             recyclerView.scrollToPosition(adapter.getItemCount()-1);
                             chatEditText.getText().clear();
                         });

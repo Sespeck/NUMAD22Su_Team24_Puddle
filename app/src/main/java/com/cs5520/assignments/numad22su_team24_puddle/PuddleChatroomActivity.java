@@ -168,7 +168,7 @@ public class PuddleChatroomActivity extends AppCompatActivity {
 
             }
         };
-        userRef = FirebaseDB.getDataReference("Users").child(FirebaseDB.currentUser.getId()).child("my_puddles");
+        userRef = FirebaseDB.getDataReference("Users").child(FirebaseDB.getLocalUser().getId()).child("my_puddles");
 
         userRef.addValueEventListener(valueEventListener);
 

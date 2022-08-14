@@ -61,6 +61,7 @@ public class User {
     }
 
     public HashMap<String, String> getMy_puddles() {
+        if(my_puddles == null) return new HashMap<String, String>();
         return my_puddles;
     }
 

@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public enum Category {
-    MUSIC(0), TRAVEL(1), FINANCE(2), EDUCATION(3);
+    MUSIC(0), TRAVEL(1), FINANCE(2), EDUCATION(3), SPORTS(4);
 
     int id;
 
@@ -22,6 +22,7 @@ public enum Category {
             case TRAVEL: return "Travel";
             case FINANCE: return "Finance";
             case EDUCATION: return "Education";
+            case SPORTS: return "Sports";
             default: return "Null Category";
         }
     }

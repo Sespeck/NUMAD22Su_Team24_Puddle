@@ -124,7 +124,7 @@ public class ChatroomAdapter extends RecyclerView.Adapter<ChatroomAdapter.Chatro
         }
 
         holder.layout.setOnLongClickListener(v -> {
-            if (holder.username.getText().equals(FirebaseDB.currentUser.getUsername())) {
+            if (holder.username.getText().equals(FirebaseDB.getLocalUser().getUsername())) {
                 PopupMenu menu = new PopupMenu(context, v);
                 MenuInflater inflater = menu.getMenuInflater();
                 inflater.inflate(R.menu.chatroom_delete_menu, menu.getMenu());

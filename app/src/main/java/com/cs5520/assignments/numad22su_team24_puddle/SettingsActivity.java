@@ -52,7 +52,7 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
         if(view.getId() == R.id.share_puddle_layout) {
             Intent intent = new Intent(Intent.ACTION_SEND);
             intent.setType("text/plain");
-            String appLink = "http://puddle-team24-app.com/join/" + puddleId;
+            String appLink = "puddle-team24-app.com/join/" + puddleId;
             intent.putExtra(Intent.EXTRA_SUBJECT, appLink);
             intent.putExtra(Intent.EXTRA_TEXT, appLink);
             startActivity(Intent.createChooser(intent, "Share using"));
@@ -60,7 +60,7 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
             new Thread(new Runnable() {
                 @Override
                 public void run() {
-                    DatabaseReference ref = FirebaseDB.getDataReference("Users").child(FirebaseDB.currentUser.getId()).child("my_puddles");
+                    DatabaseReference ref = FirebaseDB.getDataReference("Users").child(FirebaseDB.getLocalUser().getId()).child("my_puddles");
                     DatabaseReference pudRef = FirebaseDB.getDataReference("Puddles");
                     DatabaseReference memRef = FirebaseDB.getDataReference("Members").child(puddleId);
 
@@ -92,7 +92,10 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
                                     if(!memToDelete.equals("")) memRef.child(memToDelete).removeValue();
 
 
-                                    startActivity(new Intent(SettingsActivity.this, PuddleListActivity.class));
+                                    Intent intent = new Intent(SettingsActivity.this, PuddleListActivity.class);
+                                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                                    startActivity(intent);
+
                                     finish();
                                     break;
                                 }
@@ -111,7 +114,7 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
                         public void onDataChange(@NonNull DataSnapshot snapshot) {
                             for(DataSnapshot snap: snapshot.getChildren()){
                                 String username = snap.child("username").getValue(String.class);
-                                if(username.equals(FirebaseDB.currentUser.getUsername())){
+                                if(username.equals(FirebaseDB.getLocalUser().getUsername())){
                                     memToDelete = snap.getKey();
                                     memRef.removeEventListener(this);
                                     pudRef.addValueEventListener(puddleValueEventListener);

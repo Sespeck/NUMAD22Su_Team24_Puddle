@@ -15,6 +15,7 @@ import com.cs5520.assignments.numad22su_team24_puddle.Model.Puddle;
 import com.cs5520.assignments.numad22su_team24_puddle.R;
 import com.cs5520.assignments.numad22su_team24_puddle.Utils.Util;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -22,6 +23,7 @@ public class PuddleListAdapter extends RecyclerView.Adapter<PuddleListAdapter.Pu
 
     Context context;
     HashMap<Category, List<Puddle>> puddlesList;
+    ArrayList<Category> categories;
 
     public class PuddleListViewHolder extends RecyclerView.ViewHolder {
         TextView puddleCategoryName;
@@ -37,6 +39,12 @@ public class PuddleListAdapter extends RecyclerView.Adapter<PuddleListAdapter.Pu
     public PuddleListAdapter(Context context, HashMap<Category, List<Puddle>> puddlesList) {
         this.context = context;
         this.puddlesList = puddlesList;
+        this.categories = new ArrayList<>();
+        for(Category category: Category.values()) {
+            if(puddlesList.containsKey(category)) {
+                categories.add(category);
+            }
+        }
     }
 
     @NonNull
@@ -47,18 +55,14 @@ public class PuddleListAdapter extends RecyclerView.Adapter<PuddleListAdapter.Pu
 
     @Override
     public void onBindViewHolder(@NonNull PuddleListAdapter.PuddleListViewHolder holder, int position) {
-        Category category = Util.categoryMap.get(position);
+        Category category = categories.get(position);
 
-        if(puddlesList.get(category).size() == 0){
-            holder.itemView.setVisibility(View.GONE);
-        } else {
-            holder.puddleCategoryName.setText(category.toString());
-            LinearLayoutManager linearLayoutManager = new LinearLayoutManager(context);
-            linearLayoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
-            holder.puddleItemRecyclerView.setLayoutManager(linearLayoutManager);
-            holder.puddleAdapter = new PuddleAdapter(context, puddlesList.get(category));
-            holder.puddleItemRecyclerView.setAdapter(holder.puddleAdapter);
-        }
+        holder.puddleCategoryName.setText(category.toString());
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(context);
+        linearLayoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
+        holder.puddleItemRecyclerView.setLayoutManager(linearLayoutManager);
+        holder.puddleAdapter = new PuddleAdapter(context, puddlesList.get(category));
+        holder.puddleItemRecyclerView.setAdapter(holder.puddleAdapter);
 
     }
 
