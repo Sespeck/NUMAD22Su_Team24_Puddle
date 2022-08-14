@@ -92,7 +92,10 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
                                     if(!memToDelete.equals("")) memRef.child(memToDelete).removeValue();
 
 
-                                    startActivity(new Intent(SettingsActivity.this, PuddleListActivity.class));
+                                    Intent intent = new Intent(SettingsActivity.this, PuddleListActivity.class);
+                                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                                    startActivity(intent);
+
                                     finish();
                                     break;
                                 }
