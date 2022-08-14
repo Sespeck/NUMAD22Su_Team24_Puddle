@@ -4,6 +4,7 @@ import android.content.ContentResolver;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -26,14 +27,20 @@ import com.cs5520.assignments.numad22su_team24_puddle.R;
 import com.cs5520.assignments.numad22su_team24_puddle.SelectLocation;
 import com.cs5520.assignments.numad22su_team24_puddle.SettingsActivity;
 import com.cs5520.assignments.numad22su_team24_puddle.Utils.FirebaseDB;
+import com.cs5520.assignments.numad22su_team24_puddle.Utils.Util;
+import com.cs5520.assignments.numad22su_team24_puddle.chatroom_fragments.MessageNotification;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.textfield.TextInputLayout;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Objects;
 
@@ -56,6 +63,11 @@ public class AddNewEventDialog extends AppCompatActivity {
     private TextView endingTimeTextView;
     private TextView addLocationTextView;
     private String selectedLocation;
+    private MessageNotification notification;
+    private ValueEventListener valueEventListener;
+    private DatabaseReference userRef;
+    private ArrayList<ValueEventListener> valueEventListeners = new ArrayList<>();
+    private ArrayList<DatabaseReference> references = new ArrayList<>();
 
 
     ActivityResultLauncher<Intent> startActivityForResult = registerForActivityResult(
@@ -113,6 +125,10 @@ public class AddNewEventDialog extends AppCompatActivity {
             gallery.setType("image/*");
             startActivityForResult.launch(gallery);
         });
+        notification = new MessageNotification(this);
+        if (!Util.listener.isRegistered()){
+            Util.listener.registerListener(notification);
+        }
         findViewById(R.id.add_event_save_button).setOnClickListener(v -> {
             Intent intent_result = new Intent();
             Bundle result = new Bundle();
@@ -192,7 +208,6 @@ public class AddNewEventDialog extends AppCompatActivity {
         MimeTypeMap mime = MimeTypeMap.getSingleton();
         return mime.getExtensionFromMimeType(cr.getType(muri));
     }
-
 
     private void initializeAllTextViewOnClicks(Bundle savedInstanceState) {
         TextView startingTimeView = findViewById(R.id.starting_time_text_view);

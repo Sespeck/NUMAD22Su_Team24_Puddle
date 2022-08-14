@@ -104,6 +104,9 @@ public class PuddleListActivity extends AppCompatActivity implements View.OnClic
     private final String FRAGMENT_ID = "5";
     private MessageNotification notification;
     private ValueEventListener valueEventListener;
+    private ArrayList<ValueEventListener> valueEventListeners = new ArrayList<>();
+    private ArrayList<DatabaseReference> references = new ArrayList<>();
+
 
     private EventsFragment.endShimmerEffectCallback callback = new EventsFragment.endShimmerEffectCallback() {
         @Override
@@ -183,6 +186,7 @@ public class PuddleListActivity extends AppCompatActivity implements View.OnClic
         puddleSearch = findViewById(R.id.search);
         puddleSearch.clearFocus();
         puddleSearch.setIconified(false);
+        notification = new MessageNotification(this);
 
         puddleSearch.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -271,6 +275,8 @@ public class PuddleListActivity extends AppCompatActivity implements View.OnClic
         }
 
 
+
+
         getSupportFragmentManager().setFragmentResultListener("filter_result", this, new FragmentResultListener() {
             @Override
             public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle bundle) {
@@ -287,6 +293,12 @@ public class PuddleListActivity extends AppCompatActivity implements View.OnClic
                 updateRecyclerView();
             }
         });
+    }
+
+    @Override
+    protected void onResume() {
+        fetchCurrentUserData();
+        super.onResume();
     }
 
     public void filterNearMeData(String txt) {
@@ -312,7 +324,6 @@ public class PuddleListActivity extends AppCompatActivity implements View.OnClic
         }
     }
 
-
     public void filterPuddles(String txt) {
         HashMap<String, Puddle> modifiedData = new HashMap<>();
 
@@ -334,77 +345,6 @@ public class PuddleListActivity extends AppCompatActivity implements View.OnClic
         }
     }
 
-    @Override
-    protected void onPause() {
-        super.onPause();
-        userRef.removeEventListener(valueEventListener);
-    }
-
-    private void initializeNotificationListener() {
-        userRef = FirebaseDB.getDataReference("Users").child(FirebaseDB.getLocalUser().getId()).child("my_puddles");
-        valueEventListener = new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if (snapshot.getChildrenCount() != 0) {
-                    for (DataSnapshot snap :
-                            snapshot.getChildren()) {
-                        String puddleID = snap.getValue(String.class);
-                        FirebaseDB.getDataReference("Messages").child(puddleID).orderByKey().limitToLast(1).
-                                addValueEventListener(new ValueEventListener() {
-                                    @Override
-                                    public void onDataChange(@NonNull DataSnapshot snapshot) {
-                                        for (DataSnapshot snap :
-                                                snapshot.getChildren()) {
-                                            String senderUsername = snap.child("username").getValue(String.class);
-                                            String body = snap.child("body").getValue(String.class);
-                                            Boolean isImage = snap.child("isMessage").getValue(Boolean.class);
-                                            Boolean isNew = snap.child("isNew").getValue(Boolean.class);
-                                            if (isNew != null && isNew && !senderUsername.equals(FirebaseDB.getLocalUser().getUsername())
-                                                    && Util.isPuddleListForeground && !justOpened) {
-                                                snap.getRef().child("isNew").setValue(false);
-                                                FirebaseDB.getDataReference("Puddles").child(puddleID).child("name").addValueEventListener(new ValueEventListener() {
-                                                    @Override
-                                                    public void onDataChange(@NonNull DataSnapshot snapshot) {
-                                                        String name = snapshot.getValue(String.class);
-                                                        if (isImage != null && isImage) {
-                                                            notification.createNotification(senderUsername, senderUsername +
-                                                                    " sent a new image!", puddleID, name);
-                                                        } else {
-                                                            notification.createNotification(senderUsername, body, puddleID, name);
-                                                        }
-                                                    }
-                                                    @Override
-                                                    public void onCancelled(@NonNull DatabaseError error) {
-
-                                                    }
-                                                });
-                                            }
-                                            snap.getRef().child("isNew").setValue(false);
-                                        }
-
-                                    }
-
-                                    @Override
-                                    public void onCancelled (@NonNull DatabaseError error){
-
-                                    }
-                                });
-
-                    }
-                }
-
-                // Delay intended to prevent notifications populating when a user opens this activity
-//                handler.postDelayed(() -> justOpened = false,4000);
-            }
-
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-
-            }
-        };
-        userRef.addValueEventListener(valueEventListener);
-    }
 
     @Override
     protected void onNewIntent(Intent intent) {
@@ -457,7 +397,9 @@ public class PuddleListActivity extends AppCompatActivity implements View.OnClic
                     updateRecyclerView();
                 }
 
-                initializeNotificationListener();
+               if (!Util.listener.isRegistered()){
+                    Util.listener.registerListener(notification);
+                }
                 if (!FirebaseDB.getLocalUser().getProfile_icon().equals("")) {
                     Glide.with(getApplicationContext()).load(FirebaseDB.getLocalUser().getProfile_icon()).into(profileIcon);
                 }

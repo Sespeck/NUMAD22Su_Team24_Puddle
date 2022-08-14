@@ -52,6 +52,7 @@ public class PuddleChatroomActivity extends AppCompatActivity {
     private ValueEventListener valueEventListener;
     private DatabaseReference userRef;
     private ArrayList<ValueEventListener> valueEventListeners = new ArrayList<>();
+    private ArrayList<DatabaseReference> references = new ArrayList<>();
 
     ActivityResultLauncher<Intent> startActivityForResult = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
@@ -75,8 +76,11 @@ public class PuddleChatroomActivity extends AppCompatActivity {
         toolbar.setNavigationOnClickListener(v -> onBackPressed());
         notification = new MessageNotification(this);
         Util.isForeground = true;
-        justOpened = true;
+        justOpened = false;
         Util.foregroundedPuddle = puddleID;
+        if (Util.listener.isRegistered()){
+            Util.listener.unregisterListener();
+        }
         this.fab = findViewById(R.id.fab);
         if (savedInstanceState != null){
             puddleID = savedInstanceState.getString("puddleID");
@@ -127,6 +131,7 @@ public class PuddleChatroomActivity extends AppCompatActivity {
                                             if (isNew != null && ((!senderUsername.equals(FirebaseDB.getLocalUser().getUsername()) && isNew && !Util.isForeground)
                                                     || ((!senderUsername.equals(FirebaseDB.getLocalUser().getUsername())) && isNew && !justOpened &&
                                                     !Util.foregroundedPuddle.equals(snapshot.getRef().getKey())))) {
+                                                Log.d("here","puddlechatroom");
                                                 snap.getRef().child("isNew").setValue(false);
                                                 FirebaseDB.getDataReference("Puddles").child(puddleID).child("name").
                                                         addValueEventListener(new ValueEventListener() {
@@ -160,6 +165,8 @@ public class PuddleChatroomActivity extends AppCompatActivity {
 
                         FirebaseDB.getDataReference("Messages").child(puddleID).orderByKey().limitToLast(1).addValueEventListener(listener);
                         valueEventListeners.add(listener);
+                        references.add( FirebaseDB.getDataReference("Messages").child(puddleID));
+
 
                     }
                 }
@@ -173,10 +180,11 @@ public class PuddleChatroomActivity extends AppCompatActivity {
         userRef.addValueEventListener(valueEventListener);
 
         if (currentTab.getPosition() != 0 && Util.isForeground){
-            handler.postDelayed(() -> Util.isForeground = false,3000);
+            handler.postDelayed(() -> Util.isForeground = false,1000);
         }
-        handler.postDelayed(() -> justOpened = false,3000);
     }
+
+
 
 
     private void completeFragmentNavigation(TabLayout.Tab tab, int flag) {
@@ -236,8 +244,7 @@ public class PuddleChatroomActivity extends AppCompatActivity {
     protected void onSaveInstanceState(@NonNull Bundle outState) {
         outState.putString("puddleID",puddleID);
         outState.putInt("current_tab",currentTab.getPosition());
-        Log.d("here","here"+currentTab.getPosition());
-        Util.isForeground = true;
+//        Util.isForeground = true;
         super.onSaveInstanceState(outState);
     }
 
@@ -257,7 +264,6 @@ public class PuddleChatroomActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        justOpened = true;
         Util.isForeground = true;
         initializeNotificationListener();
     }
@@ -269,26 +275,42 @@ public class PuddleChatroomActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onPause() {
+    protected void onDestroy() {
+        super.onDestroy();
+        for (int i=0; i<references.size(); i++){
+            references.get(i).removeEventListener(valueEventListeners.get(i));
+        }
         userRef.removeEventListener(valueEventListener);
-        super.onPause();
     }
 
     public void navigateHome(MenuItem item) {
         Intent intent = new Intent(this, PuddleListActivity.class);
+        for (int i=0; i<references.size(); i++){
+           references.get(i).removeEventListener(valueEventListeners.get(i));
+        }
+        userRef.removeEventListener(valueEventListener);
         startActivity(intent);
     }
 
 
     public void navigateToMap(MenuItem item) {
         Intent intent = new Intent(this, MapActivity.class);
+        for (int i=0; i<references.size(); i++){
+            references.get(i).removeEventListener(valueEventListeners.get(i));
+        }
+        userRef.removeEventListener(valueEventListener);
         startActivity(intent);
     }
 
 
     public void navigateToSettings(MenuItem item) {
         Intent intent = new Intent(this, SettingsActivity.class);
+        for (int i = 0; i < references.size(); i++) {
+            references.get(i).removeEventListener(valueEventListeners.get(i));
+        }
+        intent.addFlags((Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK));
         intent.putExtra("PuddleId", puddleID);
+        finish();
         startActivity(intent);
     }
 }

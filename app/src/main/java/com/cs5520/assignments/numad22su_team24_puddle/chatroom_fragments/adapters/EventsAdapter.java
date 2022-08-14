@@ -113,7 +113,7 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.EventViewH
                                 Toast.makeText(context, "Successfully RSVPed!",Toast.LENGTH_SHORT).show();
                             } else{
                                 Toast.makeText(context, "You are no longer RSVPed",Toast.LENGTH_SHORT).show();
-                                String newCounterValue =
+                                String newCounterValue = (Integer.parseInt(holder.attendanceCounter.getText().toString()) - 1 <= 0) ? String.valueOf(0) :
                                         String.valueOf(Integer.parseInt(holder.attendanceCounter.getText().toString()) - 1);
                                 eventsRef.child(event.id).child("attendance_counter").setValue(newCounterValue);
                                 eventsRef.child(event.id).child("has_rsvped").child(FirebaseDB.currentUser.getUsername()).removeValue();

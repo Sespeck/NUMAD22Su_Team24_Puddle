@@ -33,19 +33,25 @@ import com.bumptech.glide.Glide;
 import com.cs5520.assignments.numad22su_team24_puddle.Model.ApiLoaderBar;
 import com.cs5520.assignments.numad22su_team24_puddle.Utils.FirebaseDB;
 import com.cs5520.assignments.numad22su_team24_puddle.Utils.LocationPermissionActivity;
+import com.cs5520.assignments.numad22su_team24_puddle.Utils.Util;
+import com.cs5520.assignments.numad22su_team24_puddle.chatroom_fragments.MessageNotification;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.imageview.ShapeableImageView;
 import com.google.android.material.textfield.TextInputEditText;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
 import java.io.File;
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 public class ProfileActivity extends AppCompatActivity {
@@ -61,6 +67,11 @@ public class ProfileActivity extends AppCompatActivity {
     StorageReference storeRef;
     Handler apiHandler = new Handler();
     final ApiLoaderBar apiBar = new ApiLoaderBar(ProfileActivity.this);
+    private ArrayList<ValueEventListener> valueEventListeners = new ArrayList<>();
+    private ArrayList<DatabaseReference> references = new ArrayList<>();
+    private MessageNotification notification;
+    private ValueEventListener valueEventListener;
+    private DatabaseReference userRef;
 
     public static final int CAMERA_REQUEST_CODE = 102;
 
@@ -96,6 +107,7 @@ public class ProfileActivity extends AppCompatActivity {
 
         imgRef = FirebaseDB.getDataReference("images");
         storeRef = FirebaseDB.storageRef;
+        Util.isPuddleListForeground = true;
 
         profileIcon = findViewById(R.id.profile_user_icon);
         displayET = findViewById(R.id.profile_display_name_et);
@@ -108,7 +120,10 @@ public class ProfileActivity extends AppCompatActivity {
         saveBtn.setOnClickListener(v -> saveBtnClick());
         profileIcon.setOnClickListener(v -> setProfileImage());
         cameraBtn.setOnClickListener(v -> clickCameraBtn());
-
+        notification = new MessageNotification(this);
+        if (!Util.listener.isRegistered()){
+            Util.listener.registerListener(notification);
+        }
         fillDetails();
 
     }

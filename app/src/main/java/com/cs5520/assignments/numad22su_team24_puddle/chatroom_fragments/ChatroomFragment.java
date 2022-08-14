@@ -147,7 +147,7 @@ public class ChatroomFragment extends Fragment {
 
     private void createNewMessageListener(){
         sendButton.setOnClickListener(v -> {
-            if (chatEditText.getText() != null){
+            if (chatEditText.getText() != null && !chatEditText.getText().equals("")){
                 class PushNewMsgToDB implements Runnable{
                     @Override
                     public void run() {

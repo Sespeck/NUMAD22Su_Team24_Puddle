@@ -37,6 +37,7 @@
         <activity
             android:name=".MapActivity"
             android:configChanges="screenSize|orientation"
+            android:screenOrientation="portrait"
             android:exported="false" />
         <activity
             android:name=".PuddleListActivity"

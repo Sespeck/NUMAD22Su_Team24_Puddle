@@ -14,6 +14,8 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.cs5520.assignments.numad22su_team24_puddle.Model.Puddle;
 import com.cs5520.assignments.numad22su_team24_puddle.Utils.FirebaseDB;
+import com.cs5520.assignments.numad22su_team24_puddle.Utils.Util;
+import com.cs5520.assignments.numad22su_team24_puddle.chatroom_fragments.MessageNotification;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -29,6 +31,7 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
     String keyToDelete = "";
     String memToDelete = "";
     HashMap<String, Object> puddleMap = new HashMap<>();
+    private MessageNotification notification;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -45,6 +48,12 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
         sharePuddleLayout.setOnClickListener(this);
         leavePuddleLayout.setOnClickListener(this);
         reportPuddleLayout.setOnClickListener(this);
+        Util.isPuddleListForeground = true;
+        notification = new MessageNotification(this);
+        Log.d("here", "Settings"+Util.listener.isRegistered());
+        if (!Util.listener.isRegistered()){
+            Util.listener.registerListener(notification);
+        }
     }
 
     @Override
@@ -93,9 +102,9 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
 
 
                                     Intent intent = new Intent(SettingsActivity.this, PuddleListActivity.class);
-                                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
                                     startActivity(intent);
-
+                                    Util.listener.unregisterListener();
                                     finish();
                                     break;
                                 }
