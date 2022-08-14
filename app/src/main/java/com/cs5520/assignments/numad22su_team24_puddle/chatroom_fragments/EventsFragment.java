@@ -67,7 +67,7 @@ public class EventsFragment extends Fragment {
         this.recyclerView = view.findViewById(R.id.event_recycler_view);
         shimmerFrameLayout = view.findViewById(R.id.events_shimmer_layout);
         recyclerView.hasFixedSize();
-        if (!Util.renderShimmerEffect.containsKey(Util.generateShimmerEffectID(FirebaseDB.currentUser.getUsername(),puddleID,FRAGMENT_ID))) {
+        if (!Util.renderShimmerEffect.containsKey(Util.generateShimmerEffectID(FirebaseDB.getLocalUser().getUsername(),puddleID,FRAGMENT_ID))) {
             shimmerFrameLayout.startShimmer();
             shimmerFrameLayout.setVisibility(View.VISIBLE);
             recyclerView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
@@ -79,7 +79,7 @@ public class EventsFragment extends Fragment {
                     recyclerView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
                 }
             });
-            Util.renderShimmerEffect.put(Util.generateShimmerEffectID(FirebaseDB.currentUser.getUsername(),puddleID,FRAGMENT_ID), true);
+            Util.renderShimmerEffect.put(Util.generateShimmerEffectID(FirebaseDB.getLocalUser().getUsername(),puddleID,FRAGMENT_ID), true);
         } else{
             shimmerFrameLayout.stopShimmer();
             shimmerFrameLayout.setVisibility(View.GONE);
@@ -123,9 +123,9 @@ public class EventsFragment extends Fragment {
                     newEvent.put("attendance_counter","1");
                     newEvent.put("id",uniqueID);
                     newEvent.put("selected_location", location);
-                    newEvent.put("created_by",FirebaseDB.currentUser.getUsername());
+                    newEvent.put("created_by",FirebaseDB.getLocalUser().getUsername());
                     handler.post(()->{
-                        eventsAdapter.addNewEvent(new Event(title,startingTimestamp,endingTimestamp,location,description,result.getString("image_uri"),1, uniqueID, FirebaseDB.currentUser.getUsername()));
+                        eventsAdapter.addNewEvent(new Event(title,startingTimestamp,endingTimestamp,location,description,result.getString("image_uri"),1, uniqueID, FirebaseDB.getLocalUser().getUsername()));
                     });
                     eventsRef.child(puddleID).child(uniqueID).setValue(newEvent);
                 }

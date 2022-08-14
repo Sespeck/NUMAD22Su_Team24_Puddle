@@ -60,7 +60,7 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
             new Thread(new Runnable() {
                 @Override
                 public void run() {
-                    DatabaseReference ref = FirebaseDB.getDataReference("Users").child(FirebaseDB.currentUser.getId()).child("my_puddles");
+                    DatabaseReference ref = FirebaseDB.getDataReference("Users").child(FirebaseDB.getLocalUser().getId()).child("my_puddles");
                     DatabaseReference pudRef = FirebaseDB.getDataReference("Puddles");
                     DatabaseReference memRef = FirebaseDB.getDataReference("Members").child(puddleId);
 
@@ -114,7 +114,7 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
                         public void onDataChange(@NonNull DataSnapshot snapshot) {
                             for(DataSnapshot snap: snapshot.getChildren()){
                                 String username = snap.child("username").getValue(String.class);
-                                if(username.equals(FirebaseDB.currentUser.getUsername())){
+                                if(username.equals(FirebaseDB.getLocalUser().getUsername())){
                                     memToDelete = snap.getKey();
                                     memRef.removeEventListener(this);
                                     pudRef.addValueEventListener(puddleValueEventListener);

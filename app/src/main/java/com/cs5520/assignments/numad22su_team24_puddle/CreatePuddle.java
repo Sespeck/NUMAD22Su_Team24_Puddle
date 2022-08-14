@@ -240,8 +240,8 @@ public class CreatePuddle extends AppCompatActivity {
         puddleMap.put("Location", location);
 
         HashMap<String, String> members = new HashMap<>();
-        members.put("profile_url", FirebaseDB.currentUser.getProfile_icon());
-        members.put("username", FirebaseDB.currentUser.getUsername());
+        members.put("profile_url", FirebaseDB.getLocalUser().getProfile_icon());
+        members.put("username", FirebaseDB.getLocalUser().getUsername());
 
         ref.child(pud_key).setValue(puddleMap);
         ref2.child(pud_key).push().setValue(members);

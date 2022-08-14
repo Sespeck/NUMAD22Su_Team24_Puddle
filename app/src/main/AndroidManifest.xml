@@ -42,7 +42,7 @@
             android:name=".PuddleListActivity"
             android:exported="true"
             android:theme="@style/Theme.NUMAD22Su_Team24_Puddle.NoActionBar">
-            <intent-filter>
+            <intent-filter android:autoVerify="true">
                 <action android:name="android.intent.action.VIEW" />
 
                 <category android:name="android.intent.category.DEFAULT" />

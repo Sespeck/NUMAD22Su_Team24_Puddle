@@ -127,7 +127,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     }
 
     private void initializeNotificationListener() {
-        DatabaseReference userRef = FirebaseDB.getDataReference("Users").child(FirebaseDB.currentUser.getId()).child("my_puddles");
+        DatabaseReference userRef = FirebaseDB.getDataReference("Users").child(FirebaseDB.getLocalUser().getId()).child("my_puddles");
         userRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -146,7 +146,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                                             Boolean isImage = snap.child("isMessage").getValue(Boolean.class);
                                             Boolean isDeleted = snap.child("isDeleted").getValue(Boolean.class);
                                             handler.postDelayed(() ->  {
-                                                if (isDeleted != null && !isDeleted && !senderUsername.equals(FirebaseDB.currentUser.getUsername())
+                                                if (isDeleted != null && !isDeleted && !senderUsername.equals(FirebaseDB.getLocalUser().getUsername())
                                                         && Util.isPuddleListForeground && !justOpened) {
                                                     FirebaseDB.getDataReference("Puddles").child(puddleID).child("name").addValueEventListener(new ValueEventListener() {
                                                         @Override

@@ -63,7 +63,7 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.EventViewH
     @Override
     public void onBindViewHolder(@NonNull EventsAdapter.EventViewHolder holder, int position) {
         Event event = eventList.get(position);
-        if (event.createdBy.equals(FirebaseDB.currentUser.getUsername())){
+        if (event.createdBy.equals(FirebaseDB.getLocalUser().getUsername())){
             holder.imageView.setOnClickListener(v -> {
                 new MaterialAlertDialogBuilder(context,
                         R.style.Body_ThemeOverlay_MaterialComponents_MaterialAlertDialog).setTitle(event.name).

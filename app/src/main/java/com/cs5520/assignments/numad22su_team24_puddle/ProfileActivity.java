@@ -156,12 +156,12 @@ public class ProfileActivity extends AppCompatActivity {
     }
 
     private void fillDetails() {
-        displayET.setText(FirebaseDB.currentUser.getDisplay_name());
-        bioET.setText(FirebaseDB.currentUser.getBio());
-        phoneNumberET.setText(FirebaseDB.currentUser.getPhone_number());
+        displayET.setText(FirebaseDB.getLocalUser().getDisplay_name());
+        bioET.setText(FirebaseDB.getLocalUser().getBio());
+        phoneNumberET.setText(FirebaseDB.getLocalUser().getPhone_number());
 
-        if (!FirebaseDB.currentUser.getProfile_icon().equals("")) {
-            dpUrl = FirebaseDB.currentUser.getProfile_icon();
+        if (!FirebaseDB.getLocalUser().getProfile_icon().equals("")) {
+            dpUrl = FirebaseDB.getLocalUser().getProfile_icon();
             Glide.with(ProfileActivity.this).load(dpUrl).into(profileIcon);
         }
     }
@@ -176,8 +176,8 @@ public class ProfileActivity extends AppCompatActivity {
     }
 
     public void uploadDataToFB() {
-        DatabaseReference ref = FirebaseDB.getDataReference("Users").child(FirebaseDB.currentUser.getId());
-        HashMap<String, Object> hashMap = FirebaseDB.currentUser.getUserMap();
+        DatabaseReference ref = FirebaseDB.getDataReference("Users").child(FirebaseDB.getLocalUser().getId());
+        HashMap<String, Object> hashMap = FirebaseDB.getLocalUser().getUserMap();
 
         hashMap.put("display_name", displayET.getText().toString());
         hashMap.put("bio", bioET.getText().toString());
@@ -192,10 +192,10 @@ public class ProfileActivity extends AppCompatActivity {
                 });
 
                 if (task.isSuccessful()) {
-                    FirebaseDB.currentUser.setDisplay_name(displayET.getText().toString());
-                    FirebaseDB.currentUser.setBio(bioET.getText().toString());
-                    FirebaseDB.currentUser.setPhone_number(phoneNumberET.getText().toString());
-                    FirebaseDB.currentUser.setProfile_icon(dpUrl);
+                    FirebaseDB.getLocalUser().setDisplay_name(displayET.getText().toString());
+                    FirebaseDB.getLocalUser().setBio(bioET.getText().toString());
+                    FirebaseDB.getLocalUser().setPhone_number(phoneNumberET.getText().toString());
+                    FirebaseDB.getLocalUser().setProfile_icon(dpUrl);
                     Intent intent = new Intent(ProfileActivity.this, PuddleListActivity.class);
                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
                     getApplicationContext().startActivity(intent);
