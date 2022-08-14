@@ -158,6 +158,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                                                     FirebaseDB.getDataReference("Puddles").child(puddleID).child("name").addValueEventListener(new ValueEventListener() {
                                                         @Override
                                                         public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                                            Log.d("here","mapactivity");
                                                             String name = snapshot.getValue(String.class);
                                                             if (isImage != null && isImage) {
                                                                 notification.createNotification(senderUsername, senderUsername +
