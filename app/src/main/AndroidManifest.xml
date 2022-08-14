@@ -40,6 +40,7 @@
             android:exported="false" />
         <activity
             android:name=".PuddleListActivity"
+            android:configChanges="screenSize|orientation"
             android:exported="true"
             android:theme="@style/Theme.NUMAD22Su_Team24_Puddle.NoActionBar">
             <intent-filter>
