@@ -18,6 +18,17 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
+        <ImageView
+            android:id="@+id/app_icon"
+            android:layout_width="@dimen/icon_size_lg"
+            android:layout_height="@dimen/icon_size_lg"
+            android:layout_gravity="center"
+            android:src="@drawable/icon_puddle"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/signup_username_layout"/>
+
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/signup_username_layout"
@@ -40,7 +51,7 @@
             app:layout_constraintBottom_toTopOf="@id/signup_password_layout"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/app_icon"
             app:startIconDrawable="@drawable/account_circle"
             app:startIconTint="@color/login_signup_text_color">
 
