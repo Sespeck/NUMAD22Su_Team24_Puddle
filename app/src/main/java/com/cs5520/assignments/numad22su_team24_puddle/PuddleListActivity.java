@@ -436,7 +436,7 @@ public class PuddleListActivity extends AppCompatActivity implements View.OnClic
                 Log.d("currentUser", FirebaseDB.currentUser.toString());
                 initializeNotificationListener();
                 if (!FirebaseDB.currentUser.getProfile_icon().equals("")) {
-                    Glide.with(PuddleListActivity.this).load(FirebaseDB.currentUser.getProfile_icon()).into(profileIcon);
+                    Glide.with(getApplicationContext()).load(FirebaseDB.currentUser.getProfile_icon()).into(profileIcon);
                 }
             }
 
