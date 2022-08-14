@@ -78,7 +78,7 @@ public class AboutFragment extends Fragment {
             profilePicUri = savedInstanceState.getString("profile_pic_uri");
             Glide.with(requireContext()).load(profilePicUri).into(bannerIcon);
         }
-        if (!Util.renderShimmerEffect.containsKey(Util.generateShimmerEffectID(FirebaseDB.currentUser.getUsername(),puddleID,FRAGMENT_ID))){
+        if (FirebaseDB.currentUser != null && !Util.renderShimmerEffect.containsKey(Util.generateShimmerEffectID(FirebaseDB.currentUser.getUsername(),puddleID,FRAGMENT_ID))){
             callback.onLayoutInflated();
             Util.renderShimmerEffect.put(Util.generateShimmerEffectID(FirebaseDB.currentUser.getUsername(),puddleID,FRAGMENT_ID),true);
         } else{

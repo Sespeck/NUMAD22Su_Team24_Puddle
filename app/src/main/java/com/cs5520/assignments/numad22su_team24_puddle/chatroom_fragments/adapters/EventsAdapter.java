@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -17,6 +18,7 @@ import com.bumptech.glide.Glide;
 import com.cs5520.assignments.numad22su_team24_puddle.R;
 import com.cs5520.assignments.numad22su_team24_puddle.Utils.FirebaseDB;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.database.DatabaseReference;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.RequestCreator;
@@ -69,11 +71,22 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.EventViewH
                         R.style.Body_ThemeOverlay_MaterialComponents_MaterialAlertDialog).setTitle(event.name).
                         setMessage(event.description + "\n\n" + event.location + "\n\n" + event.startingDatetime + "\n" +
                                 event.endingDatetime).setPositiveButton("RSVP", (dialog, which) -> {
-                            String newCounterValue =
-                                    String.valueOf(Integer.parseInt(holder.attendanceCounter.getText().toString()) + 1);
-                            holder.attendanceCounter.setText(newCounterValue);
-                            notifyItemChanged(position);
-                            eventsRef.child(event.id).child("attendance_counter").setValue(newCounterValue);
+                                    if (!event.hasRsvped.contains(FirebaseDB.currentUser.getUsername())) {
+                                        String newCounterValue =
+                                                String.valueOf(Integer.parseInt(holder.attendanceCounter.getText().toString()) + 1);
+                                        holder.attendanceCounter.setText(newCounterValue);
+                                        notifyItemChanged(position);
+                                        eventsRef.child(event.id).child("attendance_counter").setValue(newCounterValue);
+                                        eventsRef.child(event.id).child("has_rsvped").child(FirebaseDB.currentUser.getUsername()).setValue(true);
+                                        Toast.makeText(context, "Successfully RSVPed!",Toast.LENGTH_SHORT).show();
+                                    } else{
+                                        Toast.makeText(context, "You are no longer RSVPed",Toast.LENGTH_SHORT).show();
+                                        String newCounterValue =
+                                                String.valueOf(Integer.parseInt(holder.attendanceCounter.getText().toString()) - 1);
+                                        eventsRef.child(event.id).child("attendance_counter").setValue(newCounterValue);
+                                        eventsRef.child(event.id).child("has_rsvped").child(FirebaseDB.currentUser.getUsername()).removeValue();
+                                        event.hasRsvped.remove(FirebaseDB.currentUser.getUsername());
+                                    }
                         }).setNegativeButton("Delete", ((dialog, which) -> {
                             eventsRef.child(event.id).removeValue((error, ref) -> {
 
@@ -88,11 +101,22 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.EventViewH
                         R.style.Body_ThemeOverlay_MaterialComponents_MaterialAlertDialog).setTitle(event.name).
                         setMessage(event.description + "\n\n" + event.location + "\n\n" + event.startingDatetime + "\n" +
                                 event.endingDatetime).setPositiveButton("RSVP", (dialog, which) -> {
-                            String newCounterValue =
-                                    String.valueOf(Integer.parseInt(holder.attendanceCounter.getText().toString()) + 1);
-                            holder.attendanceCounter.setText(newCounterValue);
-                            notifyItemChanged(position);
-                            eventsRef.child(event.id).child("attendance_counter").setValue(newCounterValue);
+                            if (!event.hasRsvped.contains(FirebaseDB.currentUser.getUsername())) {
+                                String newCounterValue =
+                                        String.valueOf(Integer.parseInt(holder.attendanceCounter.getText().toString()) + 1);
+                                holder.attendanceCounter.setText(newCounterValue);
+                                notifyItemChanged(position);
+                                eventsRef.child(event.id).child("attendance_counter").setValue(newCounterValue);
+                                eventsRef.child(event.id).child("has_rsvped").child(FirebaseDB.currentUser.getUsername()).setValue(true);
+                                Toast.makeText(context, "Successfully RSVPed!",Toast.LENGTH_SHORT).show();
+                            } else{
+                                Toast.makeText(context, "You are no longer RSVPed",Toast.LENGTH_SHORT).show();
+                                String newCounterValue =
+                                        String.valueOf(Integer.parseInt(holder.attendanceCounter.getText().toString()) - 1);
+                                eventsRef.child(event.id).child("attendance_counter").setValue(newCounterValue);
+                                eventsRef.child(event.id).child("has_rsvped").child(FirebaseDB.currentUser.getUsername()).removeValue();
+                                event.hasRsvped.remove(FirebaseDB.currentUser.getUsername());
+                            }
                         }).show();
             });
         }

@@ -158,7 +158,7 @@ public class MapFragment extends Fragment{
     }
 
     public void addPuddlesToList(String pud_id, PuddleMarker pud) {
-        boolean alreadyJoined =FirebaseDB.currentUser.getMy_puddles().containsKey(pud_id);
+        boolean alreadyJoined = FirebaseDB.currentUser.getMy_puddles().containsKey(pud_id);
 
         new Thread(new Runnable() {
             @Override

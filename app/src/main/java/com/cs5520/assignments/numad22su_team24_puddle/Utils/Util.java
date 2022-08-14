@@ -24,7 +24,6 @@ public class Util {
     public static boolean isForeground = true;
     public static boolean isPuddleListForeground = true;
     public static String foregroundedPuddle;
-
     public static User user;
 
     public static String generateShimmerEffectID(String username, String puddleID, String fragmentID){

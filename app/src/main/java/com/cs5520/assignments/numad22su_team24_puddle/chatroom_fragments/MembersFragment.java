@@ -64,7 +64,7 @@ public class MembersFragment extends Fragment {
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         recyclerView.hasFixedSize();
         shimmerFrameLayout = view.findViewById(R.id.members_shimmer_frame_layout);
-        if (!Util.renderShimmerEffect.containsKey(Util.generateShimmerEffectID(FirebaseDB.currentUser.getUsername(),puddleID,FRAGMENT_ID)) && getArguments().getString("new_chatroom") == null) {
+        if (FirebaseDB.currentUser != null && !Util.renderShimmerEffect.containsKey(Util.generateShimmerEffectID(FirebaseDB.currentUser.getUsername(),puddleID,FRAGMENT_ID)) && getArguments().getString("new_chatroom") == null) {
             shimmerFrameLayout.startShimmer();
             shimmerFrameLayout.setVisibility(View.VISIBLE);
             recyclerView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {

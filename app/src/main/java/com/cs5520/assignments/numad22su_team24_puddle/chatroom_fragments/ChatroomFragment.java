@@ -118,7 +118,7 @@ public class ChatroomFragment extends Fragment {
         initializeRecyclerView();
         currentUser = FirebaseDB.currentUser;
         createNewMessageListener();
-        if (!Util.renderShimmerEffect.containsKey(Util.generateShimmerEffectID(FirebaseDB.currentUser.getUsername(),puddleID,FRAGMENT_ID)) && getArguments().getString("new_chatroom") == null) {
+        if (FirebaseDB.currentUser != null && !Util.renderShimmerEffect.containsKey(Util.generateShimmerEffectID(FirebaseDB.currentUser.getUsername(),puddleID,FRAGMENT_ID)) && getArguments().getString("new_chatroom") == null) {
             shimmerFrameLayout.startShimmer();
             shimmerFrameLayout.setVisibility(View.VISIBLE);
             recyclerView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
@@ -154,7 +154,7 @@ public class ChatroomFragment extends Fragment {
                         String textResult = chatEditText.getText().toString();
                         HashMap<String, Object> newMessage = new HashMap<>();
                         newMessage.put("timestamp", Instant.now().toString());
-                        FirebaseDB.fetchCurrentUserData();
+//                        FirebaseDB.fetchCurrentUserData();
                         newMessage.put("username", currentUser.getUsername());
                         newMessage.put("body",textResult);
                         newMessage.put("profile_url",currentUser.getProfile_icon());
@@ -239,10 +239,9 @@ public class ChatroomFragment extends Fragment {
                 ref.getDownloadUrl().addOnSuccessListener(uri1 -> new Thread(new Runnable() {
                     @Override
                     public void run() {
-//                                imageUri = uri;
                         HashMap<String, Object> newMessage = new HashMap<>();
                         newMessage.put("timestamp", Instant.now().toString());
-                        FirebaseDB.fetchCurrentUserData();
+//                        FirebaseDB.fetchCurrentUserData();
                         newMessage.put("username", currentUser.getUsername());
                         Log.d("here", imageUri.toString());
                         newMessage.put("body", uri1.toString());

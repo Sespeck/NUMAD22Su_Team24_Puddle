@@ -12,10 +12,11 @@ public class Event {
     String backgroundImgUri;
     int attendanceCount;
     String createdBy;
+    HashSet<String> hasRsvped;
 
 
     public Event(String name, String startingDatetime, String endingDatetime, String location,
-                 String description, String backgroundImgUri, int attendanceCount, String id, String createdBy){
+                 String description, String backgroundImgUri, int attendanceCount, String id, String createdBy, HashSet<String> hasRsvped){
         this.name = name;
         this.startingDatetime = startingDatetime;
         this.endingDatetime = endingDatetime;
@@ -25,6 +26,7 @@ public class Event {
         this.attendanceCount = attendanceCount;
         this.id = id;
         this.createdBy = createdBy;
+        this.hasRsvped = hasRsvped;
     }
 
     public String getName() {
@@ -53,5 +55,9 @@ public class Event {
 
     public int getAttendanceCount(){
         return attendanceCount;
+    }
+
+    public HashSet<String> getHasRsvped() {
+        return hasRsvped;
     }
 }

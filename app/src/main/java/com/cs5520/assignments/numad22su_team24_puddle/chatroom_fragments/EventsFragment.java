@@ -31,6 +31,7 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
@@ -67,7 +68,7 @@ public class EventsFragment extends Fragment {
         this.recyclerView = view.findViewById(R.id.event_recycler_view);
         shimmerFrameLayout = view.findViewById(R.id.events_shimmer_layout);
         recyclerView.hasFixedSize();
-        if (!Util.renderShimmerEffect.containsKey(Util.generateShimmerEffectID(FirebaseDB.currentUser.getUsername(),puddleID,FRAGMENT_ID))) {
+        if (FirebaseDB.currentUser != null && !Util.renderShimmerEffect.containsKey(Util.generateShimmerEffectID(FirebaseDB.currentUser.getUsername(),puddleID,FRAGMENT_ID))) {
             shimmerFrameLayout.startShimmer();
             shimmerFrameLayout.setVisibility(View.VISIBLE);
             recyclerView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
@@ -124,10 +125,13 @@ public class EventsFragment extends Fragment {
                     newEvent.put("id",uniqueID);
                     newEvent.put("selected_location", location);
                     newEvent.put("created_by",FirebaseDB.currentUser.getUsername());
+                    HashSet<String> hasRsvped = new HashSet<>();
+                    hasRsvped.add(FirebaseDB.currentUser.getUsername());
                     handler.post(()->{
-                        eventsAdapter.addNewEvent(new Event(title,startingTimestamp,endingTimestamp,location,description,result.getString("image_uri"),1, uniqueID, FirebaseDB.currentUser.getUsername()));
+                        eventsAdapter.addNewEvent(new Event(title,startingTimestamp,endingTimestamp,location,description,result.getString("image_uri"),1, uniqueID, FirebaseDB.currentUser.getUsername(), hasRsvped));
                     });
                     eventsRef.child(puddleID).child(uniqueID).setValue(newEvent);
+                    eventsRef.child(puddleID).child(uniqueID).child("has_rsvped").child(FirebaseDB.currentUser.getUsername()).setValue(true);
                 }
             }
             Thread worker = new Thread(new CreateNewEventRunnable());
@@ -155,8 +159,13 @@ public class EventsFragment extends Fragment {
                             String location = snap.child("selected_location").getValue(String.class);
                             String id = snap.child("id").getValue(String.class);
                             String createdBy = snap.child("created_by").getValue(String.class);
+                            HashSet<String>  hasRsvped = new HashSet<>();
+                            for (DataSnapshot rsvpsnap:
+                                    snap.child("has_rsvped").getChildren()) {
+                                hasRsvped.add(rsvpsnap.getKey());
+                            }
                             int attendanceCounter = Integer.parseInt(Objects.requireNonNull(snap.child("attendance_counter").getValue(String.class)));
-                            eventList.add(new Event(title, startingTimestamp, endingTimestamp, location, description, imageUri, attendanceCounter,id, createdBy));
+                            eventList.add(new Event(title, startingTimestamp, endingTimestamp, location, description, imageUri, attendanceCounter,id, createdBy, hasRsvped));
                         }
                         handler.post(() -> {
                             eventsAdapter = new EventsAdapter(eventList, getContext(), eventsRef.child(puddleID));
