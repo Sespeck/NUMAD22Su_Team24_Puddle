@@ -295,12 +295,6 @@ public class PuddleListActivity extends AppCompatActivity implements View.OnClic
         });
     }
 
-    @Override
-    protected void onResume() {
-        fetchCurrentUserData();
-        super.onResume();
-    }
-
     public void filterNearMeData(String txt) {
         HashMap<Category, List<Puddle>> modifiedCategoryPuddlesData = new HashMap<>();
 
