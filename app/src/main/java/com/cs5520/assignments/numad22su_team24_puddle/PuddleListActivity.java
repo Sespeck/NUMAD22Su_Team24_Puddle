@@ -351,7 +351,7 @@ public class PuddleListActivity extends AppCompatActivity implements View.OnClic
                                             String body = snap.child("body").getValue(String.class);
                                             Boolean isImage = snap.child("isMessage").getValue(Boolean.class);
                                             Boolean isNew = snap.child("isNew").getValue(Boolean.class);
-                                            if (isNew != null && isNew && !senderUsername.equals(FirebaseDB.currentUser.getUsername())
+                                            if (isNew != null && isNew && !senderUsername.equals(FirebaseDB.getLocalUser().getUsername())
                                                     && Util.isPuddleListForeground && !justOpened) {
                                                 snap.getRef().child("isNew").setValue(false);
                                                 FirebaseDB.getDataReference("Puddles").child(puddleID).child("name").addValueEventListener(new ValueEventListener() {

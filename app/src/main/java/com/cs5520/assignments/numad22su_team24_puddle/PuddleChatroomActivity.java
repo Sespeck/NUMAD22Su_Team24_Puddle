@@ -124,9 +124,9 @@ public class PuddleChatroomActivity extends AppCompatActivity {
                                             String body = snap.child("body").getValue(String.class);
                                             Boolean isImage = snap.child("isMessage").getValue(Boolean.class);
                                             Boolean isNew = snap.child("isNew").getValue(Boolean.class);
-                                            if (isNew != null && ((!senderUsername.equals(FirebaseDB.currentUser.getUsername()) && isNew && !Util.isForeground)
-                                                    || ((!senderUsername.equals(FirebaseDB.currentUser.getUsername()) && isNew && !justOpened &&
-                                                    !Util.foregroundedPuddle.equals(snapshot.getRef().getKey()))))) {
+                                            if (isNew != null && ((!senderUsername.equals(FirebaseDB.getLocalUser().getUsername()) && isNew && !Util.isForeground)
+                                                    || ((!senderUsername.equals(FirebaseDB.getLocalUser().getUsername())) && isNew && !justOpened &&
+                                                    !Util.foregroundedPuddle.equals(snapshot.getRef().getKey())))) {
                                                 snap.getRef().child("isNew").setValue(false);
                                                 FirebaseDB.getDataReference("Puddles").child(puddleID).child("name").
                                                         addValueEventListener(new ValueEventListener() {
