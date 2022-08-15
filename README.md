@@ -33,3 +33,10 @@ The following branches were used:
 5. rls/sean - Contains commit made by Zhenyu Wang
 6. rls/chris - Contains commit made by Christopher Schelb
 
+# While Testing
+The app has the ability to generate a joining link for each puddle, if the link doesn't work and it opens browser, do the following:
+1. Go to Ap Info
+2. Select the option "Option by default"
+3. Click on "Add Link" and by default, it should show you a link, add it.
+4. Following the above steps should fix the issue.
+
