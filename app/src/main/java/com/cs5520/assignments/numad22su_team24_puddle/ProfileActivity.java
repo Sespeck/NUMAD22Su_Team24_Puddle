@@ -27,6 +27,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.webkit.MimeTypeMap;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
@@ -57,7 +58,8 @@ import java.util.HashMap;
 public class ProfileActivity extends AppCompatActivity {
 
     ShapeableImageView profileIcon, cameraBtn;
-    TextInputEditText displayET, bioET, phoneNumberET;
+    TextInputEditText bioET, phoneNumberET;
+    TextView displayET;
     Button saveBtn;
     Uri imageUri = null;
     String dpUrl = "";
@@ -110,7 +112,7 @@ public class ProfileActivity extends AppCompatActivity {
         Util.isPuddleListForeground = true;
 
         profileIcon = findViewById(R.id.profile_user_icon);
-        displayET = findViewById(R.id.profile_display_name_et);
+        displayET = findViewById(R.id.profile_display_name_layout);
         bioET = findViewById(R.id.profile_description_et);
         phoneNumberET = findViewById(R.id.profile_phone_number_et);
         phoneNumberET.addTextChangedListener(new PhoneNumberFormattingTextWatcher());
