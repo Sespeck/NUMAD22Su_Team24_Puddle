@@ -594,7 +594,7 @@ public class PuddleListActivity extends AppCompatActivity implements View.OnClic
 
     public void showJoinPuddleDialogue(Context context, Puddle puddle) {
         Util.isPuddleListForeground = false;
-        if (FirebaseDB.getLocalUser() == null) {
+        if (FirebaseDB.currentUser == null) {
             FirebaseUser current_user = FirebaseDB.getCurrentUser();
             DatabaseReference userRef = FirebaseDB.getDataReference("Users").child(current_user.getUid());
             userRef.addValueEventListener(new ValueEventListener() {
