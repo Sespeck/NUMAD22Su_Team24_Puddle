@@ -35,8 +35,8 @@ The following branches were used:
 
 # While Testing
 The app has the ability to generate a joining link for each puddle, if the link doesn't work and it opens browser, do the following:
-1. Go to Ap Info
+1. Go to App Info
 2. Select the option "Option by default"
-3. Click on "Add Link" and by default, it should show you a link, add it.
+3. Click on "Add Link" and it should show you a link, add it.
 4. Following the above steps should fix the issue.
 
