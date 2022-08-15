@@ -107,31 +107,54 @@ public class PuddleListActivity extends AppCompatActivity implements View.OnClic
     private ArrayList<ValueEventListener> valueEventListeners = new ArrayList<>();
     private ArrayList<DatabaseReference> references = new ArrayList<>();
 
-
     private EventsFragment.endShimmerEffectCallback callback = new EventsFragment.endShimmerEffectCallback() {
         @Override
         public void onLayoutInflated() {
-            handler.postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    shimmerFrameLayout.stopShimmer();
-                    shimmerFrameLayout.setVisibility(View.GONE);
-                    puddleListRecyclerView.setVisibility(View.VISIBLE);
+            if (Util.isNewAccount) {
+                handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        Util.isNewAccount = false;
+                        shimmerFrameLayout.stopShimmer();
+                        shimmerFrameLayout.setVisibility(View.GONE);
+                        puddleListRecyclerView.setVisibility(View.VISIBLE);
 //                    if (FirebaseDB.getLocalUser().getMy_puddles().size() == 0){
 //                        noResultFound.setVisibility(View.VISIBLE);
 //                    } else {
 //                        noResultFound.setVisibility(View.GONE);
 //                    }
-                    if (currentView != null && currentView == myPuddlesBtn && myPuddlesData.size() == 0) {
-                        noResultFound.setVisibility(TextView.VISIBLE);
-                    } else {
-                        noResultFound.setVisibility(TextView.GONE);
-                    }
+                        if (currentView != null && currentView == myPuddlesBtn && myPuddlesData.size() == 0) {
+                            noResultFound.setVisibility(TextView.VISIBLE);
+                        } else {
+                            noResultFound.setVisibility(TextView.GONE);
+                        }
 
-                }
-            }, 1200);
+                    }
+                }, 3300);
+            } else{
+                handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        shimmerFrameLayout.stopShimmer();
+                        shimmerFrameLayout.setVisibility(View.GONE);
+                        puddleListRecyclerView.setVisibility(View.VISIBLE);
+//                    if (FirebaseDB.getLocalUser().getMy_puddles().size() == 0){
+//                        noResultFound.setVisibility(View.VISIBLE);
+//                    } else {
+//                        noResultFound.setVisibility(View.GONE);
+//                    }
+                        if (currentView != null && currentView == myPuddlesBtn && myPuddlesData.size() == 0) {
+                            noResultFound.setVisibility(TextView.VISIBLE);
+                        } else {
+                            noResultFound.setVisibility(TextView.GONE);
+                        }
+
+                    }
+                }, 1200);
+            }
         }
     };
+
 
     public interface endShimmerEffectCallback {
         void onLayoutInflated();

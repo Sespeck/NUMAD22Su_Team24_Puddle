@@ -47,6 +47,7 @@ public class SignupActivity extends AppCompatActivity {
                 Toast.makeText(this, "Please connect to internet!", Toast.LENGTH_SHORT).show();
                 return;
             }
+            Util.isNewAccount = true;
             FirebaseDB.registerUser(usernameEditText.getText().toString() + "@puddle.com"
                     , passwordEditText.getText().toString()
                     , usernameEditText.getText().toString()
