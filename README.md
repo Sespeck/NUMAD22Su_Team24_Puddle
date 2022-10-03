@@ -2,7 +2,7 @@
 This app is made by Team 24 for **P3 Final Project**
 
 # Video Tours
-https://www.youtube.com/watch?v=XpVx59h85ys&ab_channel=SeanWang
+[<img src="./puddle-project.png" width="50%">](https://youtu.be/YUkcJ53CLT0)
 
 # Running the App
 - Clone this repository
