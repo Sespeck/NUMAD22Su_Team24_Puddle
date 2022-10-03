@@ -2,7 +2,11 @@
 This app is made by Team 24 for **P3 Final Project**
 
 # Video Tours
-[<img src="./puddle-project.png" width="50%">](https://youtu.be/YUkcJ53CLT0)
+[<img src="./puddle-project.png" width="50%">]
+[Part 1 Login Filter Join](https://youtu.be/r8jXYaUzRp8)
+[Part 2 Homepage Create Share](https://youtu.be/oYm6n5S5CGU)
+[Part 3 Chatroom](https://youtu.be/cuA34VItn_A)
+[Part 4 Map](https://youtu.be/YUkcJ53CLT0)
 
 # Running the App
 - Clone this repository
