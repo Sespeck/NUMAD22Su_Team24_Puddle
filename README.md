@@ -1,6 +1,9 @@
 # NUMAD22Su_Team24_Puddle
 This app is made by Team 24 for **P3 Final Project**
 
+# Video Tours
+https://www.youtube.com/watch?v=XpVx59h85ys&ab_channel=SeanWang
+
 # Running the App
 - Clone this repository
 - Checkout to the folder
